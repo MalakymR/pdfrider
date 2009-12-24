@@ -1,0 +1,85 @@
+﻿<Window x:Class="PDFRider.MainWindow"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PDFRider"
+    Title="PDF Rider" Height="430" Width="686"
+    Style="{StaticResource GenericStyle}" ResizeMode="CanResizeWithGrip"
+        local:ClosingCommandBehavior.WindowClosing="{Binding CmdClosing}" Icon="/PDFRider;component/PDFRider.ico">
+    <DockPanel LastChildFill="True">
+
+        <Border DockPanel.Dock="Top" BorderBrush="SteelBlue" BorderThickness="2">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Menu Style="{StaticResource GenericStyle}">
+                    <MenuItem Header="{DynamicResource loc_miFile}">
+                        <MenuItem Name="miHome" Header="{DynamicResource loc_miHomePage}" 
+                                  Command="{Binding CmdHome}">
+                            <MenuItem.Icon>
+                                <Image Source="..\images\folder_home.png" Style="{StaticResource MenuItemImage}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <MenuItem Name="miOpen" Header="{DynamicResource loc_miOpenFile}" 
+                                  Command="{Binding CmdOpenDocument}">
+                            <MenuItem.Icon>
+                                <Image Source="..\images\folder_yellow_open.png" Style="{StaticResource MenuItemImage}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
+                        <!--<Separator />
+                        <MenuItem Name="miPreferences" Header="{DynamicResource loc_miPreferences}" 
+                                   >
+                            <MenuItem.Icon>
+                                <Image Source="..\images\configure.png" Style="{StaticResource MenuItemImage}" />
+                            </MenuItem.Icon>
+                        </MenuItem>-->
+                        <Separator />
+                        <MenuItem Name="miExit" Header="{DynamicResource loc_miExit}" 
+                                  Command="{Binding CmdClose}" />
+                    </MenuItem>
+                    <MenuItem Header="{DynamicResource loc_miTools}">
+                        <MenuItem Name="miInsertPages" Header="{DynamicResource loc_miInsertPages}"
+                                  Command="{Binding CmdInsertPages}" />
+                        <MenuItem Name="miExtractPages" Header="{DynamicResource loc_miExtractPages}"
+                                  Command="{Binding CmdExtractPages}" />
+                        <MenuItem Name="miDeletePages" Header="{DynamicResource loc_miDeletePages}"
+                                  Command="{Binding CmdDeletePages}" />
+                    </MenuItem>
+
+                    <MenuItem Header="?">
+                        <MenuItem Name="miAbout" Header="{DynamicResource loc_miAbout}"
+                                  Command="{Binding CmdAbout}" />
+                    </MenuItem>
+
+                </Menu>
+                
+                <TextBlock Grid.Column="1" Name="tbkVersion" Text="{Binding Version}"
+                           HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+                
+            </Grid>
+        </Border>
+        <!--<TextBox DockPanel.Dock="Top" Name="tbxInd" Text="{Binding Uri}" />-->
+        <StatusBar DockPanel.Dock="Bottom" Padding="0" Visibility="Visible">
+            <StatusBarItem>
+                <TextBlock Text="{Binding Uri}">
+                    <TextBlock.Style>
+                        <Style TargetType="TextBlock">
+                            <Style.Triggers>
+                                <DataTrigger Binding="{Binding IsDocumentChanged}" Value="True">
+                                    <Setter Property="Foreground" Value="Red"/>
+                                </DataTrigger>
+                            </Style.Triggers>
+                        </Style>
+                    </TextBlock.Style>
+                </TextBlock>
+            </StatusBarItem>
+            <!--<TextBox Margin="0" Background="Transparent" Width="Auto" />-->
+        </StatusBar>
+        <Border BorderBrush="DarkSlateGray" BorderThickness="2">
+            <WebBrowser Name="browser" 
+                        local:WebBrowserUtility.BindableSource="{Binding Uri, Mode=TwoWay}" />
+        </Border>
+
+    </DockPanel>
+</Window>
