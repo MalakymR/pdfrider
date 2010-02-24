@@ -1,8 +1,8 @@
-﻿<Window x:Class="PDFRider.WndDeletePages"
+﻿<local:BaseWindow x:Class="PDFRider.WndDeletePages"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PDFRider"
     Title="{DynamicResource loc_wndDeletePagesTitle}" Height="175" Width="348" WindowStartupLocation="CenterOwner" 
-    DataContext="{Binding Source={StaticResource Locator}, Path=WndDeletePagesViewModel}"
     ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
     <Grid>
         <Grid.RowDefinitions>
@@ -13,26 +13,28 @@
 
         <StackPanel Orientation="Horizontal">
             <TextBlock Text="{DynamicResource loc_tbkPagesFrom}" Style="{StaticResource LabelTextBlock}" />
-            <TextBox Name="tbxFrom" Width="50" Margin="5" GotFocus="tbxFrom_GotFocus" Text="{Binding PageStart}" />
+            <local:IntervalTextBox Style="{StaticResource IntervalTextBox}" SelectAllText="True"
+                                   IsValidInterval="{Binding IsValidPageStart}"
+                                   Text="{Binding PageStart, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{DynamicResource loc_tbkPagesTo}" Margin="5" VerticalAlignment="Center" />
-            <TextBox Name="tbxTo" Width="50" Margin="5" GotFocus="tbxTo_GotFocus" Text="{Binding PageEnd}" />
+            <local:IntervalTextBox Style="{StaticResource IntervalTextBox}" SelectAllText="True"
+                                   IsValidInterval="{Binding IsValidPageEnd}"
+                                   Text="{Binding PageEnd, UpdateSourceTrigger=PropertyChanged}" />
             <TextBlock Text="{DynamicResource loc_tbkPagesOf}" Margin="5" VerticalAlignment="Center" />
-            <TextBlock Name="tbkNumberOfPages" Text="{Binding NumberOfPages}" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding NumberOfPages}" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{Binding NumberOfPhysicalPages, StringFormat=({0})}" Margin="5" VerticalAlignment="Center" />
         </StackPanel>
 
         <StackPanel Grid.Row="1" Visibility="Visible" >
-            <TextBlock Margin="5" Name="tbkInfo" TextWrapping="WrapWithOverflow" 
-                       Foreground="DarkOrange" FontStyle="Italic">
-                
-            </TextBlock>
+            <TextBlock Style="{StaticResource InformationTextBlock}" Text="{Binding Information}" />
         </StackPanel>
 
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Name="btnOK" Content="{DynamicResource loc_btnOK}" Command="{Binding CmdDelete}"
+            <Button Content="{DynamicResource loc_btnOK}" Command="{Binding CmdDelete}"
                     Style="{StaticResource StandardRectangleDialogButton}" />
-            <Button Name="btnCancel" Content="{DynamicResource loc_btnCancel}" Command="{Binding CmdClose}"
+            <Button Content="{DynamicResource loc_btnCancel}" Command="{Binding CmdClose}"
                     Style="{StaticResource StandardRectangleDialogButton}"/>
         </StackPanel>
 
     </Grid>
-</Window>
+</local:BaseWindow>

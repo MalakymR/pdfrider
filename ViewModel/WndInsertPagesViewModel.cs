@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -9,15 +10,18 @@ namespace PDFRider
     /// <summary>
     /// This class contains properties that a View can data bind to.
     /// </summary>
-    public class WndInsertPagesViewModel : ViewModelBase
+    public class WndInsertPagesViewModel : WindowViewModel
     {
         PDFDocument _doc;
 
-        string _numberOfPages = "";
-        string _pageStart = "0";
-        InsertPositions _insertPosition = InsertPositions.End;
-        string _fileToMerge = "";
-        string _fileNameToMerge = "";
+        string _pageStart;
+        bool _isValidPageStart;
+        PDFDocument.InsertPositions _insertPosition;
+        string _fileToMerge;
+        string _fileNameToMerge;
+
+        System.Text.RegularExpressions.Regex _intervalRegex = new System.Text.RegularExpressions.Regex(
+                @"^[0-9]+$"); // Accepts only numbers
 
         /// <summary>
         /// Initializes a new instance of the WndInsertPagesViewModel class.
@@ -32,19 +36,9 @@ namespace PDFRider
         /// <summary>
         /// The total number of pages of the document.
         /// </summary>
-        public string NumberOfPages
-        {
-            get
-            {
-                return this._numberOfPages;
-            }
-            set
-            {
-                this._numberOfPages = value;
-                RaisePropertyChanged("NumberOfPages");
-            }
+        public int NumberOfPages { get; private set; }
+        public int NumberOfPhysicalPages { get; private set; }
 
-        }
 
         /// <summary>
         /// Number of the page to start insert from.
@@ -58,15 +52,48 @@ namespace PDFRider
             set
             {
                 this._pageStart = value;
-                RaisePropertyChanged("PageStart");
-            }
 
+                this.InsertPosition = PDFDocument.InsertPositions.Custom;
+
+                if ((this._intervalRegex.IsMatch(this._pageStart)) &&
+                    (Int32.Parse(this._pageStart) >= 0) &&
+                    (Int32.Parse(this._pageStart) <= this.NumberOfPages))
+                {
+                    this.IsValidPageStart = true;
+                }
+                else
+                {
+                    this.IsValidPageStart = false;
+                }
+
+                RaisePropertyChanged("PageStart");
+
+                if (this.IsValidPageStart) this.Information = "";
+                else this.Information = App.Current.FindResource("loc_correctErrors").ToString();
+            }
         }
+
+        /// <summary>
+        /// Indicates if the value for PageStart is valid
+        /// </summary>
+        public bool IsValidPageStart
+        {
+            get
+            {
+                return this._isValidPageStart;
+            }
+            set
+            {
+                this._isValidPageStart = value;
+                RaisePropertyChanged("IsValidPageStart");
+            }
+        }
+
 
         /// <summary>
         /// Position to start insert from.
         /// </summary>
-        public InsertPositions InsertPosition
+        public PDFDocument.InsertPositions InsertPosition
         {
             get
             {
@@ -119,27 +146,6 @@ namespace PDFRider
 
         #region Commands
 
-        #region CmdClose
-
-        RelayCommand _cmdClose;
-        public ICommand CmdClose
-        {
-            get
-            {
-                if (this._cmdClose == null)
-                {
-                    this._cmdClose = new RelayCommand(() => this.DoCmdClose());
-                }
-                return this._cmdClose;
-            }
-        }
-        private void DoCmdClose()
-        {
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this, ""));
-        }
-
-        #endregion
-
         #region CmdInsert
 
         RelayCommand _cmdInsert;
@@ -149,7 +155,8 @@ namespace PDFRider
             {
                 if (this._cmdInsert == null)
                 {
-                    this._cmdInsert = new RelayCommand(() => this.DoCmdInsert());
+                    this._cmdInsert = new RelayCommand(() => this.DoCmdInsert(),
+                        () => CanDoCmdInsert);
                 }
                 return this._cmdInsert;
             }
@@ -157,20 +164,18 @@ namespace PDFRider
 
         private void DoCmdInsert()
         {
-            string tempFileName = App.Current.FindResource("loc_defaultTempFileName").ToString() +
+            string tempFileName = App.Current.FindResource("loc_tempPagesFrom").ToString() +
                 this._doc.FileName;
             string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
-            //int end = Int32.Parse(this.PageEnd) - this._doc.PageLabelStart + 1;
 
-            SelectionStates state = this._doc.InsertPages(start, this._insertPosition, 
+            PDFDocument.OperationStates state = this._doc.InsertPages(start, this._insertPosition, 
                 this._fileToMerge, tempFile);
 
-            if (state == SelectionStates.OutOfDocument)
+            if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
             {
-                Messenger.Default.Send<TMsgInformation>(new TMsgInformation(
-                    App.Current.FindResource("loc_msgOutOfDocument").ToString()));
+                this.Information = App.Current.FindResource("loc_msgOutOfDocument").ToString();
             }
             else
             {
@@ -178,10 +183,18 @@ namespace PDFRider
             }
         }
 
+        private bool CanDoCmdInsert
+        {
+            get
+            {
+                return this.IsValidPageStart;
+            }
+        }
 
         #endregion
 
         #endregion
+
 
         #region Message handlers
 
@@ -191,12 +204,15 @@ namespace PDFRider
             this._doc = msg.Document;
 
             //... and do some initializations.
-            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1).ToString();
+            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
+            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
 
             this.PageStart = this._doc.PageLabelStart.ToString();
 
             this.FileToMerge = msg.FileToMerge;
             this.FileNameToMerge = System.IO.Path.GetFileName(this._fileToMerge);
+
+            this.InsertPosition = PDFDocument.InsertPositions.End;
         }
 
         #endregion

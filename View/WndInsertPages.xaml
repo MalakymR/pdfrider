@@ -1,9 +1,8 @@
-﻿<Window x:Class="PDFRider.WndInsertPages"
+﻿<local:BaseWindow x:Class="PDFRider.WndInsertPages"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
-    Title="{DynamicResource loc_wndInsertPagesTitle}" Height="242" Width="359" WindowStartupLocation="CenterOwner" 
-    DataContext="{Binding Source={StaticResource Locator}, Path=WndInsertPagesViewModel}"
+    Title="{DynamicResource loc_wndInsertPagesTitle}" Height="267" Width="360" WindowStartupLocation="CenterOwner" 
     ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
     <Window.Resources>
         <local:EnumBooleanConverter x:Key="enumBooleanConverter" />
@@ -30,20 +29,23 @@
                     <RadioButton Margin="5" VerticalAlignment="Center"
                                  Content="{DynamicResource loc_positionCustom}"
                                  IsChecked="{Binding Path=InsertPosition, Converter={StaticResource enumBooleanConverter}, ConverterParameter=Custom}"/>
-                    <TextBox Margin="5" Width="50"  Text="{Binding PageStart}" />
+                    <local:IntervalTextBox Style="{StaticResource IntervalTextBox}" SelectAllText="True"
+                                   IsValidInterval="{Binding IsValidPageStart}"
+                                   Text="{Binding PageStart, UpdateSourceTrigger=PropertyChanged}" />
                     <TextBlock Margin="5" Text="{DynamicResource loc_tbkPagesOf}" VerticalAlignment="Center"/>
                     <TextBlock Margin="5" Text="{Binding NumberOfPages}" VerticalAlignment="Center"/>
+                    <TextBlock Margin="5" Text="{Binding NumberOfPhysicalPages, StringFormat=({0})}" VerticalAlignment="Center" />
                 </StackPanel>
-                <TextBlock Margin="5" Name="tbkInfo" TextWrapping="WrapWithOverflow" 
-                       Foreground="DarkOrange" FontStyle="Italic" />
+                <TextBlock Style="{StaticResource InformationTextBlock}" Text="{Binding Information}"
+                           VerticalAlignment="Center" />
             </StackPanel>
         </GroupBox>
         
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Name="btnOK" Content="{DynamicResource loc_btnOK}" Command="{Binding CmdInsert}"
+            <Button Content="{DynamicResource loc_btnOK}" Command="{Binding CmdInsert}"
                     Style="{StaticResource StandardRectangleDialogButton}" />
-            <Button Name="btnCancel" Content="{DynamicResource loc_btnCancel}" Command="{Binding CmdClose}"
+            <Button Content="{DynamicResource loc_btnCancel}" Command="{Binding CmdClose}"
                     Style="{StaticResource StandardRectangleDialogButton}"/>
         </StackPanel>
     </Grid>
-</Window>
+</local:BaseWindow>

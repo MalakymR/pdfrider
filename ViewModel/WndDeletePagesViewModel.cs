@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
@@ -9,13 +10,17 @@ namespace PDFRider
     /// <summary>
     /// This class contains properties that a View can data bind to.
     /// </summary>
-    public class WndDeletePagesViewModel : ViewModelBase
+    public class WndDeletePagesViewModel : WindowViewModel
     {
         PDFDocument _doc;
 
-        string _numberOfPages = "";
         string _pageStart = "";
         string _pageEnd = "";
+        bool _isValidPageStart;
+        bool _isValidPageEnd;
+
+        System.Text.RegularExpressions.Regex _intervalRegex = new System.Text.RegularExpressions.Regex(
+                @"^[0-9]+$"); // Accepts only numbers
 
         /// <summary>
         /// Initializes a new instance of the WndDeletePagesViewModel class.
@@ -30,19 +35,8 @@ namespace PDFRider
         /// <summary>
         /// The total number of pages of the document.
         /// </summary>
-        public string NumberOfPages
-        {
-            get
-            {
-                return this._numberOfPages;
-            }
-            set
-            {
-                this._numberOfPages = value;
-                RaisePropertyChanged("NumberOfPages");
-            }
-
-        }
+        public int NumberOfPages { get; private set; }
+        public int NumberOfPhysicalPages { get; private set; }
 
         /// <summary>
         /// Number of page to start extracting from.
@@ -56,7 +50,22 @@ namespace PDFRider
             set
             {
                 this._pageStart = value;
+
+                if ((this._intervalRegex.IsMatch(this._pageStart)) &&
+                    (Int32.Parse(this._pageStart) > 0) &&
+                    (Int32.Parse(this._pageStart) <= this.NumberOfPages))
+                {
+                    this.IsValidPageStart = true;
+                }
+                else
+                {
+                    this.IsValidPageStart = false;
+                }
+
                 RaisePropertyChanged("PageStart");
+
+                if ((this.IsValidPageStart) && (this.IsValidPageEnd)) this.Information = "";
+                else this.Information = App.Current.FindResource("loc_correctErrors").ToString();
             }
 
         }
@@ -73,35 +82,61 @@ namespace PDFRider
             set
             {
                 this._pageEnd = value;
+
+                if ((this._intervalRegex.IsMatch(this._pageEnd)) &&
+                    (Int32.Parse(this._pageEnd) > 0) &&
+                    (Int32.Parse(this._pageEnd) <= this.NumberOfPages))
+                {
+                    this.IsValidPageEnd = true;
+                }
+                else
+                {
+                    this.IsValidPageEnd = false;
+                }
+
                 RaisePropertyChanged("PageEnd");
+
+                if ((this.IsValidPageStart) && (this.IsValidPageEnd)) this.Information = "";
+                else this.Information = App.Current.FindResource("loc_correctErrors").ToString();
             }
 
+        }
+
+        /// <summary>
+        /// Indicates if the value for PageStart is valid
+        /// </summary>
+        public bool IsValidPageStart
+        {
+            get
+            {
+                return this._isValidPageStart;
+            }
+            set
+            {
+                this._isValidPageStart = value;
+                RaisePropertyChanged("IsValidPageStart");
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the value for PageEnd is valid
+        /// </summary>
+        public bool IsValidPageEnd
+        {
+            get
+            {
+                return this._isValidPageEnd;
+            }
+            set
+            {
+                this._isValidPageEnd = value;
+                RaisePropertyChanged("IsValidPageEnd");
+            }
         }
 
         #endregion
 
         #region Commands
-
-        #region CmdClose
-
-        RelayCommand _cmdClose;
-        public ICommand CmdClose
-        {
-            get
-            {
-                if (this._cmdClose == null)
-                {
-                    this._cmdClose = new RelayCommand(() => this.DoCmdClose());
-                }
-                return this._cmdClose;
-            }
-        }
-        private void DoCmdClose()
-        {
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this, ""));
-        }
-
-        #endregion
 
         #region CmdDelete
 
@@ -112,7 +147,8 @@ namespace PDFRider
             {
                 if (this._cmdDelete == null)
                 {
-                    this._cmdDelete = new RelayCommand(() => this.DoCmdDelete());
+                    this._cmdDelete = new RelayCommand(() => this.DoCmdDelete(),
+                        () => CanDoCmdDelete);
                 }
                 return this._cmdDelete;
             }
@@ -120,31 +156,37 @@ namespace PDFRider
 
         private void DoCmdDelete()
         {
-            string tempFileName = App.Current.FindResource("loc_defaultTempFileName").ToString() +
+            string tempFileName = App.Current.FindResource("loc_tempPagesFrom").ToString() +
                 this._doc.FileName;
             string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
             int end = Int32.Parse(this.PageEnd) - this._doc.PageLabelStart + 1;
 
-            SelectionStates state = this._doc.DeletePages(start, end, tempFile, false);
+            PDFDocument.OperationStates state = this._doc.DeletePages(start, end, tempFile, false);
 
-            if (state == SelectionStates.OutOfDocument)
+            if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
             {
-                Messenger.Default.Send<TMsgInformation>(new TMsgInformation(
-                    App.Current.FindResource("loc_msgOutOfDocument").ToString()));
+                this.Information = App.Current.FindResource("loc_msgOutOfDocument").ToString();
             }
-            else if (state == SelectionStates.EntireDocument)
+            else if (state == PDFDocument.OperationStates.PageRangeEntireDocument)
             {
-                Messenger.Default.Send<TMsgInformation>(new TMsgInformation(
-                    App.Current.FindResource("loc_msgEntireDocument").ToString()));
+                this.Information = App.Current.FindResource("loc_msgEntireDocument").ToString();
             }
             else
             {
                 Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
             }
         }
-        
+
+        private bool CanDoCmdDelete
+        {
+            get
+            {
+                return ((this.IsValidPageStart) && (this.IsValidPageEnd));
+            }
+        }
+
 
         #endregion
 
@@ -158,8 +200,8 @@ namespace PDFRider
             this._doc = msg.Document;
 
             //... and do some initializations.
-            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1).ToString() +
-                " (" + this._doc.NumberOfPages.ToString() + ")";
+            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
+            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
 
             this.PageStart = this._doc.PageLabelStart.ToString();
             this.PageEnd = this._doc.PageLabelStart.ToString();

@@ -12,7 +12,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PDF Rider")]
-[assembly: AssemblyCopyright("Copyright ©  2009")]
+[assembly: AssemblyCopyright("Copyright ©  2010")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -51,5 +51,5 @@ using System.Windows;
 // È possibile specificare tutti i valori oppure impostare valori predefiniti per i numeri relativi alla revisione e alla build 
 // utilizzando l'asterisco (*) come descritto di seguito:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.2.*")]
-[assembly: AssemblyFileVersion("0.2.*")]
+[assembly: AssemblyVersion("0.3.*")]
+[assembly: AssemblyFileVersion("0.3")]

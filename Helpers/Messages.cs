@@ -1,12 +1,12 @@
 ﻿using System;
-using GalaSoft.MvvmLight;
+using System.Collections.Generic;
 
 namespace PDFRider
 {
     public enum InformationType
     {
         All,
-        OutOfDocument
+        PageRangeOutOfDocument
     }
 
     /// <summary>
@@ -31,34 +31,28 @@ namespace PDFRider
     /// <summary>
     /// Type of the message for requesting to close a window.
     /// </summary>
-    /// <remarks>
-    /// I pass a generic ViewModel in the constructor, so when a window catches this message,
-    /// it only needs to check if it's equal to its DataContext.
-    /// </remarks>
     public class TMsgClose
     {
-        public TMsgClose(ViewModelBase view_model, object dialog_return_value)
+        public TMsgClose(WindowViewModel sender_view_model, object dialog_return_value)
         {
-            this.SenderViewModel = view_model;
+            this.SenderViewModel = sender_view_model;
             this.DialogReturnValue = dialog_return_value;
         }
-
-        public TMsgClose(ViewModelBase view_model, bool? dialog_result)
+        public TMsgClose(WindowViewModel sender_view_model, bool? dialog_result)
         {
-            this.SenderViewModel = view_model;
+            this.SenderViewModel = sender_view_model;
             this.DialogResult = dialog_result;
         }
-
-        public TMsgClose(ViewModelBase view_model)
-            : this(view_model, null)
+        public TMsgClose(WindowViewModel sender_view_model)
+            : this(sender_view_model, null)
         {
         }
 
-        public ViewModelBase SenderViewModel { get; private set; }
+        public WindowViewModel SenderViewModel { get; private set; }
         public bool? DialogResult { get; set; }
 
         /// <summary>
-        /// A custom value that a dialog window can return in place of the standard bool? DialogResult
+        /// A custom value that a dialog window can return in place of the standard "bool? DialogResult"
         /// </summary>
         public object DialogReturnValue { get; set; }
     }
@@ -66,24 +60,17 @@ namespace PDFRider
     /// <summary>
     /// Type of the message for sending information about window closing status.
     /// </summary>
-    /// <remarks>
-    /// I pass a generic ViewModel in the constructor, so when a window catches this message,
-    /// it only needs to check if it's equal to its DataContext.
-    /// </remarks>
     public class TMsgClosing
     {
-        public TMsgClosing(ViewModelBase view_model)
+        public TMsgClosing()
         {
-            this.SenderViewModel = view_model;
             this.AskForSave = false;
             this.EventArgs = new System.ComponentModel.CancelEventArgs();
             
         }
 
-        public ViewModelBase SenderViewModel { get; private set; }
         public bool AskForSave { get; set; }
         public System.ComponentModel.CancelEventArgs EventArgs { get; set; }
-        
     }
 
     /// <summary>
@@ -91,11 +78,12 @@ namespace PDFRider
     /// </summary>
     public class TMsgOpenFile
     {
-        public TMsgOpenFile() { }
+        public TMsgOpenFile() 
+        {
+            this.Multiselect = false;
+        }
         
-        public string Title { get; set; }
-        public string Filter { get; set; }
-        public string FileType { get; set; }
+        public bool Multiselect { get; set; }
     }
 
     /// <summary>
@@ -143,6 +131,19 @@ namespace PDFRider
     }
 
     /// <summary>
+    /// Type of the message for passing a list of files.
+    /// </summary>
+    public class TMsgAddFiles
+    {
+        public TMsgAddFiles(List<string> files)
+        {
+            this.Files = files;
+        }
+
+        public List<string> Files { get; set; }
+    }
+
+    /// <summary>
     /// Type of the message for requesting to extract the pages from the document.
     /// </summary>
     public class TMsgShowExtractPages
@@ -181,6 +182,25 @@ namespace PDFRider
         public PDFDocument Document { get; private set; }
         public string FileToMerge { get; set; }
     }
+
+    /// <summary>
+    /// Type of the message for requesting to merge documents.
+    /// </summary>
+    public class TMsgShowMergeDocuments
+    {
+        public TMsgShowMergeDocuments(List<string> filesToMerge)
+        {
+            this.FilesToMerge = filesToMerge;
+        }
+
+        public TMsgShowMergeDocuments()
+            : this(new List<string>())
+        {
+        }
+
+        public List<string> FilesToMerge { get; private set; }
+    }
+
 
     /// <summary>
     /// Type of the message for requesting to show the information window.

@@ -6,6 +6,7 @@ namespace PDFRider
 {
     /// <summary>
     /// This class is from David Schmitt (http://stackoverflow.com/users/4918/david-schmitt)
+    /// Posted at http://stackoverflow.com/questions/397556/wpf-how-to-bind-radiobuttons-to-an-enum
     /// </summary>
     public class EnumBooleanConverter : IValueConverter
     {

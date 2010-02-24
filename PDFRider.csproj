@@ -93,6 +93,10 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
+    <Page Include="View\WndMergeDocuments.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
@@ -103,10 +107,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Helpers\Arguments.cs" />
     <Compile Include="Helpers\CommandBehaviors.cs" />
     <Compile Include="Helpers\EnumBooleanConverter.cs" />
-    <Compile Include="Helpers\WindowViewModel.cs" />
+    <Compile Include="Helpers\IntervalTextBox.cs" />
+    <Compile Include="Model\PDFFile.cs" />
+    <Compile Include="ViewModel\FileToMergeViewModel.cs" />
     <Compile Include="ViewModel\MainWindowViewModel.cs" />
     <Compile Include="Helpers\Messages.cs" />
     <Compile Include="Model\PDFDocument.cs" />
@@ -123,11 +128,13 @@
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
-    <Compile Include="ViewModel\ViewModelLocator.cs" />
     <Compile Include="Helpers\WebBrowserUtility.cs" />
+    <Compile Include="ViewModel\WindowViewModel.cs" />
     <Compile Include="ViewModel\WndDeletePagesViewModel.cs" />
     <Compile Include="ViewModel\WndExtractPagesViewModel.cs" />
     <Compile Include="ViewModel\WndInsertPagesViewModel.cs" />
+    <Compile Include="ViewModel\WndMergeDocumentsViewModel.cs" />
+    <Compile Include="View\BaseWindow.cs" />
     <Compile Include="View\WndAbout.xaml.cs">
       <DependentUpon>WndAbout.xaml</DependentUpon>
     </Compile>
@@ -139,6 +146,9 @@
     </Compile>
     <Compile Include="View\WndInsertPages.xaml.cs">
       <DependentUpon>WndInsertPages.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="View\WndMergeDocuments.xaml.cs">
+      <DependentUpon>WndMergeDocuments.xaml</DependentUpon>
     </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
@@ -164,6 +174,11 @@
     <Content Include="GalaSoft.MvvmLight.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Resource Include="images\pdf.png" />
+    <Resource Include="images\down.png" />
+    <Resource Include="images\up.png" />
+    <Resource Include="images\edit_add.png" />
+    <Resource Include="images\edit_remove.png" />
     <Content Include="license.txt">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

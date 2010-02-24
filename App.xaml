@@ -8,16 +8,22 @@
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="LocTable.xaml" />
             </ResourceDictionary.MergedDictionaries>
-
-            <local:ViewModelLocator x:Key="Locator" />
             
             <Style x:Key="GenericStyle" TargetType="Control">
                 <Setter Property="FontFamily" Value="Verdana" />
-                <Setter Property="FontSize" Value="14" />
+                <Setter Property="FontSize" Value="12" />
+            </Style>
+            
+            <Style x:Key="MenuStyle" TargetType="Menu" BasedOn="{StaticResource GenericStyle}">
+                <Setter Property="Background" Value="Transparent" />
+            </Style>
+            <Style x:Key="MenuItemStyle" TargetType="MenuItem" BasedOn="{StaticResource GenericStyle}">
+                <Setter Property="Margin" Value="0,0,5,0" />
             </Style>
             
             <Style x:Key="StandardRectangleButton" TargetType="Button">
-                <Setter Property="Width" Value="80" />
+                <Setter Property="MinWidth" Value="80" />
+                <Setter Property="Width" Value="Auto" />
             </Style>
             
             <Style x:Key="StandardRectangleDialogButton" TargetType="Button" 
@@ -25,9 +31,15 @@
                 <Setter Property="Margin" Value="5" />
             </Style>
             
-            <Style x:Key="IntervalTextBox" TargetType="TextBox">
+            <Style x:Key="IntervalTextBox" TargetType="{x:Type local:IntervalTextBox}">
                 <Setter Property="Width" Value="50" />
                 <Setter Property="Margin" Value="5" />
+                <Style.Triggers>
+                    <Trigger Property="IsValidInterval" Value="False">
+                        <Setter Property="Background" Value="#80FF0000" />
+                        <!--<Setter Property="Foreground" Value="DarkRed" />-->
+                    </Trigger>
+                </Style.Triggers>
             </Style>
             
             <Style x:Key="LabelTextBlock" TargetType="TextBlock">
@@ -35,9 +47,25 @@
                 <Setter Property="Margin" Value="5" />
             </Style>
             
+            <Style x:Key="InformationTextBlock" TargetType="TextBlock">
+                <Setter Property="TextWrapping" Value="WrapWithOverflow" />
+                <Setter Property="Margin" Value="5" />
+                <Setter Property="Foreground" Value="DarkOrange" />
+                <Setter Property="FontStyle" Value="Italic" />
+                <Setter Property="VerticalAlignment" Value="Center" />
+            </Style>
+            
             <Style x:Key="MenuItemImage" TargetType="Image">
                 <Setter Property="Width" Value="20" />
                 <Setter Property="Height" Value="20" />
+            </Style>
+            <Style x:Key="SmallImage" TargetType="Image">
+                <Setter Property="Width" Value="16" />
+                <Setter Property="Height" Value="16" />
+            </Style>
+            <Style x:Key="BigImage" TargetType="Image">
+                <Setter Property="Width" Value="48" />
+                <Setter Property="Height" Value="48" />
             </Style>
         
         </ResourceDictionary>

@@ -4,12 +4,18 @@
     xml:space="preserve">
     
     <!-- 'xml:space="preserve"' activated to easily edit line breaks in string.
-         Do not use indentation in String content definition unless you want to indent the text! -->
+         Do not use indentation in String content definition unless you want to indent the text! 
+         Pay attention to leading and trailing spaces too. 
+    
+         Numbers inside braces (e.g. {0}) are argument passed to String.Format method.
+    -->
     
     <!-- General -->
     <sys:String x:Key="loc_version">version</sys:String>
     
-    <sys:String x:Key="loc_defaultTempFileName">Pages from </sys:String>
+    <sys:String x:Key="loc_defaultTempFileName">Pages from </sys:String> <!-- deprecated. use "loc_tempPagesFrom" -->
+    <sys:String x:Key="loc_tempPagesFrom">Pages from </sys:String>
+    <sys:String x:Key="loc_tempMerged"> - Merged</sys:String>
     
     <sys:String x:Key="loc_btnOK">OK</sys:String>
     <sys:String x:Key="loc_btnCancel">Cancel</sys:String>
@@ -32,10 +38,16 @@ Page interval must be less than the total number of pages.
 The current document may have not been saved.
 Do you want to save it now?
     </sys:String>
+    <sys:String x:Key="loc_correctErrors">
+Correct the errors before continuing.
+    </sys:String>
+    <sys:String x:Key="loc_tooManyFiles">
+Sorry, I can't handle more than {0} files.
+    </sys:String>
     
     
     
-    <!-- Window1 -->
+    <!-- MainWindow -->
     <sys:String x:Key="loc_miFile">Application</sys:String>
     <sys:String x:Key="loc_miHomePage">Home page</sys:String>
     <sys:String x:Key="loc_miOpenFile">Open document...</sys:String>
@@ -45,6 +57,7 @@ Do you want to save it now?
     <sys:String x:Key="loc_miExtractPages">Extract pages...</sys:String>
     <sys:String x:Key="loc_miDeletePages">Delete pages...</sys:String>
     <sys:String x:Key="loc_miInsertPages">Insert pages...</sys:String>
+    <sys:String x:Key="loc_miMergeDocuments">Merge documents...</sys:String>
     <sys:String x:Key="loc_miAbout">About PDF Rider</sys:String>
     
     
@@ -77,21 +90,24 @@ Do you want to save it now?
     
     
     
+    <!-- WndMergeDocuments -->
+    <sys:String x:Key="loc_wndMergeDocumentsTitle">Merge documents</sys:String>
+    <sys:String x:Key="loc_fileColumn">File</sys:String>
+    <sys:String x:Key="loc_pagesColumn">Pages</sys:String>
+    <sys:String x:Key="loc_moveUp">Move up</sys:String>
+    <sys:String x:Key="loc_moveDown">Move down</sys:String>
+    <sys:String x:Key="loc_addFile">Add...</sys:String>
+    <sys:String x:Key="loc_removeFile">Remove</sys:String>
+    <sys:String x:Key="loc_rdbAllPages">All pages</sys:String>
+    <sys:String x:Key="loc_rdbPagesInterval">Pages: </sys:String>
+    <sys:String x:Key="loc_allPages">All pages</sys:String>
+    <sys:String x:Key="loc_pagesIntervalInfo">Insert page numbers or intervals separated by comma.
+(e.g. 1,3-6,8)</sys:String>
+    
+    
+    
     <!-- WndAbout -->
     <sys:String x:Key="loc_wndAboutTitle">About PDF Rider</sys:String>
-    <!--sys:String x:Key="loc_disclaimer">This program is free software. 
-You can redistribute it and/or modify it under the terms of the GNU General Public License version 2, as published by the Free Software Foundation.
-This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
-It uses components from other people/companies, which are not subject to this license (the GNU GPL), but have their own.
-
-Components used:
-   - Images (except the application icon) by David Vignoni.
-   - Application icon by Charlotte Schmidt.
-   - pdftk by Sid Steward.
-   - MVVM Light Toolkit by Laurent Bugnion.
-        
-A copy of the GNU GPL should be included with the source code of the software, as well as the licenses of the other components.</sys:String-->
-    
     <sys:String x:Key="loc_disclaimer">
 This program is free software.
 

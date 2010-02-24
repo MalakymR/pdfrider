@@ -1,12 +1,14 @@
 ﻿using System;
+using System.Linq;
 using System.Windows.Input;
+using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {
-    public class MainWindowViewModel : ViewModelBase
+    public class MainWindowViewModel : WindowViewModel
     {
         //Original Uri of the document. It is compared with the current Uri to check if the document
         //may have been changed
@@ -30,8 +32,9 @@ namespace PDFRider
 
             //Initialize the properties
             this.Uri = this._homeUri;
+            this.Files = new List<string>();
 
-            
+            this.StartupInitializations();
         }
 
         #region Properties
@@ -43,7 +46,7 @@ namespace PDFRider
         {
             get
             {
-                return "ver. " + App.ResourceAssembly.GetName().Version.ToString();
+                return "ver. " + App.VERSION;
             }
         }
 
@@ -81,6 +84,8 @@ namespace PDFRider
                 RaisePropertyChanged("Uri");
             }
         }
+
+        public List<string> Files { get; private set; }
 
         #endregion
 
@@ -124,31 +129,7 @@ namespace PDFRider
         }
         private void DoCmdOpenDocument()
         {
-            Messenger.Default.Send<TMsgOpenFile>(new TMsgOpenFile()
-            {
-                FileType = "pdf"
-            });
-        }
-
-        #endregion
-
-        #region CmdClose
-
-        RelayCommand _cmdClose;
-        public ICommand CmdClose
-        {
-            get
-            {
-                if (this._cmdClose == null)
-                {
-                    this._cmdClose = new RelayCommand(() => this.DoCmdClose());
-                }
-                return this._cmdClose;
-            }
-        }
-        private void DoCmdClose()
-        {
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this));
+            Messenger.Default.Send<TMsgOpenFile, MainWindow>(new TMsgOpenFile());
         }
 
         #endregion
@@ -170,7 +151,7 @@ namespace PDFRider
         }
         private void DoCmdClosing(System.ComponentModel.CancelEventArgs e)
         {
-            Messenger.Default.Send<TMsgClosing>(new TMsgClosing(this)
+            Messenger.Default.Send<TMsgClosing, MainWindow>(new TMsgClosing()
             {
                 AskForSave = this.IsDocumentChanged,
                 EventArgs = e
@@ -267,6 +248,35 @@ namespace PDFRider
 
         #endregion
 
+        #region CmdMergeDocuments
+
+        RelayCommand _cmdMergeDocuments;
+        public ICommand CmdMergeDocuments
+        {
+            get
+            {
+                if (this._cmdMergeDocuments == null)
+                {
+                    this._cmdMergeDocuments = new RelayCommand(() => this.DoCmdMergeDocuments());
+                }
+                return this._cmdMergeDocuments;
+            }
+        }
+        private void DoCmdMergeDocuments()
+        {
+            TMsgShowMergeDocuments msg = new TMsgShowMergeDocuments();
+            
+            if ((this._doc != null)&&(this._doc.HasInfo))
+            {
+                msg.FilesToMerge.Add(this._doc.FullName);
+            }
+
+            Messenger.Default.Send<TMsgShowMergeDocuments>(msg);
+        }
+        
+
+        #endregion
+
         #region CmdAbout
 
         RelayCommand _cmdAbout;
@@ -295,31 +305,102 @@ namespace PDFRider
 
         void MsgLoadFile_Handler(TMsgLoadFile msg)
         {
-            if ((msg.NewWindow) &&
-                (msg.FileName != null) && (msg.FileName != ""))
+            if ((msg.FileName != null) && (msg.FileName != "") &&
+                (System.IO.File.Exists(msg.FileName)))
             {
-                PDFDocument.OpenWithPdfRider(msg.FileName, "true");
-            }
-            else
-            {
-                if ((msg.FileName != null) && (msg.FileName != ""))
+                if (msg.NewWindow)
                 {
-                    this.Uri = msg.FileName;
-                }
-
-                if (msg.NewFile)
-                {
-                    this._originalUri = msg.FileName;
-                }
-
-                if (this.Uri == this._originalUri)
-                {
-                    this.IsDocumentChanged = false;
+                    PDFDocument.OpenWithPdfRider(msg.FileName, App.CLO_DOCUMENT_CHANGED);
                 }
                 else
                 {
-                    this.IsDocumentChanged = true;
+                    //if ((msg.FileName != null) && (msg.FileName != ""))
+                    //{
+                        this.Uri = msg.FileName;
+                    //}
+
+                    if (msg.NewFile)
+                    {
+                        this._originalUri = msg.FileName;
+                    }
+                    
+                    if (this.Uri == this._originalUri)
+                    {
+                        this.IsDocumentChanged = false;
+                    }
+                    else
+                    {
+                        this.IsDocumentChanged = true;
+                    }
                 }
+            }
+        }
+
+        #endregion
+
+
+        #region Private (support) methods
+
+        void StartupInitializations()
+        {
+            // Handles command line arguments
+            string[] args = Environment.GetCommandLineArgs();
+            
+            if (args.Length > 1)
+            {
+                // The first argument returned by Environment.GetCommandLineArgs() is the
+                // program executable, so I bypass it.
+                for (int i = 1; i < args.Length; i++)
+                {
+                    string a = args[i];
+
+                    // Handles simple command line options (e.g. "/C")
+                    if (a.StartsWith("/")) // process the options
+                    {
+                        switch (a)
+                        {
+                            case App.CLO_DOCUMENT_CHANGED:
+                                this.IsDocumentChanged = true;
+                                break;
+                        }
+                    }
+                    else // get the file names
+                        this.Files.Add(a);
+                }
+
+                if (this.Files.Count == 1)
+                {
+                    // Only one file: open it in the main window
+                    this.Uri = this.Files[0];
+                }
+            }
+
+            //Deletes the temporary files only if the temporary directory is not in use or
+            //if there isn't another PDF Rider process running.
+            if ((System.Diagnostics.Process.GetProcessesByName(App.PROCESS_NAME).Length == 0) &&
+                (!this.Uri.StartsWith(App.TEMP_DIR)))
+            {
+                this.DeleteTempFiles();
+            }
+
+            // Shows the window for merging documents, if more than one file is passed in Arguments list
+            if (this.Files.Count > 1)
+            {
+                Messenger.Default.Send<TMsgShowMergeDocuments>(
+                    new TMsgShowMergeDocuments(this.Files));
+            }
+        }
+
+        //Deletes the temporary files.
+        void DeleteTempFiles()
+        {
+            foreach (string file in System.IO.Directory.GetFiles(App.TEMP_DIR))
+            {
+                try
+                {
+                    System.IO.File.Delete(file);
+                }
+                catch { }
             }
         }
 
