@@ -10,19 +10,15 @@ namespace PDFRider
     /// <summary>
     /// This class contains properties that a View can data bind to.
     /// </summary>
-    public class WndInsertPagesViewModel : WindowViewModel
+    public class WndInsertPagesViewModel : ToolWindowViewModel
     {
         PDFDocument _doc;
 
-        string _pageStart;
-        bool _isValidPageStart;
         PDFDocument.InsertPositions _insertPosition;
         string _fileToMerge;
         string _fileNameToMerge;
 
-        System.Text.RegularExpressions.Regex _intervalRegex = new System.Text.RegularExpressions.Regex(
-                @"^[0-9]+$"); // Accepts only numbers
-
+        
         /// <summary>
         /// Initializes a new instance of the WndInsertPagesViewModel class.
         /// </summary>
@@ -32,63 +28,6 @@ namespace PDFRider
         }
 
         #region Properties
-
-        /// <summary>
-        /// The total number of pages of the document.
-        /// </summary>
-        public int NumberOfPages { get; private set; }
-        public int NumberOfPhysicalPages { get; private set; }
-
-
-        /// <summary>
-        /// Number of the page to start insert from.
-        /// </summary>
-        public string PageStart
-        {
-            get
-            {
-                return this._pageStart;
-            }
-            set
-            {
-                this._pageStart = value;
-
-                this.InsertPosition = PDFDocument.InsertPositions.Custom;
-
-                if ((this._intervalRegex.IsMatch(this._pageStart)) &&
-                    (Int32.Parse(this._pageStart) >= 0) &&
-                    (Int32.Parse(this._pageStart) <= this.NumberOfPages))
-                {
-                    this.IsValidPageStart = true;
-                }
-                else
-                {
-                    this.IsValidPageStart = false;
-                }
-
-                RaisePropertyChanged("PageStart");
-
-                if (this.IsValidPageStart) this.Information = "";
-                else this.Information = App.Current.FindResource("loc_correctErrors").ToString();
-            }
-        }
-
-        /// <summary>
-        /// Indicates if the value for PageStart is valid
-        /// </summary>
-        public bool IsValidPageStart
-        {
-            get
-            {
-                return this._isValidPageStart;
-            }
-            set
-            {
-                this._isValidPageStart = value;
-                RaisePropertyChanged("IsValidPageStart");
-            }
-        }
-
 
         /// <summary>
         /// Position to start insert from.
@@ -164,14 +103,12 @@ namespace PDFRider
 
         private void DoCmdInsert()
         {
-            string tempFileName = App.Current.FindResource("loc_tempPagesFrom").ToString() +
-                this._doc.FileName;
-            string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
+            string tempFile = System.IO.Path.Combine(App.TEMP_DIR, this._doc.FileName);
 
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
 
             PDFDocument.OperationStates state = this._doc.InsertPages(start, this._insertPosition, 
-                this._fileToMerge, tempFile);
+                this._fileToMerge, ref tempFile);
 
             if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
             {
@@ -208,6 +145,7 @@ namespace PDFRider
             this.NumberOfPhysicalPages = this._doc.NumberOfPages;
 
             this.PageStart = this._doc.PageLabelStart.ToString();
+            this.PageEnd = this.NumberOfPhysicalPages.ToString();
 
             this.FileToMerge = msg.FileToMerge;
             this.FileNameToMerge = System.IO.Path.GetFileName(this._fileToMerge);

@@ -1,4 +1,5 @@
-+++ About PDFRider +++
+About PDFRider
+-------------------------------------------------------------------------------------------
 
 This program is free software.
 
@@ -10,7 +11,8 @@ Project page: http://pdfrider.codeplex.com
 
 
 
-+++ NOTE ! +++
+NOTE
+-------------------------------------------------------------------------------------------
 
 This software uses components from other people/companies, which are not subject to this license (the GNU GPL), but have their own.
 

@@ -1,0 +1,163 @@
+﻿<local:BaseWindow x:Class="PDFRider.WndSecurity"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:PDFRider"
+    xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    Title="{ltl:Translate loc_wndSecurityTitle}" Height="520" Width="400" WindowStartupLocation="CenterOwner" 
+    ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
+    
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+        
+        <GroupBox Margin="5" FocusManager.IsFocusScope="True">
+            <GroupBox.Header>
+                <CheckBox Content="{ltl:Translate loc_setOpenPassword}" Name="chkOpenPassword"
+                          IsEnabled="{Binding IsUnlocked}"
+                          IsChecked="{Binding SetOpenPassword}" />
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                
+                <DockPanel Margin="5">
+                    <TextBlock Margin="5" Text="{ltl:Translate loc_openPassword}"
+                               VerticalAlignment="Center" />
+                    <PasswordBox Margin="5" Name="tbxOpenPassword"
+                             IsEnabled="{Binding ElementName=chkOpenPassword, Path=IsChecked}"
+                             local:PasswordBoxExtension.BindableSecurePassword="{Binding OpenPassword}">
+                        <PasswordBox.Style>
+                            <Style TargetType="{x:Type PasswordBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </PasswordBox.Style>
+                    </PasswordBox>
+                    <!--<TextBox Margin="5" Text="{Binding OpenPassword, UpdateSourceTrigger=PropertyChanged}"
+                             IsEnabled="{Binding ElementName=chkOpenPassword, Path=IsChecked}">
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>-->
+                </DockPanel>
+                
+                
+            </Grid>
+        </GroupBox>
+
+        <GroupBox Grid.Row="1" Margin="5" FocusManager.IsFocusScope="True">
+            <GroupBox.Header>
+                <CheckBox Content="{ltl:Translate loc_setEditPassword}" Name="chkEditPassword" 
+                          IsEnabled="{Binding IsUnlocked}"
+                          IsChecked="{Binding SetEditPassword}" />
+            </GroupBox.Header>
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+
+                <DockPanel Margin="5">
+                    <TextBlock Margin="5" Text="{ltl:Translate loc_editPassword}"
+                               VerticalAlignment="Center" />
+                    <PasswordBox Margin="5" Name="tbxEditPassword"
+                             IsEnabled="{Binding ElementName=chkEditPassword, Path=IsChecked}"
+                             local:PasswordBoxExtension.BindableSecurePassword="{Binding EditPassword}">
+                        <PasswordBox.Style>
+                            <Style TargetType="{x:Type PasswordBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </PasswordBox.Style>
+                    </PasswordBox>
+                    <!--<TextBox Margin="5" Text="{Binding EditPassword, UpdateSourceTrigger=PropertyChanged}"
+                             IsEnabled="{Binding ElementName=chkEditPassword, Path=IsChecked}">
+                        <TextBox.Style>
+                            <Style TargetType="{x:Type TextBox}">
+                                <Style.Triggers>
+                                    <Trigger Property="IsEnabled" Value="True">
+                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
+                                    </Trigger>
+                                </Style.Triggers>
+                            </Style>
+                        </TextBox.Style>
+                    </TextBox>-->
+                </DockPanel>
+
+                <DockPanel Grid.Row="1"  Margin="5" LastChildFill="True">
+                    <TextBlock Margin="5" Text="{ltl:Translate loc_editPasswordDescription}"
+                               DockPanel.Dock="Top" />
+                    <GroupBox Margin="5" IsEnabled="{Binding ElementName=chkEditPassword, Path=IsChecked}">
+                        <StackPanel>
+                            <CheckBox Content="{ltl:Translate loc_printing}" Margin="5"
+                                  IsChecked="{Binding AllowPrinting}" />
+                            <CheckBox Content="{ltl:Translate loc_degradatedPrinting}" Margin="5"
+                                  IsChecked="{Binding AllowDegradatedPrinting}" />
+                            <CheckBox Content="{ltl:Translate loc_modifyContents}" Margin="5"
+                                  IsChecked="{Binding AllowModifyContents}"
+                                  Name="chkModifyContents" />
+                            <CheckBox Content="{ltl:Translate loc_assembly}" Margin="5"
+                                  IsChecked="{Binding AllowAssembly}">
+                                <!-- Vedere se conviene di più gestire questa cosa da codice -->
+                                <CheckBox.Style>
+                                    <Style TargetType="CheckBox">
+                                        <Style.Triggers>
+                                            <DataTrigger Binding="{Binding ElementName=chkModifyContents, Path=IsChecked}" Value="True">
+                                                <Setter Property="IsEnabled" Value="False" />
+                                            </DataTrigger>
+                                        </Style.Triggers>
+                                    </Style>
+                                </CheckBox.Style>
+                            </CheckBox>
+                            <CheckBox Content="{ltl:Translate loc_copyContents}" Margin="5"
+                                  IsChecked="{Binding AllowCopyContents}" />
+                            <CheckBox Content="{ltl:Translate loc_screenReaders}" Margin="5"
+                                  IsChecked="{Binding AllowScreenReaders}" />
+                            <CheckBox Content="{ltl:Translate loc_modifyAnnotations}" Margin="5"
+                                  IsChecked="{Binding AllowModifyAnnotations}" />
+                            <CheckBox Content="{ltl:Translate loc_fillIn}" Margin="5"
+                                  IsChecked="{Binding AllowFillIn}" />
+                            <CheckBox Content="{ltl:Translate loc_allFeatures}" Margin="5"
+                                  IsChecked="{Binding AllowAll}" />
+                        </StackPanel>
+                    </GroupBox>
+                </DockPanel>
+            </Grid>
+        </GroupBox>
+        
+        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
+            <Button Content="{ltl:Translate loc_setPasswords}" Command="{Binding CmdSetPasswords}"
+                    Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True">
+                <!--<Button.CommandParameter>
+                    <MultiBinding Converter="{StaticResource BindingArrayConverter}">
+                        <Binding ElementName="tbxOpenPassword" />
+                        <Binding ElementName="tbxEditPassword" />
+                    </MultiBinding>
+                </Button.CommandParameter>-->
+            </Button>
+            <Button  Margin="5" Content="{ltl:Translate loc_removePasswords}" 
+                     Command="{Binding CmdRemovePasswords}" />
+            <Button Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
+                    Style="{StaticResource StandardRectangleDialogButton}" IsCancel="True"/>
+        </StackPanel>
+        
+    </Grid>
+</local:BaseWindow>

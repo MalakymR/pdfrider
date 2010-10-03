@@ -16,28 +16,43 @@ namespace PDFRider
 
         PDFDocument _doc = null;
         
-        bool _isDocumentChanged = false;
-
         string _homeUri = "";
 
+        
         public MainWindowViewModel()
             : base()
         {
-            //Register some messages
-            Messenger.Default.Register<TMsgLoadFile>(this, MsgLoadFile_Handler);
-
             string homeUriPath = System.IO.Path.Combine(App.LOC_DIR, "home.html");
             if (System.IO.File.Exists(homeUriPath))
                 this._homeUri = homeUriPath;
 
             //Initialize the properties
+            this.WindowTitle = App.TITLE;
             this.Uri = this._homeUri;
             this.Files = new List<string>();
-
+            
             this.StartupInitializations();
         }
 
+
         #region Properties
+
+        /// <summary>
+        /// Title of the main window. Displays the current file name.
+        /// </summary>
+        string _windowTitle;
+        public string WindowTitle
+        {
+            get
+            {
+                return this._windowTitle;
+            }
+            set
+            {
+                this._windowTitle = value;
+                RaisePropertyChanged("WindowTitle");
+            }
+        }
 
         /// <summary>
         /// Get the application version as string
@@ -57,11 +72,11 @@ namespace PDFRider
         {
             get
             {
-                return this._isDocumentChanged;
+                return this._doc.IsChanged;
             }
             set
             {
-                this._isDocumentChanged = value;
+                this._doc.IsChanged = value;
                 RaisePropertyChanged("IsDocumentChanged");
             }
         }
@@ -81,7 +96,40 @@ namespace PDFRider
             set
             {   
                 this._doc = new PDFDocument(value);
+
+                if (this._doc.FullName != this._homeUri)
+                {
+                    this.WindowTitle = System.IO.Path.GetFileName(this._doc.FileName) + " - " + App.TITLE;
+                    if (this._doc.HasInfo)
+                    {
+                        this.ShowInfoBar = false;
+                    }
+                    else
+                    {
+                        this.Information = App.Current.FindResource("loc_invalidDocument").ToString(); 
+                        // "Impossibile recuperare informazioni sul documento.\nIl documento potrebbe non essere valido oppure protetto da password.";
+                        this.ShowInfoBar = true;
+                    }
+                }
+
                 RaisePropertyChanged("Uri");
+            }
+        }
+
+        /// <summary>
+        /// Indicates if the info bar is visible
+        /// </summary>
+        bool _showInfoBar = false;
+        public bool ShowInfoBar
+        {
+            get
+            {
+                return this._showInfoBar;
+            }
+            set
+            {
+                this._showInfoBar = value;
+                RaisePropertyChanged("ShowInfoBar");
             }
         }
 
@@ -129,7 +177,58 @@ namespace PDFRider
         }
         private void DoCmdOpenDocument()
         {
-            Messenger.Default.Send<TMsgOpenFile, MainWindow>(new TMsgOpenFile());
+            // TODO: Ask for saving before open a new document
+
+            GenericMessageAction<TMsgOpenFile, TMsgOpenFile> message = new GenericMessageAction<TMsgOpenFile, TMsgOpenFile>(
+                new TMsgOpenFile()
+                {
+                    NewFile = true
+                }, 
+                this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgOpenFile, TMsgOpenFile>, MainWindow>(message);
+        }
+
+        #endregion
+
+        #region CmdSaveDocument
+
+        RelayCommand _cmdSaveDocument;
+        public ICommand CmdSaveDocument
+        {
+            get
+            {
+                if (this._cmdSaveDocument == null)
+                {
+                    this._cmdSaveDocument = new RelayCommand(() => this.DoCmdSaveDocument(),
+                        () => this.CanDoCmdSaveDocument );
+                }
+                return this._cmdSaveDocument;
+            }
+        }
+        private void DoCmdSaveDocument()
+        {
+
+            GenericMessageAction<TMsgSaveFile, TMsgOpenFile> message = new GenericMessageAction<TMsgSaveFile, TMsgOpenFile>(
+                new TMsgSaveFile(), x =>
+                {
+                    if (x.NewFile)
+                    {
+                        // Always overwrite. Don't check here if the file already exists!
+                        System.IO.File.Copy(this.Uri, x.FileName, true);
+
+                        this.MsgLoadFile_Handler(x);
+                    }
+                });
+
+            Messenger.Default.Send<GenericMessageAction<TMsgSaveFile, TMsgOpenFile>, MainWindow>(message);
+        }
+        private bool CanDoCmdSaveDocument
+        {
+            get
+            {
+                return this.IsDocumentChanged;
+            }
         }
 
         #endregion
@@ -151,12 +250,25 @@ namespace PDFRider
         }
         private void DoCmdClosing(System.ComponentModel.CancelEventArgs e)
         {
-            Messenger.Default.Send<TMsgClosing, MainWindow>(new TMsgClosing()
-            {
-                AskForSave = this.IsDocumentChanged,
-                EventArgs = e
-            });
+            GenericMessageAction<TMsgClosing, TMsgClosing> message = new GenericMessageAction<TMsgClosing, TMsgClosing>(
+                new TMsgClosing()
+                {
+                    AskForSave = this.IsDocumentChanged
+                }, 
+                x =>
+                    {
+                        // x.Data contains the file name chosen to save the file
+                        // or null if no name was provided.
+                        if ((!x.Cancel)&&(x.Data != null))
+                        {
+                            // Always overwrite. Don't check here if the file already exists!
+                            System.IO.File.Copy(this.Uri, (string)x.Data, true);
+                        }
+                        e.Cancel = x.Cancel;
+                    }
+            );
 
+            Messenger.Default.Send<GenericMessageAction<TMsgClosing, TMsgClosing>, MainWindow>(message);
         }
 
         #endregion
@@ -178,7 +290,10 @@ namespace PDFRider
         }
         private void DoCmdExtractPages()
         {
-            Messenger.Default.Send<TMsgShowExtractPages>(new TMsgShowExtractPages(this._doc));
+            GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile>(
+                new TMsgShowExtractPages(this._doc), this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile>, MainWindow>(message);
         }
         private bool CanDoCmdExtractPages
         {
@@ -207,7 +322,10 @@ namespace PDFRider
         }
         private void DoCmdDeletePages()
         {
-            Messenger.Default.Send<TMsgShowDeletePages>(new TMsgShowDeletePages(this._doc));
+            GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile>(
+                new TMsgShowDeletePages(this._doc), this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile>, MainWindow>(message);
         }
         private bool CanDoCmdDeletePages
         {
@@ -236,9 +354,46 @@ namespace PDFRider
         }
         private void DoCmdInsertPages()
         {
-            Messenger.Default.Send<TMsgShowInsertPages>(new TMsgShowInsertPages(this._doc));
+            GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile>(
+                new TMsgShowInsertPages(this._doc), this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile>, MainWindow>(message);
+
         }
         private bool CanDoCmdInsertPages
+        {
+            get
+            {
+                return ((this._doc != null) && (this._doc.HasInfo));
+            }
+        }
+
+        #endregion
+
+        #region CmdRotatePages
+
+        RelayCommand _cmdRotatePages;
+        public ICommand CmdRotatePages
+        {
+            get
+            {
+                if (this._cmdRotatePages == null)
+                {
+                    this._cmdRotatePages = new RelayCommand(() => this.DoCmdRotatePages(),
+                        () => this.CanDoCmdRotatePages);
+                }
+                return this._cmdRotatePages;
+            }
+        }
+        private void DoCmdRotatePages()
+        {
+            GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile>(
+                new TMsgShowRotatePages(this._doc), this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile>, MainWindow>(message);
+
+        }
+        private bool CanDoCmdRotatePages
         {
             get
             {
@@ -265,15 +420,81 @@ namespace PDFRider
         private void DoCmdMergeDocuments()
         {
             TMsgShowMergeDocuments msg = new TMsgShowMergeDocuments();
-            
-            if ((this._doc != null)&&(this._doc.HasInfo))
+
+            if ((this._doc != null) && (this._doc.HasInfo))
             {
                 msg.FilesToMerge.Add(this._doc.FullName);
             }
 
-            Messenger.Default.Send<TMsgShowMergeDocuments>(msg);
+            GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile> message = new GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>(
+                msg, this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>, MainWindow>(message);
+
         }
         
+
+        #endregion
+
+        #region CmdBurst
+
+        RelayCommand _cmdBurst;
+        public ICommand CmdBurst
+        {
+            get
+            {
+                if (this._cmdBurst == null)
+                {
+                    this._cmdBurst = new RelayCommand(() => this.DoCmdBurst(),
+                        () => this.CanDoCmdBurst);
+                }
+                return this._cmdBurst;
+            }
+        }
+        private void DoCmdBurst()
+        {
+            Messenger.Default.Send<TMsgShowBurst>(new TMsgShowBurst(this._doc));
+        }
+        private bool CanDoCmdBurst
+        {
+            get
+            {
+                return ((this._doc != null) && (this._doc.HasInfo));
+            }
+        }
+
+        #endregion
+
+        #region CmdSecurity
+
+        RelayCommand _cmdSecurity;
+        public ICommand CmdSecurity
+        {
+            get
+            {
+                if (this._cmdSecurity == null)
+                {
+                    this._cmdSecurity = new RelayCommand(() => this.DoCmdSecurity(),
+                        () => this.CanDoCmdSecurity);
+                }
+                return this._cmdSecurity;
+            }
+        }
+        private void DoCmdSecurity()
+        {
+            GenericMessageAction<TMsgShowSecurity, TMsgOpenFile> message = new GenericMessageAction<TMsgShowSecurity, TMsgOpenFile>(
+                new TMsgShowSecurity(this._doc), this.MsgLoadFile_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgShowSecurity, TMsgOpenFile>, MainWindow>(message);
+
+        }
+        private bool CanDoCmdSecurity
+        {
+            get
+            {
+                return (this._doc != null);
+            }
+        }
 
         #endregion
 
@@ -298,12 +519,33 @@ namespace PDFRider
 
         #endregion
 
+        #region CmdHideInfoBar
+
+        RelayCommand _cmdHideInfoBar;
+        public ICommand CmdHideInfoBar
+        {
+            get
+            {
+                if (this._cmdHideInfoBar == null)
+                {
+                    this._cmdHideInfoBar = new RelayCommand(() => this.DoCmdHideInfoBar());
+                }
+                return this._cmdHideInfoBar;
+            }
+        }
+        private void DoCmdHideInfoBar()
+        {
+            this.ShowInfoBar = false;
+        }
+
+        #endregion
+
         #endregion
 
 
         #region Message handlers
 
-        void MsgLoadFile_Handler(TMsgLoadFile msg)
+        void MsgLoadFile_Handler(TMsgOpenFile msg)
         {
             if ((msg.FileName != null) && (msg.FileName != "") &&
                 (System.IO.File.Exists(msg.FileName)))
@@ -314,10 +556,7 @@ namespace PDFRider
                 }
                 else
                 {
-                    //if ((msg.FileName != null) && (msg.FileName != ""))
-                    //{
-                        this.Uri = msg.FileName;
-                    //}
+                    this.Uri = msg.FileName;
 
                     if (msg.NewFile)
                     {
@@ -333,6 +572,7 @@ namespace PDFRider
                         this.IsDocumentChanged = true;
                     }
                 }
+
             }
         }
 
@@ -345,22 +585,27 @@ namespace PDFRider
         {
             // Handles command line arguments
             string[] args = Environment.GetCommandLineArgs();
+
             
             if (args.Length > 1)
             {
+                // Define some variables to store informations passed via command line arguments
+                bool documentChanged = false;
+
                 // The first argument returned by Environment.GetCommandLineArgs() is the
                 // program executable, so I bypass it.
                 for (int i = 1; i < args.Length; i++)
                 {
                     string a = args[i];
-
+                    
                     // Handles simple command line options (e.g. "/C")
                     if (a.StartsWith("/")) // process the options
                     {
+                        
                         switch (a)
                         {
                             case App.CLO_DOCUMENT_CHANGED:
-                                this.IsDocumentChanged = true;
+                                documentChanged = true;
                                 break;
                         }
                     }
@@ -372,22 +617,28 @@ namespace PDFRider
                 {
                     // Only one file: open it in the main window
                     this.Uri = this.Files[0];
+
+                    // Set initial informations
+                    this.IsDocumentChanged = documentChanged;
                 }
             }
 
             //Deletes the temporary files only if the temporary directory is not in use or
             //if there isn't another PDF Rider process running.
-            if ((System.Diagnostics.Process.GetProcessesByName(App.PROCESS_NAME).Length == 0) &&
+            if ((System.Diagnostics.Process.GetProcessesByName(App.PROCESS_NAME).Length == 1) &&
                 (!this.Uri.StartsWith(App.TEMP_DIR)))
             {
                 this.DeleteTempFiles();
             }
 
+            
             // Shows the window for merging documents, if more than one file is passed in Arguments list
             if (this.Files.Count > 1)
             {
-                Messenger.Default.Send<TMsgShowMergeDocuments>(
-                    new TMsgShowMergeDocuments(this.Files));
+                GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile> message = new GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>(
+                new TMsgShowMergeDocuments(this.Files), this.MsgLoadFile_Handler);
+
+                Messenger.Default.Send<GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>, MainWindow>(message);
             }
         }
 

@@ -17,12 +17,11 @@ namespace PDFRider
 
         public const string PROCESS_NAME = "PDFRider";
         const string LOC_DIR_NAME = "Locales";
-        const string BASE_LOC_FILE_NAME = "LocTable-";
-        const string LOC_FILE_NAME_EXT = ".xaml";
+        const string LOC_FILE_NAME = "LocTable-{0}.xaml";
         const string TEMP_DIR_NAME = "Temp";
 
         public static string NAME = App.ResourceAssembly.GetName().Name;
-        public static string TITLE = "PDF Rider";
+        public static string TITLE = "PDF Rider"; // I could use reflection here...
         public static string VERSION = String.Format("{0}.{1}",
             App.ResourceAssembly.GetName().Version.Major.ToString(),
             App.ResourceAssembly.GetName().Version.Minor.ToString());
@@ -46,7 +45,7 @@ namespace PDFRider
             // -- Remove or comment this block in the final version --
 
             //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("en-US");
-            //enCulture = new System.Globalization.CultureInfo("it-IT");
+            //enCulture = new System.Globalization.CultureInfo("fr-FR");
             //System.Threading.Thread.CurrentThread.CurrentCulture = enCulture;
             //System.Threading.Thread.CurrentThread.CurrentUICulture = enCulture;
 
@@ -80,7 +79,7 @@ namespace PDFRider
             string cultureName = System.Threading.Thread.CurrentThread.CurrentCulture.Name;
 
             Uri languageUri = new Uri(
-                Path.Combine(App.LOC_DIR, App.BASE_LOC_FILE_NAME + cultureName + App.LOC_FILE_NAME_EXT));
+                Path.Combine(App.LOC_DIR, String.Format(App.LOC_FILE_NAME, cultureName)));
 
             //If the localized StringTable doesn't exist, the default (compiled)
             //StringTable will be used.

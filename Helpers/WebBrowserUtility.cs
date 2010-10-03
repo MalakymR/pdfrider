@@ -5,13 +5,12 @@ using System.Windows.Controls;
 namespace PDFRider
 {
     /// <summary>
-    /// Useful stuff for WebBrowser control
+    /// The Source property of WebBrowser control is not bindable, so I made an attached property
+    /// (BindableSource) that can be binded to a data source and sets the control Source property 
+    /// accordingly.
     /// </summary>
     public static class WebBrowserUtility
     {
-        // The Source property of WebBrowser control is not bindable, so I made an attached property
-        // (named BindableSource) that can be binded to a data source and sets the control Source property 
-        // accordingly.
         #region BindableSourceProperty
 
         public static readonly DependencyProperty BindableSourceProperty =

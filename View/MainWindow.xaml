@@ -2,57 +2,88 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
-    Title="PDF Rider" Height="430" Width="686"
-    Style="{StaticResource GenericStyle}" ResizeMode="CanResizeWithGrip"
-    local:ClosingCommandBehavior.WindowClosing="{Binding CmdClosing}" Icon="/PDFRider;component/PDFRider.ico">
+    xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras"
+    xmlns:ftc="clr-namespace:FTControls;assembly=FTControls"
+    Title="{Binding WindowTitle}" Height="430" Width="686"
+    Style="{StaticResource GenericStyle}" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
+    Icon="/PDFRider;component/PDFRider.ico">
+    
+    <i:Interaction.Triggers>
+        <i:EventTrigger EventName="Closing">
+            <cmd:EventToCommand
+                Command="{Binding CmdClosing}"
+                PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+    </i:Interaction.Triggers>
+    
     <DockPanel LastChildFill="True">
 
         <Border DockPanel.Dock="Top" BorderBrush="SteelBlue" BorderThickness="2">
             <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
                 </Grid.ColumnDefinitions>
                 <Menu Style="{StaticResource MenuStyle}">
-                    <MenuItem Header="{DynamicResource loc_miFile}" Style="{StaticResource MenuItemStyle}">
-                        <MenuItem Header="{DynamicResource loc_miHomePage}" 
+                    <MenuItem Header="{ltl:Translate loc_miFile}" Style="{StaticResource MenuItemStyle}">
+                        <MenuItem Header="{ltl:Translate loc_miHomePage}" 
                                   Command="{Binding CmdHome}">
                             <MenuItem.Icon>
                                 <Image Source="..\images\folder_home.png" Style="{StaticResource MenuItemImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
-                        <MenuItem Header="{DynamicResource loc_miOpenFile}" 
+                        <MenuItem Header="{ltl:Translate loc_miOpenFile}" 
                                   Command="{Binding CmdOpenDocument}">
                             <MenuItem.Icon>
                                 <Image Source="..\images\folder_yellow_open.png" Style="{StaticResource MenuItemImage}" />
                             </MenuItem.Icon>
                         </MenuItem>
+                        <MenuItem Header="{ltl:Translate loc_miSaveFile}" 
+                                  Command="{Binding CmdSaveDocument}">
+                            <MenuItem.Icon>
+                                <Image Source="..\images\filesaveas.png" Style="{StaticResource MenuItemImage}" />
+                            </MenuItem.Icon>
+                        </MenuItem>
                         <!--<Separator />
-                        <MenuItem Header="{DynamicResource loc_miPreferences}" 
+                        <MenuItem Header="{ltl:Translate loc_miPreferences}" 
                                    >
                             <MenuItem.Icon>
                                 <Image Source="..\images\configure.png" Style="{StaticResource MenuItemImage}" />
                             </MenuItem.Icon>
                         </MenuItem>-->
                         <Separator />
-                        <MenuItem Header="{DynamicResource loc_miExit}" 
+                        <MenuItem Header="{ltl:Translate loc_miExit}" 
                                   Command="{Binding CmdClose}" />
                     </MenuItem>
                     
-                    <MenuItem Header="{DynamicResource loc_miTools}" Style="{StaticResource MenuItemStyle}">
-                        <MenuItem Header="{DynamicResource loc_miInsertPages}"
+                    <MenuItem Header="{ltl:Translate loc_miTools}" Style="{StaticResource MenuItemStyle}">
+                        <MenuItem Header="{ltl:Translate loc_miInsertPages}"
                                   Command="{Binding CmdInsertPages}" />
-                        <MenuItem Header="{DynamicResource loc_miExtractPages}"
+                        <MenuItem Header="{ltl:Translate loc_miExtractPages}"
                                   Command="{Binding CmdExtractPages}" />
-                        <MenuItem Header="{DynamicResource loc_miDeletePages}"
+                        <MenuItem Header="{ltl:Translate loc_miDeletePages}"
                                   Command="{Binding CmdDeletePages}" />
+                        <MenuItem Header="{ltl:Translate loc_miRotatePages}"
+                                  Command="{Binding CmdRotatePages}" />
                         <Separator />
-                        <MenuItem Header="{DynamicResource loc_miMergeDocuments}"
+                        <MenuItem Header="{ltl:Translate loc_miMergeDocuments}"
                                   Command="{Binding CmdMergeDocuments}" />
+                        <Separator />
+                        <MenuItem Header="{ltl:Translate loc_miBurst}"
+                                  Command="{Binding CmdBurst}" />
+                        <Separator />
+                        <MenuItem Header="{ltl:Translate loc_miSecurity}"
+                                  Command="{Binding CmdSecurity}" />
                     </MenuItem>
 
                     <MenuItem Header="?" Style="{StaticResource MenuItemStyle}">
-                        <MenuItem Header="{DynamicResource loc_miAbout}"
+                        <MenuItem Header="{ltl:Translate loc_miAbout}"
                                   Command="{Binding CmdAbout}" />
                     </MenuItem>
 
@@ -60,7 +91,12 @@
                 
                 <TextBlock Grid.Column="1" Text="{Binding Version}"
                            HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+
+                <ftc:InformationBar Grid.Row="1" Grid.ColumnSpan="2"
+                                    Visibility="{Binding Path=ShowInfoBar, Converter={StaticResource BooleanToVisibilityConverter}}"
+                                    Text="{Binding Information}" />
                 
+
             </Grid>
         </Border>
         
@@ -78,8 +114,10 @@
                     </TextBlock.Style>
                 </TextBlock>
             </StatusBarItem>
+            
             <!--<TextBox Margin="0" Background="Transparent" Width="Auto" />-->
         </StatusBar>
+        
         <Border BorderBrush="DarkSlateGray" BorderThickness="2">
             <WebBrowser local:WebBrowserUtility.BindableSource="{Binding Uri, Mode=TwoWay}" />
         </Border>

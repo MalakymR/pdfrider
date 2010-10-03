@@ -16,8 +16,13 @@ namespace PDFRider
             Interval
         }
 
-        System.Text.RegularExpressions.Regex _intervalRegex = new System.Text.RegularExpressions.Regex(
-                @"^[0-9]+((-?,?[0-9]+)*)$"); // Checks for a valid pages interval
+        static System.Text.RegularExpressions.Regex _intervalRegex = new System.Text.RegularExpressions.Regex(
+                @"^[0-9]+((-?,?[0-9]+)*)$"); /* Checks for a valid pages interval:
+                                              *     1. Start with a number 
+                                              *     2. Can have 0 or more combination
+                                              *        of "-" or "," characters, followed by a number
+                                              */
+                                               
 
         string _fileName;
         string _uri;
@@ -25,15 +30,16 @@ namespace PDFRider
         string _interval;
         bool _isValidInterval;
 
+        
         public FileToMergeViewModel(string path)
         {
-            this.PdfFile = new PDFFile(path);
-
+            this.PdfFileInfo = PDFDocument.GetInfo(path);
+            
             this.FullName = path;
             this.PagesInterval = PagesIntervalEnum.AllPages;
         }
 
-        public PDFFile PdfFile { get; private set; }
+        public PDFFileInfo PdfFileInfo { get; private set; }
 
         public string FileName
         {
@@ -52,18 +58,18 @@ namespace PDFRider
         {
             get
             {
-                return this.PdfFile.FullName;
+                return this.PdfFileInfo.FullName;
             }
             set
             {
-                this.PdfFile.FullName = value;
+                this.PdfFileInfo.FullName = value;
                 RaisePropertyChanged("FullName");
 
                 this.FileName = System.IO.Path.GetFileName(value);
 
                 // I use uri instead of path so I can specify parameters like below
                 Uri uri = new Uri(value);
-                this.Uri = uri.AbsoluteUri + "#toolbar=0";
+                this.Uri = uri.AbsoluteUri + "#toolbar=0"; // Maybe this kork only with Adobe Reader ?
             }
         }
 
@@ -118,10 +124,10 @@ namespace PDFRider
                 // If I had specified a valid interval, I add the page ranges to the underlying PDFFile
                 if (this.IsValidInterval)
                 {
-                    this.PdfFile.PageRanges.Clear();
+                    this.PdfFileInfo.PageRanges.Clear();
                     if (this._interval != App.Current.FindResource("loc_allPages").ToString())
                     {
-                        this.PdfFile.PageRanges.AddRange(this._interval.Split(','));
+                        this.PdfFileInfo.PageRanges.AddRange(this._interval.Split(','));
                     }
                 }
 
@@ -143,9 +149,23 @@ namespace PDFRider
 
         private void CheckInterval()
         {
-            if (this._intervalRegex.IsMatch(this._interval))
+            if (_intervalRegex.IsMatch(this._interval))
             {
+                // Start with true...
                 this.IsValidInterval = true;
+
+                // ...then check if the values are inside the document lenght
+                string[] ranges = this._interval.Split(',');
+                foreach (string range in ranges)
+                {
+                    if ((short.Parse(range.First().ToString()) <= 0) ||
+                        (short.Parse(range.Last().ToString()) > this.PdfFileInfo.NumberOfPages))
+                    {
+                        this.IsValidInterval = false;
+                        break;
+                    }
+                }
+                
             }
             else
             {

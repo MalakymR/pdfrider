@@ -9,6 +9,9 @@
                 <ResourceDictionary Source="LocTable.xaml" />
             </ResourceDictionary.MergedDictionaries>
             
+            <!-- This converter is native of WPF! -->
+            <BooleanToVisibilityConverter x:Key="BooleanToVisibilityConverter" />
+            
             <Style x:Key="GenericStyle" TargetType="Control">
                 <Setter Property="FontFamily" Value="Verdana" />
                 <Setter Property="FontSize" Value="12" />
@@ -37,7 +40,6 @@
                 <Style.Triggers>
                     <Trigger Property="IsValidInterval" Value="False">
                         <Setter Property="Background" Value="#80FF0000" />
-                        <!--<Setter Property="Foreground" Value="DarkRed" />-->
                     </Trigger>
                 </Style.Triggers>
             </Style>

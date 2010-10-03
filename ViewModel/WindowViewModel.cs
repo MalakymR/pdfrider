@@ -6,6 +6,9 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {
+    /// <summary>
+    /// A base class for the view models of windows
+    /// </summary>
     public abstract class WindowViewModel : ViewModelBase
     {
         #region Properties
@@ -22,7 +25,6 @@ namespace PDFRider
             set
             {
                 this._information = value;
-                Messenger.Default.Send<TMsgInformation>(new TMsgInformation(value));
                 RaisePropertyChanged("Information");
             }
         }
@@ -50,10 +52,15 @@ namespace PDFRider
         }
         private void DoCmdClose()
         {
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this));
+            this.OnCmdClose();
         }
 
         #endregion
+
+        protected virtual void OnCmdClose()
+        {
+            Messenger.Default.Send<TMsgClose>(new TMsgClose(this));
+        }
 
         #endregion
 

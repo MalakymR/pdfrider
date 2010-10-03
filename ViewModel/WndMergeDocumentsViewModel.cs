@@ -13,12 +13,9 @@ namespace PDFRider
     {
         public static int MAX_FILES = PDFDocument.MAX_HANDLES;
 
-        FileToMergeViewModel _selectedFile;
-
         public WndMergeDocumentsViewModel()
         {
             Messenger.Default.Register<TMsgShowMergeDocuments>(this, MsgShowMergeDocuments_Handler);
-            Messenger.Default.Register<TMsgAddFiles>(this, MsgAddFiles_Handler);
 
             this.Files = new ObservableCollection<FileToMergeViewModel>();
         }
@@ -26,14 +23,15 @@ namespace PDFRider
         #region Properties
 
         public ObservableCollection<FileToMergeViewModel> Files { get; private set; }
-        
+
+        FileToMergeViewModel _selectedFile;
         public FileToMergeViewModel SelectedFile 
         {
             get
             {
                 return this._selectedFile;
             }
-            private set
+            set
             {
                 this._selectedFile = value;
                 RaisePropertyChanged("SelectedFile");
@@ -78,15 +76,15 @@ namespace PDFRider
             }
             else
             {
-                string tempFileName = System.IO.Path.GetFileNameWithoutExtension(this.Files[0].FileName) +
-                    App.Current.FindResource("loc_tempMerged").ToString() +
+                string tempFileName = String.Format(App.Current.FindResource("loc_tempMerged").ToString(),
+                    System.IO.Path.GetFileNameWithoutExtension(this.Files[0].FileName)) +
                     System.IO.Path.GetExtension(this.Files[0].FileName);
                 string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
-                PDFFile[] filesToMerge = (from f in this.Files
-                                          select f.PdfFile).ToArray<PDFFile>();
+                PDFFileInfo[] filesToMerge = (from f in this.Files
+                                              select f.PdfFileInfo).ToArray<PDFFileInfo>();
 
-                PDFDocument.OperationStates state = PDFDocument.MergeDocuments(filesToMerge, tempFile);
+                PDFDocument.OperationStates state = PDFDocument.MergeDocuments(filesToMerge, ref tempFile);
 
                 if (state == PDFDocument.OperationStates.TooManyFiles)
                 {
@@ -98,32 +96,6 @@ namespace PDFRider
                     Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
                 }
             }
-        }
-
-
-        #endregion
-
-        #region CmdSelectFile
-
-        // This is the easiest way I found to work with the selected item of a ListView.
-        // See also SelectedCommandBehavior.
-
-        RelayCommand<FileToMergeViewModel> _cmdSelectFile;
-        public ICommand CmdSelectFile
-        {
-            get
-            {
-                if (this._cmdSelectFile == null)
-                {
-                    this._cmdSelectFile = new RelayCommand<FileToMergeViewModel>((x) => this.DoCmdSelectFile(x));
-                }
-                return this._cmdSelectFile;
-            }
-        }
-
-        private void DoCmdSelectFile(FileToMergeViewModel file)
-        {
-            this.SelectedFile = file;
         }
 
 
@@ -214,10 +186,14 @@ namespace PDFRider
 
         private void DoCmdAddFile()
         {
-            Messenger.Default.Send<TMsgOpenFile, WndMergeDocuments>(new TMsgOpenFile()
-            {
-                Multiselect = true
-            });
+            GenericMessageAction<TMsgOpenFile, TMsgOpenFile> message = new GenericMessageAction<TMsgOpenFile, TMsgOpenFile>(
+                new TMsgOpenFile()
+                {
+                    Multiselect = true
+                },
+                this.MsgAddFiles_Handler);
+
+            Messenger.Default.Send<GenericMessageAction<TMsgOpenFile, TMsgOpenFile>, MainWindow>(message);
         }
 
         #endregion
@@ -266,9 +242,9 @@ namespace PDFRider
         }
 
 
-        void MsgAddFiles_Handler(TMsgAddFiles msg)
+        void MsgAddFiles_Handler(TMsgOpenFile msg)
         {
-            this.AddFiles(msg.Files);
+            this.AddFiles(msg.FileNames);
         }
 
         #endregion

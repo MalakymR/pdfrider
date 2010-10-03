@@ -7,7 +7,6 @@ using System.Diagnostics;
 
 namespace PDFRider
 {
-    
     /// <summary>
     /// Contains properties and methods for working with the PDF document.
     /// </summary>
@@ -18,7 +17,8 @@ namespace PDFRider
             Ok,
             PageRangeEntireDocument,
             PageRangeOutOfDocument,
-            TooManyFiles
+            TooManyFiles,
+            WrongPassword
         }
 
         public enum InsertPositions
@@ -27,6 +27,32 @@ namespace PDFRider
             End,
             Custom
         }
+
+        public enum PageIntervals
+        {
+            All,
+            Odd,
+            Even
+        }
+
+        //public enum Orientations
+        //{
+        //    All,
+        //    Vertical,
+        //    Horizontal
+        //}
+
+        public enum Rotations
+        {
+            North,  // 0 
+            South,  // 180
+            East,   // 90
+            West,   // 90
+            Left,   // -90
+            Right,  // +90
+            Down    // +180
+        }
+
 
         private static string BASE_DIR = AppDomain.CurrentDomain.BaseDirectory;
 
@@ -39,15 +65,21 @@ namespace PDFRider
         private static char[] PDF_HANDLES = new char[MAX_HANDLES] {'A','B','C','D','E','F','G','H','I','J',
             'K','L','M','N','O','P','Q','R','S','T','U','V','W','X','Y','Z'};
 
+        // Suffix used to obtain a valid file name
+        static System.Text.RegularExpressions.Regex _fileSuffixRegex = new System.Text.RegularExpressions.Regex(
+                @"(\[[0-9]+\])$"); // Any number inside square brackets
+ 
+
         public PDFDocument(string fileName)
         {
             this.FullName = fileName;
 
-            this.NumberOfPages = 0;
-            this.PageLabelStart = 1;
+            PDFFileInfo info = PDFDocument.GetInfo(fileName);
+            this.NumberOfPages = info.NumberOfPages;
+            this.PageLabelStart = info.PageLabelStart;
 
             this.HasInfo = true;
-            if (this.GetInfo() == -1)
+            if (this.NumberOfPages == 0)
             {
                 this.HasInfo = false;
             }
@@ -92,6 +124,10 @@ namespace PDFRider
         /// </summary>
         public int PageLabelStart { get; private set; }
 
+
+        public bool IsChanged { get; set; }
+
+
         #endregion
 
 
@@ -104,7 +140,7 @@ namespace PDFRider
         /// <param name="pageEnd">Last page to extract</param>
         /// <param name="outputFileName">Path of the new file</param>
         /// <returns></returns>
-        public OperationStates ExtractPages(int pageStart, int pageEnd, string outputFileName)
+        public OperationStates ExtractPages(int pageStart, int pageEnd, ref string outputFileName)
         {
             OperationStates state = OperationStates.Ok;
 
@@ -117,26 +153,16 @@ namespace PDFRider
 
             string range = pageStart.ToString() + "-" + pageEnd.ToString();
 
-            if (File.Exists(outputFileName))
-                File.Delete(outputFileName);
-            
-            Process p = new Process();
+            GetValidOutputFileName(ref outputFileName, 1);
 
-            p.StartInfo.FileName = "pdftk.exe";
-            p.StartInfo.WorkingDirectory = BASE_DIR;
-
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-            p.StartInfo.Arguments = "\"" + this.FullName + "\" cat " +
+            string args = "\"" + this.FullName + "\" cat " +
                 range + " output \"" + outputFileName + "\"";
 
-            p.Start();
-            p.WaitForExit();
-            p.Close();
-            
+            RunPdftk(args);
+                        
             return state;
         }
+
 
         /// <summary>
         /// Deletes one or more contiguous pages from a pdf file.
@@ -146,7 +172,7 @@ namespace PDFRider
         /// <param name="outputFileName">Path of the new file (original file without the selected pages)</param>
         /// <param name="overwriteOriginal">Tells if the program should overwrite the original file</param>
         /// <returns></returns>
-        public OperationStates DeletePages(int pageStart, int pageEnd, string outputFileName, bool overwriteOriginal)
+        public OperationStates DeletePages(int pageStart, int pageEnd, ref string outputFileName, bool overwriteOriginal)
         {
             OperationStates state = OperationStates.Ok;
 
@@ -167,26 +193,16 @@ namespace PDFRider
                 return state;
             }
 
-            if (File.Exists(outputFileName))
-                File.Delete(outputFileName);
-
-            Process p = new Process();
-
-            p.StartInfo.FileName = "pdftk.exe";
-            p.StartInfo.WorkingDirectory = BASE_DIR;
-
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-                
-            p.StartInfo.Arguments = "\"" + this.FullName + "\" cat " +
+            GetValidOutputFileName(ref outputFileName, 1);
+            
+            string args = "\"" + this.FullName + "\" cat " +
                 rangeStart + " " + rangeEnd + " output \"" + outputFileName + "\"";
 
-            p.Start();
-            p.WaitForExit();
-            p.Close();
+            RunPdftk(args);
 
             return state;
         }
+
 
         /// <summary>
         /// Inserts pages of a pdf file into this document at a specified position.
@@ -196,7 +212,7 @@ namespace PDFRider
         /// <param name="fileToMerge">Path of the file to merge with this document</param>
         /// <param name="outputFileName">Path of the new file</param>
         /// <returns></returns>
-        public OperationStates InsertPages(int pageStart, InsertPositions position, string fileToMerge, string outputFileName)
+        public OperationStates InsertPages(int pageStart, InsertPositions position, string fileToMerge, ref string outputFileName)
         {
             OperationStates state = OperationStates.Ok;
 
@@ -221,34 +237,122 @@ namespace PDFRider
                 range = "A1-" + pageStart.ToString() + " B A" + (pageStart + 1).ToString() + "-end";
             }
 
-
-            if (File.Exists(outputFileName))
-                File.Delete(outputFileName);
-
-            Process p = new Process();
-
-            p.StartInfo.FileName = "pdftk.exe";
-            p.StartInfo.WorkingDirectory = BASE_DIR;
-
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-            p.StartInfo.Arguments = "A=\"" + this.FullName + "\" B=\"" + fileToMerge + "\" cat " +
+            GetValidOutputFileName(ref outputFileName, 1);
+            
+            string args = "A=\"" + this.FullName + "\" B=\"" + fileToMerge + "\" cat " +
                 range + " output \"" + outputFileName + "\"";
 
-            p.Start();
-            p.WaitForExit();
-            p.Close();
+            RunPdftk(args);
 
             return state;
         }
+
+
+        /// <summary>
+        /// Rotates pages from a pdf file and saves them into a new file.
+        /// </summary>
+        /// <param name="pageStart">First page to rotate</param>
+        /// <param name="pageEnd">Last page to rotate</param>
+        /// <param name="interval">Page interval (all, even, odd)</param>
+        /// <param name="rotation">Rotation type</param>
+        /// <param name="outputFileName">Path of the new file</param>
+        /// <returns></returns>
+        public OperationStates RotatePages(int pageStart, int pageEnd, PageIntervals interval,
+            Rotations rotation, ref string outputFileName)
+        {
+            OperationStates state = OperationStates.Ok;
+
+            if ((pageStart < 1) || (pageStart > this.NumberOfPages) ||
+                (pageEnd < 1) || (pageEnd > this.NumberOfPages))
+            {
+                state = OperationStates.PageRangeOutOfDocument;
+                return state;
+            }
+
+            string s_rotation = "";
+            switch (rotation)
+            {
+                case Rotations.North:
+                    s_rotation += "N";
+                    break;
+                case Rotations.South:
+                    s_rotation += "S";
+                    break;
+                case Rotations.East:
+                    s_rotation += "E";
+                    break;
+                case Rotations.West:
+                    s_rotation += "W";
+                    break;
+                case Rotations.Left:
+                    s_rotation += "L";
+                    break;
+                case Rotations.Right:
+                    s_rotation += "R";
+                    break;
+                case Rotations.Down:
+                    s_rotation += "D";
+                    break;
+            }
+
+            string range = "";
+
+            if (pageStart > 1)
+            {
+                range += "1-" + (pageStart - 1).ToString() + " ";
+            }
+
+            /* pdftk rotates the pages using the "cat" option, which catenates pages from a pdf
+             * into another pdf file. If I specify an odd or even range (e.g. 1-10odd) only odd
+             * or even pages within that range are catenated in the output file, but that's not
+             * what I want. I need ALL pages to be present in the new file and only odd or even
+             * pages be rotated. To achieve this I need to break the interval like below. */
+            switch (interval)
+            {
+                case PageIntervals.Even:
+                    for (int i = pageStart; i <= pageEnd; i++)
+                    {
+                        range += i.ToString();
+                        range += (i % 2 == 0) ? s_rotation + " " : " ";
+                    }
+                    break;
+                case PageIntervals.Odd:
+                    for (int i = pageStart; i <= pageEnd; i++)
+                    {
+                        range += i.ToString();
+                        range += (i % 2 != 0) ? s_rotation + " " : " ";
+                    }
+                    break;
+                case PageIntervals.All:
+                    for (int i = pageStart; i <= pageEnd; i++)
+                    {
+                        range += i.ToString() + s_rotation + " ";
+                    }
+                    break;
+            }        
+
+            if (pageEnd < this.NumberOfPages)
+            {
+                range += " " + (pageEnd + 1).ToString() + "-" + this.NumberOfPages.ToString();
+            }
+
+            GetValidOutputFileName(ref outputFileName, 1);
+            
+            string args = "\"" + this.FullName + "\" cat " +
+                range + " output \"" + outputFileName + "\"";
+
+            RunPdftk(args);
+
+            return state;
+        }
+
 
         /// <summary>
         /// Merge some PDF documents togheter.
         /// </summary>
         /// <param name="filesToMerge">List of file to merge</param>
         /// <param name="outputFileName">Path of the new file</param>
-        public static OperationStates MergeDocuments(PDFFile[] filesToMerge, string outputFileName)
+        public static OperationStates MergeDocuments(PDFFileInfo[] filesToMerge, ref string outputFileName)
         {
             OperationStates state = OperationStates.Ok;
 
@@ -258,45 +362,231 @@ namespace PDFRider
                 return state;
             }
 
-            if (File.Exists(outputFileName))
-                File.Delete(outputFileName);
-
-            Process p = new Process();
-
-            p.StartInfo.FileName = "pdftk.exe";
-            p.StartInfo.WorkingDirectory = BASE_DIR;
-
-            p.StartInfo.CreateNoWindow = true;
-            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
-
-            p.StartInfo.Arguments = "";
+            GetValidOutputFileName(ref outputFileName, 1);
+            
+            string args = "";
             for (int i = 0; i < filesToMerge.Length; i++)
             {
-                p.StartInfo.Arguments += PDF_HANDLES[i] + "=\"" + filesToMerge[i].FullName + "\" ";
+                args += PDF_HANDLES[i] + "=\"" + filesToMerge[i].FullName + "\" ";
             }
-            p.StartInfo.Arguments += "cat ";
+            args += "cat ";
             for (int i = 0; i < filesToMerge.Length; i++)
             {
                 if (filesToMerge[i].PageRanges.Count > 0)
                 {
                     foreach (string s in filesToMerge[i].PageRanges)
                     {
-                        p.StartInfo.Arguments += PDF_HANDLES[i] + s + " ";
+                        args += PDF_HANDLES[i] + s + " ";
                     }
                 }
                 else
                 {
-                    p.StartInfo.Arguments += PDF_HANDLES[i] + " ";
+                    args += PDF_HANDLES[i] + " ";
                 }
             }
-            p.StartInfo.Arguments += "output \"" + outputFileName + "\"";
+            args += "output \"" + outputFileName + "\"";
+
+            RunPdftk(args);
             
-            p.Start();
-            p.WaitForExit();
-            p.Close();
+            return state;
+        }
+
+
+        /// <summary>
+        /// Splits a single, input PDF document into individual	pages.
+        /// </summary>
+        /// <param name="destinationDirectory">Directory where save the burst pages.</param>
+        /// <param name="prefix">Prefix used to name the burst pages.</param>
+        /// <returns></returns>
+        public OperationStates Burst(string destinationDirectory, string prefix)
+        {
+            OperationStates state = OperationStates.Ok;
+
+            if (Directory.Exists(destinationDirectory))
+            {
+                if (String.Compare(Path.GetFullPath(destinationDirectory).TrimEnd('\\'),
+                                   Path.GetFullPath(BASE_DIR).TrimEnd('\\'),
+                                   StringComparison.InvariantCultureIgnoreCase) != 0)
+                {
+                    // Copy pdftk.exe to destinationDirectory, because burst files are placed in the 
+                    // pdftk working directory.
+                    File.Copy(Path.Combine(BASE_DIR, "pdftk.exe"), Path.Combine(destinationDirectory, "pdftk.exe"), true);
+                }
+                
+                string inputFileName = this.FullName;
+
+                string args = "\"" + inputFileName + "\" burst output " + prefix + "%04d.pdf";
+
+                RunPdftk(args, destinationDirectory);
+
+                // Wait 1 sec to allow the system to release the pdftk.exe process
+                // I hate this but I didn't find a better solution...
+                System.Threading.Thread.Sleep(1000);
+
+                // Remove the pdftk.exe previously copied
+                File.Delete(Path.Combine(destinationDirectory, "pdftk.exe"));
+
+                // Remove doc_data.txt (report file generated by pdftk)
+                File.Delete(Path.Combine(destinationDirectory, "doc_data.txt"));
+            }
+            
+            return state;
+        }
+
+
+        /// <summary>
+        /// Encrypt a PDF document with a user or owner password.
+        /// </summary>
+        /// <param name="userPassword">Password to open the document. Set null if not needed.</param>
+        /// <param name="ownerPassword">Password to edit the document. Set null if not needed.</param>
+        /// <returns></returns>
+        public OperationStates Encrypt(System.Security.SecureString userPassword, System.Security.SecureString ownerPassword,
+            bool allowPrinting, bool allowDegradatedPrinting, bool allowModifyContents, bool allowAssembly,
+            bool allowCopyContents, bool allowScreenReaders, bool allowModifyAnnotations,
+            bool allowFillIn, bool allowAllFeatures, ref string outputFileName)
+        {
+            OperationStates state = OperationStates.Ok;
+
+            if ((userPassword == null) && (ownerPassword == null)) return state;
+
+            string allow = "";
+            if (allowAllFeatures)
+            {
+                allow = "AllFeatures";
+            }
+            else
+            {
+                if (allowPrinting)
+                {
+                    allow += "Printing ";
+                }
+                if (allowDegradatedPrinting)
+                {
+                    allow += "DegradatedPrinting ";
+                }
+                if (allowModifyContents)
+                {
+                    allow += "ModifyContents ";
+                    allowAssembly = true;
+                }
+                if (allowAssembly)
+                {
+                    allow += "Assembly ";
+                }
+                if (allowCopyContents)
+                {
+                    allow += "CopyContents ";
+                    allowScreenReaders = true;
+                }
+                if (allowScreenReaders)
+                {
+                    allow += "ScreenReaders ";
+                }
+                if (allowModifyAnnotations)
+                {
+                    allow += "ModifyAnnotations ";
+                    allowFillIn = true;
+                }
+                if (allowFillIn)
+                {
+                    allow += "FillIn ";
+                }
+            }
+
+            string passwords = "";
+            if (userPassword != null)
+            {
+                IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(userPassword);
+
+                passwords += "user_pw " + System.Runtime.InteropServices.Marshal.PtrToStringAuto(ptr);
+            }
+            if (ownerPassword != null)
+            {
+                IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(ownerPassword);
+
+                passwords += " owner_pw " + System.Runtime.InteropServices.Marshal.PtrToStringAuto(ptr);
+
+                if (allow != "")
+                {
+                    passwords += " allow " + allow;
+                }
+            }
+
+            if (passwords != "")
+            {
+                string inputFileName = this.FullName;
+                GetValidOutputFileName(ref outputFileName, 1);
+
+                string args = "\"" + inputFileName + "\" output \"" + outputFileName + "\" " + passwords;
+
+                userPassword = null;
+                ownerPassword = null;
+
+                RunPdftk(args);
+            }
+            
+            return state;
+        }
+
+
+        /// <summary>
+        /// Try to decrypt the document with the given password
+        /// </summary>
+        /// <param name="password">Password to decrypt the document</param>
+        /// <returns></returns>
+        public OperationStates TryDecrypt(System.Security.SecureString password)
+        {
+            OperationStates state = OperationStates.Ok;
+
+            string inputFileName = this.FullName;
+
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(password);
+            string pwd = System.Runtime.InteropServices.Marshal.PtrToStringAuto(ptr);
+
+            string args = "\"" + inputFileName + "\" input_pw " + pwd + " dump_data output pw.check dont_ask";
+
+            pwd = null;
+
+            if (RunPdftk(args) > 0)
+            {
+                state = OperationStates.WrongPassword;
+            }
+
+            if (File.Exists("pw.check"))
+                File.Delete("pw.check");
 
             return state;
         }
+
+
+        /// <summary>
+        /// Decrypt the document with the given password
+        /// </summary>
+        /// <param name="password">Password to decrypt the document</param>
+        /// <returns></returns>
+        public OperationStates Decrypt(System.Security.SecureString password, ref string outputFileName)
+        {
+            OperationStates state = OperationStates.Ok;
+
+            string inputFileName = this.FullName;
+
+            IntPtr ptr = System.Runtime.InteropServices.Marshal.SecureStringToBSTR(password);
+            string pwd = System.Runtime.InteropServices.Marshal.PtrToStringAuto(ptr);
+
+            GetValidOutputFileName(ref outputFileName, 1);
+
+            string args = "\"" + inputFileName + "\" input_pw " + pwd + " output \"" + outputFileName + "\" dont_ask";
+
+            pwd = null;
+
+            if (RunPdftk(args) > 0)
+            {
+                state = OperationStates.WrongPassword;
+            }
+
+            return state;
+        }
+
 
         /// <summary>
         /// Open the current PDF document with the default application.
@@ -344,19 +634,58 @@ namespace PDFRider
         #region Private methods
 
         /// <summary>
-        /// Gets informations about the pdf file with the "dump_data" function of pdftk.
+        /// Executes pdftk with the provided arguments.
         /// </summary>
-        /// <returns>-1 if an error occurs</returns>
-        private int GetInfo()
+        /// <param name="args">Command line arguments to pass to pdftk.</param>
+        private static int RunPdftk(string args)
+        {
+            return RunPdftk(args, BASE_DIR);
+        }
+
+        /// <summary>
+        /// Executes pdftk with the provided arguments.
+        /// </summary>
+        /// <param name="args">Command line arguments to pass to pdftk.</param>
+        /// <param name="workingDirectory">Working directory for pdftk.</param>
+        private static int RunPdftk(string args, string workingDirectory)
         {
             int ret = 0;
+
+            Process p = new Process();
+
+            p.StartInfo.FileName = "pdftk.exe";
+            p.StartInfo.WorkingDirectory = workingDirectory;
+
+            p.StartInfo.CreateNoWindow = true;
+            p.StartInfo.WindowStyle = ProcessWindowStyle.Hidden;
+
+            p.StartInfo.Arguments = args;
+
+            p.Start();
+            p.WaitForExit();
+            ret = p.ExitCode;
+            p.Close();
+
+            return ret;
+        }
+
+
+        /// <summary>
+        /// Gets informations about the pdf file specified by <paramref name="path"/>
+        /// using the "dump_data" function of pdftk.
+        /// </summary>
+        /// <param name="path">Full path of the file that you want to get information from.</param>
+        /// <returns>PDFFileInfo object storing basic information about PDF document.</returns>
+        public static PDFFileInfo GetInfo(string path)
+        {
+            PDFFileInfo info = new PDFFileInfo();
+
+            //Creates a process for pdftk and sets its parameters.
+            Process p = new Process();
 
             //Handles possible errors of pdftk.
             try
             {
-                //Creates a process for pdftk and sets its parameters.
-                Process p = new Process();
-
                 p.StartInfo.FileName = "pdftk.exe";
                 p.StartInfo.WorkingDirectory = BASE_DIR;
 
@@ -366,14 +695,17 @@ namespace PDFRider
                 //Sets pdftk command line arguments.
                 //You must use quotation marks to specify command line arguments that have
                 //spaces inside them, or they will be considered as different arguments.
-                p.StartInfo.Arguments = "\"" + this.FullName + "\" dump_data output \"" + DUMP_DATA_FILE + "\" dont_ask";
+                p.StartInfo.Arguments = "\"" + path + "\" dump_data output \"" + DUMP_DATA_FILE + "\" dont_ask";
 
                 p.Start();
                 p.WaitForExit();
+                //Console.WriteLine("pdftk exit code: " + p.ExitCode.ToString());
                 p.Close();
 
                 if (File.Exists(DUMP_DATA_FILE))
                 {
+                    info.FullName = path;
+
                     //Searches the informations inside pdftk dump_data file.
                     using (StreamReader sr = new StreamReader(DUMP_DATA_FILE))
                     {
@@ -382,25 +714,25 @@ namespace PDFRider
                         {
                             if (line.StartsWith("NumberOfPages"))
                             {
-                                this.NumberOfPages = Int32.Parse(line.Remove(0, 15));
+                                info.NumberOfPages = short.Parse(line.Remove(0, 15));
                             }
 
                             if (line.StartsWith("PageLabelStart"))
                             {
-                                this.PageLabelStart = Int32.Parse(line.Remove(0, 16));
+                                info.PageLabelStart = short.Parse(line.Remove(0, 16));
                             }
                         }
                     }
-                }
-                else
-                {
-                    ret = -1;
+
+                    // PageLabelStart is used to get the effective number of pages,
+                    // so it must be greater than 0
+                    if (info.PageLabelStart == 0)
+                        info.PageLabelStart = 1;
                 }
 
             }
             catch
             {
-                ret = -1;
             }
             finally
             {
@@ -408,13 +740,51 @@ namespace PDFRider
                     File.Delete(DUMP_DATA_FILE);
             }
 
-            return ret;
+            return info;
         }
 
+
+
+        /// <summary>
+        /// Checks if <paramref name="fileName"/> already exists end generate a valid file name.
+        /// </summary>
+        /// <param name="fileName">The file name to check</param>
+        /// <param name="fileIndex">Start index to name the file. You should set this to 1.</param>
+        /// <remarks>The application hangs if you try to write a file (in this case a temporary file)
+        /// that is in use by another process (or an instance of this process).</remarks>
+        private static void GetValidOutputFileName(ref string fileName, short fileIndex)
+        {
+            /* 1. Check if fileName exists
+             * 2. If it does, check if it ends with a number inside square brackets ([fileIndex])
+             * 3. If it does, remove the suffix
+             * 4. Append the suffix "[fileIndex]" to fileName
+             * 5. Restart the check
+             * 6. fileName will be set to a valid file name. */
+
+            if (File.Exists(fileName))
+            {
+                if (_fileSuffixRegex.IsMatch(Path.GetFileNameWithoutExtension(fileName)))
+                {
+                    int suffix_length = fileIndex.ToString().Length + 2;
+                    fileName = Path.Combine(Path.GetDirectoryName(fileName),
+                        Path.GetFileNameWithoutExtension(fileName).Remove(
+                        Path.GetFileNameWithoutExtension(fileName).Length - suffix_length) +
+                        Path.GetExtension(fileName));
+                }
+
+                fileName = Path.Combine(Path.GetDirectoryName(fileName),
+                    Path.GetFileNameWithoutExtension(fileName) + "[" + fileIndex.ToString() + "]" +
+                    Path.GetExtension(fileName));
+
+                fileIndex++;
+                GetValidOutputFileName(ref fileName, fileIndex);
+            }
+        }
 
         #endregion
 
     }
+
 
     
 }

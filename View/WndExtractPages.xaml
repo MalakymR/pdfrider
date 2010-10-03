@@ -2,7 +2,8 @@
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
-    Title="{DynamicResource loc_wndExtractPagesTitle}" Height="164" Width="348" WindowStartupLocation="CenterOwner"
+    xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    Title="{ltl:Translate loc_wndExtractPagesTitle}" Height="164" Width="348" WindowStartupLocation="CenterOwner"
     ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
     
     <Grid>
@@ -14,25 +15,25 @@
         </Grid.RowDefinitions>
         
         <StackPanel Orientation="Horizontal">
-            <TextBlock Text="{DynamicResource loc_tbkPagesFrom}" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{ltl:Translate loc_tbkPagesFrom}" Margin="5" VerticalAlignment="Center" />
             <local:IntervalTextBox Style="{StaticResource IntervalTextBox}" SelectAllText="True"
                                    IsValidInterval="{Binding IsValidPageStart}"
                                    Text="{Binding PageStart, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{DynamicResource loc_tbkPagesTo}" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{ltl:Translate loc_tbkPagesTo}" Margin="5" VerticalAlignment="Center" />
             <local:IntervalTextBox Style="{StaticResource IntervalTextBox}" SelectAllText="True"
                                    IsValidInterval="{Binding IsValidPageEnd}"
                                    Text="{Binding PageEnd, UpdateSourceTrigger=PropertyChanged}" />
-            <TextBlock Text="{DynamicResource loc_tbkPagesOf}" Margin="5" VerticalAlignment="Center" />
+            <TextBlock Text="{ltl:Translate loc_tbkPagesOf}" Margin="5" VerticalAlignment="Center" />
             <TextBlock Text="{Binding NumberOfPages}" Margin="5" VerticalAlignment="Center" />
             <TextBlock Text="{Binding NumberOfPhysicalPages, StringFormat=({0})}" Margin="5" VerticalAlignment="Center" />
         </StackPanel>
         
         <StackPanel Grid.Row="1" Visibility="Collapsed" >
             <CheckBox Margin="5" 
-                      Content="{DynamicResource loc_deletePagesAfterExtraction}" />
+                      Content="{ltl:Translate loc_deletePagesAfterExtraction}" />
             
             <CheckBox Margin="5" 
-                      Content="{DynamicResource loc_separateExtraction}" />
+                      Content="{ltl:Translate loc_separateExtraction}" />
             
             <StackPanel Margin="30,5,0,5">
                 <TextBlock>Step (FINIRE)</TextBlock>
@@ -44,9 +45,9 @@
         </StackPanel>
         
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="{DynamicResource loc_btnOK}" Command="{Binding CmdExtract}"
+            <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdExtract}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True" />
-            <Button Content="{DynamicResource loc_btnCancel}" Command="{Binding CmdClose}"
+            <Button Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsCancel="True" />
         </StackPanel>
         

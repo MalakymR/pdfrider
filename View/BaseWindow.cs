@@ -4,6 +4,9 @@ using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {
+    /// <summary>
+    /// A base class for windows that use MVVM
+    /// </summary>
     public class BaseWindow : Window
     {
         //Value returned by the ShowDialog method.
@@ -40,6 +43,13 @@ namespace PDFRider
 
         void MsgClose_Handler(TMsgClose msg)
         {
+            this.OnMsgClose(msg);
+        }
+
+        #endregion
+
+        protected virtual void OnMsgClose(TMsgClose msg)
+        {
             // Close the window only if the message comes from the DataContext of this window
             if (msg.SenderViewModel == this.DataContext)
             {
@@ -47,8 +57,6 @@ namespace PDFRider
                 this.Close();
             }
         }
-
-        #endregion
 
     }
 }

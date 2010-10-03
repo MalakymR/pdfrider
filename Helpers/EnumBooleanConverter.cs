@@ -5,6 +5,8 @@ using System.Windows.Data;
 namespace PDFRider
 {
     /// <summary>
+    /// This converter is used to data bind checked/uncheckd (bool) value of e.g. a radiobutton 
+    /// to the corresponding value of an underlying enum.
     /// This class is from David Schmitt (http://stackoverflow.com/users/4918/david-schmitt)
     /// Posted at http://stackoverflow.com/questions/397556/wpf-how-to-bind-radiobuttons-to-an-enum
     /// </summary>
