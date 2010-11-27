@@ -1,4 +1,27 @@
-﻿using System;
+﻿/*
+ *    Copyright 2009, 2010 Francesco Tonucci
+ * 
+ * This file is part of PDFRider.
+ * 
+ * PDFRider is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PDFRider is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with PDFRider; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * 
+ * Project page: http://pdfrider.codeplex.com
+*/
+
+using System;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -26,7 +49,10 @@ namespace PDFRider
             Messenger.Default.Register<TMsgShowBurst>(this, MsgShowBurst_Handler);
             Messenger.Default.Register<GenericMessageAction<TMsgShowSecurity, TMsgOpenFile>>(this, MsgShowSecurity_Handler);
 
+            Messenger.Default.Register<TMsgShowNewVersion>(this, MsgShowNewVersion_Handler);
             Messenger.Default.Register<TMsgShowAbout>(this, MsgShowAbout_Handler);
+
+            Messenger.Default.Register<DialogMessage>(this, MsgDialogMessage_Handler);
 
             // Instantiate the data context (view model) AFTER registration of the messages.
             this.DataContext = new MainWindowViewModel();
@@ -48,40 +74,15 @@ namespace PDFRider
 
                 if (result == MessageBoxResult.Cancel)
                 {
-                    //msg.Data.EventArgs.Cancel = true;
-                    //msg.Data.Cancel = true;
                     data.Cancel = true;
                 }
                 else if (result == MessageBoxResult.Yes)
                 {
-
-                    //Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-                    //sfd.Title = this.FindResource("loc_saveFileDialogTitle").ToString();
-                    //sfd.DefaultExt = "pdf";
-                    //sfd.AddExtension = true;
-                    //sfd.Filter = App.Current.FindResource("loc_saveFileDialogFilter").ToString();
-
-                    //if ((bool)sfd.ShowDialog())
-
                     FileDialogResult r = DialogController.ShowSaveFileDialog();
                     data.Data = r.FileName;
-                    //msg.Data.EventArgs.Cancel = !r.CommonDialogReturn;
                     data.Cancel = !r.CommonDialogReturn;
-                    //msg.Execute(msg.Data);
-
-                    //if (r.CommonDialogReturn)
-                    //{
-                    //    MainWindowViewModel mwvm = this.DataContext as MainWindowViewModel;
-
-                    //    System.IO.File.Copy(mwvm.Uri, r.FileName);
-                    //}
-                    //else
-                    //{
-                    //    msg.Data.EventArgs.Cancel = true;
-                    //}
                 }
 
-                //msg.Data = data;
                 msg.Execute(data);
 
             }
@@ -93,61 +94,19 @@ namespace PDFRider
         {
             TMsgOpenFile data = msg.Data;
 
-            //Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            //ofd.DefaultExt = "pdf";
-            //ofd.Multiselect = data.Multiselect;
-            //ofd.Title = App.Current.FindResource("loc_openFileDialogTitle").ToString();
-            //ofd.Filter = App.Current.FindResource("loc_openFileDialogFilter").ToString();
-
             FileDialogResult r = DialogController.ShowOpenFileDialog(data.Multiselect);
             data.FileName = r.FileName;
             data.FileNames = r.FileNames;
             data.NewFile = r.CommonDialogReturn;
-            msg.Execute(data); //new TMsgOpenFile(r.FileName, r.CommonDialogReturn));
-
-            //if ((bool)ofd.ShowDialog())
-            //{
-            //    if (ofd.Multiselect)
-            //    {
-            //        data.FileNames.AddRange(ofd.FileNames);
-            //    }
-            //    else
-            //    {
-            //        data.FileName = ofd.FileName;
-            //    }
-            //    //msg.Data = data;
-            //    msg.Execute(data);
-            //}
+            msg.Execute(data);
         }
 
 
         // --- SAVE FILE
         void MsgSaveFile_Handler(GenericMessageAction<TMsgSaveFile, TMsgOpenFile> msg)
         {
-            
-            //Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-            //sfd.Title = this.FindResource("loc_saveFileDialogTitle").ToString();
-            //sfd.DefaultExt = "pdf";
-            //sfd.AddExtension = true;
-            //sfd.Filter = App.Current.FindResource("loc_saveFileDialogFilter").ToString();
-
-            //if ((bool)sfd.ShowDialog())
             FileDialogResult r = DialogController.ShowSaveFileDialog();
             msg.Execute(new TMsgOpenFile(r.FileName, r.CommonDialogReturn));
-
-            //if (r.CommonDialogReturn)
-            //{
-            //    MainWindowViewModel mwvm = this.DataContext as MainWindowViewModel;
-
-            //    System.IO.File.Copy(mwvm.Uri, r.FileName);
-
-            //    msg.Execute(new TMsgOpenFile(r.FileName, true));
-            //}
-            //else
-            //{
-            //    msg.Execute(new TMsgOpenFile());
-            //}
-                
         }
 
 
@@ -275,6 +234,16 @@ namespace PDFRider
         }
 
 
+        // --- NEW VERSION AVAILABLE
+        void MsgShowNewVersion_Handler(TMsgShowNewVersion msg)
+        {
+            WndNewVersion wndNewVersion = new WndNewVersion();
+            Messenger.Default.Send<TMsgShowNewVersion, WndNewVersionViewModel>(msg);
+
+            wndNewVersion.ShowDialog();
+        }
+
+
         // --- ABOUT
         void MsgShowAbout_Handler(TMsgShowAbout msg)
         {
@@ -282,6 +251,21 @@ namespace PDFRider
 
             wndAbout.Owner = this;
             wndAbout.ShowDialog();
+        }
+
+
+
+        // --- MESSAGES
+        void MsgDialogMessage_Handler(DialogMessage msg)
+        {
+            var result = MessageBox.Show(
+                        msg.Content,
+                        msg.Caption,
+                        msg.Button,
+                        msg.Icon);
+
+            // Send callback
+            msg.ProcessCallback(result);
         }
 
         #endregion

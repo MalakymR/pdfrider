@@ -22,34 +22,25 @@
 */
 
 using System;
-using System.Windows;
-using System.Windows.Controls;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
 
-namespace PDFRider
+namespace PDFRider.Updater
 {
-    public partial class WndAbout : Window
+    /// <summary>
+    /// Stores the updater configuration.
+    /// </summary>
+    public class UpdaterConfig
     {
-        public WndAbout()
-        {
-            InitializeComponent();
+        /// <summary>
+        /// Indicates whether to check for update at startup
+        /// </summary>
+        public bool CheckAtStartup { get; set; }
 
-            this.AppName = App.TITLE;
-            this.AppVersion = App.VERSION;
-
-            // A ViewModel is very useless for this window!
-            this.DataContext = this;
-        }
-
-        public string AppName { get; private set; }
-        public string AppVersion { get; private set; }
-
-        // To open link in wpf window applications you must handle this event like this
-        private void linkCodePlex_RequestNavigate(object sender, System.Windows.Navigation.RequestNavigateEventArgs e)
-        {
-            System.Diagnostics.Process.Start(
-                new System.Diagnostics.ProcessStartInfo(App.WEBSITE));
-
-            e.Handled = true;
-        }
+        /// <summary>
+        /// Url to connect to retrieve informations about the newer version
+        /// </summary>
+        public string RemoteUrl { get; set; }
     }
 }

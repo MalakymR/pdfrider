@@ -14,7 +14,7 @@
     -->
     
     
-    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.4">
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.5">
 'xml:space="preserve"' activated to easily edit line breaks in string.
 Do not use indentation in text unless you really want to indent it! 
 Pay attention to leading and trailing spaces too.
@@ -62,6 +62,11 @@ Sorry, I can't handle more than {0} files.
     </ltl:LocItem>
     <ltl:LocItem x:Key="loc_invalidDocument">Cannot retrieve informations about the document.
 The document could be an invalid pdf document or password protected.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_missingConfigFiles">Cannot find the configuration files.
+A new installation could solve the problem.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_programUpToDate">
+The program is up to date.
+    </ltl:LocItem>
     
     
     
@@ -80,6 +85,7 @@ The document could be an invalid pdf document or password protected.</ltl:LocIte
     <ltl:LocItem x:Key="loc_miMergeDocuments">Merge documents...</ltl:LocItem>
     <ltl:LocItem x:Key="loc_miBurst">Burst...</ltl:LocItem>
     <ltl:LocItem x:Key="loc_miSecurity">Security...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miCheckForUpdates">Check for updates...</ltl:LocItem>
     <ltl:LocItem x:Key="loc_miAbout">About PDF Rider</ltl:LocItem>
     
     
@@ -174,6 +180,7 @@ The document could be an invalid pdf document or password protected.</ltl:LocIte
     <ltl:LocItem x:Key="loc_setPasswords">Set passwords</ltl:LocItem>
     <ltl:LocItem x:Key="loc_removePasswords">Remove passwords</ltl:LocItem>
     
+    <ltl:LocItem x:Key="loc_username">User name:</ltl:LocItem>
     <ltl:LocItem x:Key="loc_password">Password:</ltl:LocItem>
     
     
@@ -193,34 +200,64 @@ Remember that if the document has both open and edit password, you must supply t
     
     
     
+    <!-- WndNewVersion -->
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle">New version available!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersionAvailable">A new verison of PDF Rider is available for download.
+
+Click OK to go to the application web site and download it!
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_currentVersion">Installed version: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersion">New version: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_checkAtStartup">Check for updates at startup</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsTitle">Authentication required</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsSaveCredentials">Save this credentials</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsMessage">Proxy at {0} requires authentication.
+Please supply your username and password to connect to the internet.
+    </ltl:LocItem>
+    
+    
+    
+    
     <!-- WndAbout -->
     <ltl:LocItem x:Key="loc_wndAboutTitle">About PDF Rider</ltl:LocItem>
     <ltl:LocItem x:Key="loc_disclaimer">
-This program is free software.
+LEGAL
+-------------------------------------------------------------------------------------------
+Copyright 2009, 2010 Francesco Tonucci
 
-You can redistribute it and/or modify it under the terms of the GNU General Public License version 2, as published by the Free Software Foundation.
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
 
-This software is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY.
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
 
 Project page: http://pdfrider.codeplex.com
 
         
-+++ NOTE ! +++
+NOTES
+-------------------------------------------------------------------------------------------
 
 This software uses components from other people/companies, which are not subject to this license (the GNU GPL), but have their own.
-
 
 Components used:
    - Images (except the application icon) by David Vignoni - http://www.icon-king.com
 
    - Application icon by Charlotte Schmidt - http://pattedemouche.free.fr/
 
-   - pdftk by Sid Steward - http://www.accesspdf.com/pdftk/
+   - pdftk by Sid Steward - http://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
 
    - MVVM Light Toolkit by Laurent Bugnion - http://www.galasoft.ch/mvvm/getstarted/
 
-        
-A copy of the GNU GPL must be included with the source code of the software, as well as the licenses of the other components.
+A copy of the GNU GPL should be included with the source code of the software, as well as the licenses of the other components.
     </ltl:LocItem>
     
 </ResourceDictionary>

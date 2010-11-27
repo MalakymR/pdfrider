@@ -25,10 +25,12 @@
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto" />
                     <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
                 </Grid.RowDefinitions>
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
                     <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
                 <Menu Style="{StaticResource MenuStyle}">
                     <MenuItem Header="{ltl:Translate loc_miFile}" Style="{StaticResource MenuItemStyle}">
@@ -83,16 +85,28 @@
                     </MenuItem>
 
                     <MenuItem Header="?" Style="{StaticResource MenuItemStyle}">
+                        <MenuItem Header="{ltl:Translate loc_miCheckForUpdates}"
+                                  Command="{Binding CmdCheckForUpdates}" />
                         <MenuItem Header="{ltl:Translate loc_miAbout}"
                                   Command="{Binding CmdAbout}" />
                     </MenuItem>
 
                 </Menu>
                 
-                <TextBlock Grid.Column="1" Text="{Binding Version}"
-                           HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />
+                <!--<TextBlock Grid.Column="2" Text="{Binding Version}"
+                           HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />-->
 
-                <ftc:InformationBar Grid.Row="1" Grid.ColumnSpan="2"
+                <Button Grid.Column="3" Width="100" Height="30" Command="{Binding CmdOpenAd}"
+                        Visibility="{Binding Path=ShowAd, Converter={StaticResource BooleanToVisibilityConverter}}"
+                        Cursor="Hand">
+                    <Button.Template>
+                        <ControlTemplate>
+                            <Image Source="..\images\blogo.jpg" />
+                        </ControlTemplate>
+                    </Button.Template>
+                </Button>
+
+                <ftc:InformationBar Grid.Row="2" Grid.ColumnSpan="3"
                                     Visibility="{Binding Path=ShowInfoBar, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Text="{Binding Information}" />
                 

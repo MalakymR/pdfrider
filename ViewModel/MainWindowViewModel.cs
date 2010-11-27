@@ -1,10 +1,35 @@
-﻿using System;
+﻿/*
+ *    Copyright 2009, 2010 Francesco Tonucci
+ * 
+ * This file is part of PDFRider.
+ * 
+ * PDFRider is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PDFRider is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with PDFRider; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * 
+ * Project page: http://pdfrider.codeplex.com
+*/
+
+using System;
 using System.Linq;
 using System.Windows.Input;
 using System.Collections.Generic;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+
+using System.Configuration;
 
 namespace PDFRider
 {
@@ -18,11 +43,14 @@ namespace PDFRider
         
         string _homeUri = "";
 
+        // Stores application settings
+        PDFRiderConfig _config = null;
+
         
         public MainWindowViewModel()
             : base()
         {
-            string homeUriPath = System.IO.Path.Combine(App.LOC_DIR, "home.html");
+            string homeUriPath = App.HOME_URI;
             if (System.IO.File.Exists(homeUriPath))
                 this._homeUri = homeUriPath;
 
@@ -130,6 +158,23 @@ namespace PDFRider
             {
                 this._showInfoBar = value;
                 RaisePropertyChanged("ShowInfoBar");
+            }
+        }
+
+        /// <summary>
+        /// Indicates whether to show the Ad
+        /// </summary>
+        bool _showAd = false;
+        public bool ShowAd
+        {
+            get
+            {
+                return this._showAd;
+            }
+            set
+            {
+                this._showAd = value;
+                RaisePropertyChanged("ShowAd");
             }
         }
 
@@ -498,6 +543,47 @@ namespace PDFRider
 
         #endregion
 
+        #region CmdCheckForUpdates
+
+        RelayCommand _cmdCheckForUpdates;
+        public ICommand CmdCheckForUpdates
+        {
+            get
+            {
+                if (this._cmdCheckForUpdates == null)
+                {
+                    this._cmdCheckForUpdates = new RelayCommand(() => this.DoCmdCheckForUpdates());
+                }
+                return this._cmdCheckForUpdates;
+            }
+        }
+        private void DoCmdCheckForUpdates()
+        {
+            Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
+
+            if (info != null)
+            {
+                if (info.NewVersionAvailable == true)
+                {
+                    Messenger.Default.Send<TMsgShowNewVersion>(new TMsgShowNewVersion(info));
+                }
+                else
+                {
+                    DialogMessage message = new DialogMessage(App.Current.FindResource("loc_programUpToDate").ToString(), null)
+                    {
+                        Button = System.Windows.MessageBoxButton.OK,
+                        Icon = System.Windows.MessageBoxImage.Information,
+                        Caption = App.NAME
+                    };
+
+                    Messenger.Default.Send<DialogMessage, MainWindow>(message);
+                }
+            }
+            
+        }
+
+        #endregion
+
         #region CmdAbout
 
         RelayCommand _cmdAbout;
@@ -536,6 +622,28 @@ namespace PDFRider
         private void DoCmdHideInfoBar()
         {
             this.ShowInfoBar = false;
+        }
+
+        #endregion
+
+        #region CmdOpenAd
+
+        RelayCommand _cmdOpenAd;
+        public ICommand CmdOpenAd
+        {
+            get
+            {
+                if (this._cmdOpenAd == null)
+                {
+                    this._cmdOpenAd = new RelayCommand(() => this.DoCmdOpenAd());
+                }
+                return this._cmdOpenAd;
+            }
+        }
+        private void DoCmdOpenAd()
+        {
+            System.Diagnostics.Process.Start(
+                new System.Diagnostics.ProcessStartInfo(App.AD_LINK));
         }
 
         #endregion
@@ -583,6 +691,21 @@ namespace PDFRider
 
         void StartupInitializations()
         {
+            if ((!System.IO.File.Exists(PDFRiderConfig.CONFIG_FILE)) ||
+                (!System.IO.File.Exists(Updater.Updater.CONFIG_FILE)))
+            {
+                DialogMessage message = new DialogMessage(App.Current.FindResource("loc_missingConfigFiles").ToString(), null)
+                    {
+                        Button = System.Windows.MessageBoxButton.OK,
+                        Icon = System.Windows.MessageBoxImage.Error,
+                        Caption = App.NAME
+                    };
+
+                Messenger.Default.Send<DialogMessage, MainWindow>(message);
+
+                return;
+            }
+
             // Handles command line arguments
             string[] args = Environment.GetCommandLineArgs();
 
@@ -623,12 +746,45 @@ namespace PDFRider
                 }
             }
 
-            //Deletes the temporary files only if the temporary directory is not in use or
-            //if there isn't another PDF Rider process running.
+            // Load application configuration
+            try
+            {
+                this._config = new PDFRiderConfig();
+            }
+            catch { }
+
+            if (this._config != null)
+            {
+                // Show Ad?
+                this.ShowAd = this._config.ShowAd;
+            }
+            
+            // Operation to do only if the temporary directory is not in use or
+            // if there isn't another PDF Rider process running.
             if ((System.Diagnostics.Process.GetProcessesByName(App.PROCESS_NAME).Length == 1) &&
                 (!this.Uri.StartsWith(App.TEMP_DIR)))
+                // Use the following lines for debug
+                //if ((System.Diagnostics.Process.GetProcessesByName("PDFRider.vshost.exe").Length <= 1) &&
+                //    (!this.Uri.StartsWith(App.TEMP_DIR)))
             {
+                // Deletes the temporary files
                 this.DeleteTempFiles();
+
+                // Checks for update
+                Updater.UpdaterConfig updaterConfig = Updater.Updater.LoadConfig();
+                if ((updaterConfig != null) && (updaterConfig.CheckAtStartup))
+                {
+                    Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
+
+                    if (info != null)
+                    {
+                        if (info.NewVersionAvailable == true)
+                        {
+                            Messenger.Default.Send<TMsgShowNewVersion>(new TMsgShowNewVersion(info));
+                        }
+                    }
+                }
+
             }
 
             
@@ -654,6 +810,7 @@ namespace PDFRider
                 catch { }
             }
         }
+
 
         #endregion
 
