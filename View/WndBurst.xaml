@@ -3,8 +3,9 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
     xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
-    Title="{ltl:Translate loc_wndBurstTitle}" Height="267" Width="360" WindowStartupLocation="CenterOwner" 
-    ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
+    Title="{ltl:Translate loc_wndBurstTitle}"  WindowStartupLocation="CenterOwner" ShowInTaskbar="False" ResizeMode="NoResize" 
+    Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico" 
+    mc:Ignorable="d" xmlns:d="http://schemas.microsoft.com/expression/blend/2008" xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" Width="430" SizeToContent="Height">
     <Window.Resources>
         <local:EnumBooleanConverter x:Key="enumBooleanConverter" />
     </Window.Resources>
@@ -25,7 +26,7 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
-                <TextBox Text="{Binding WorkingDirectory}" Margin="10" />
+                <TextBox Text="{Binding WorkingDirectory}" Margin="10" HorizontalAlignment="Stretch" />
                 <Button Grid.Column="1" Margin="5" Command="{Binding CmdBrowse}">
                     <StackPanel Orientation="Horizontal">
                         <Image Source="..\images\folder_yellow_open.png" Style="{StaticResource MenuItemImage}" />
@@ -35,7 +36,7 @@
             </Grid>
         </StackPanel>
 
-        <TextBlock Grid.Row="1" Text="{ltl:Translate loc_burstFileDescription}" Margin="5" />
+        <TextBlock Grid.Row="1" Text="{ltl:Translate loc_burstFileDescription}" Margin="5" TextWrapping="Wrap" />
 
         <Grid Grid.Row="2">
             <Grid.RowDefinitions>
@@ -52,14 +53,16 @@
             
             <TextBlock Grid.Row="1" Grid.Column="1" Margin="5,0"
                    Text="{Binding ElementName=tbxPrefix, Path=Text, StringFormat=( \{0\}0000.pdf )}" />
-            
-            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="5"
+
+            <TextBlock Grid.Row="2" Grid.ColumnSpan="2" Margin="5" TextWrapping="Wrap"
                        Text="{ltl:Translate loc_burstFilesWarning}" />
         </Grid>
-        
-        <CheckBox Grid.Row="3" Margin="5" IsChecked="{Binding ShowFiles}" Content="{ltl:Translate loc_showBurstFiles}" />
-        
-        <TextBlock Grid.Row="4" Style="{StaticResource InformationTextBlock}" Text="{Binding Information}" />
+
+        <CheckBox Grid.Row="3" Margin="5" IsChecked="{Binding ShowFiles}">
+            <TextBlock Text="{ltl:Translate loc_showBurstFiles}" TextWrapping="Wrap" />
+        </CheckBox>
+
+        <TextBlock Grid.Row="4" Style="{StaticResource InformationTextBlock}" Text="{Binding Information}" TextWrapping="Wrap" />
         
         <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
             <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdBurst}"

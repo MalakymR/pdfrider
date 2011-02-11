@@ -1,5 +1,5 @@
 ﻿/*
- *    Copyright 2009, 2010 Francesco Tonucci
+ *    Copyright 2009-2011 Francesco Tonucci
  * 
  * This file is part of PDFRider.
  * 
@@ -35,7 +35,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PDF Rider")]
-[assembly: AssemblyCopyright("Copyright ©  2009, 2010 Francesco Tonucci")]
+[assembly: AssemblyCopyright("Copyright ©  2009-2011 Francesco Tonucci")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -74,5 +74,5 @@ using System.Windows;
 // È possibile specificare tutti i valori oppure impostare valori predefiniti per i numeri relativi alla revisione e alla build 
 // utilizzando l'asterisco (*) come descritto di seguito:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.5.*")]
-[assembly: AssemblyFileVersion("0.5")]
+[assembly: AssemblyVersion("0.5.1")]
+[assembly: AssemblyFileVersion("0.5.1")]

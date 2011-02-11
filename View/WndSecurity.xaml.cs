@@ -1,5 +1,5 @@
 ﻿/*
- *    Copyright 2009, 2010 Francesco Tonucci
+ *    Copyright 2009-2011 Francesco Tonucci
  * 
  * This file is part of PDFRider.
  * 

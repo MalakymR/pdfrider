@@ -4,7 +4,7 @@
         xmlns:local="clr-namespace:PDFRider"
         xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
         Title="{ltl:Translate loc_wndNewVersionTitle}" Icon="/PDFRider;component/PDFRider.ico" 
-        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" ResizeMode="NoResize" Height="234" Width="375">
+        WindowStartupLocation="CenterScreen" ShowInTaskbar="False" ResizeMode="NoResize" Width="375" SizeToContent="Height">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         
         <TextBlock Margin="5" FontSize="13" FontWeight="Bold" 
-                   Text="{ltl:Translate loc_newVersionAvailable}" TextWrapping="WrapWithOverflow" />
+                   Text="{ltl:Translate loc_newVersionAvailable}" TextWrapping="Wrap" />
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -33,9 +33,10 @@
             <TextBlock Grid.Row="1" Grid.Column="2" Text="{Binding NewVersion}" Margin="5,0" />
         </Grid>
 
-        <CheckBox Grid.Row="2" Content="{ltl:Translate loc_checkAtStartup}" Margin="5"
-                                  IsChecked="{Binding ShowAtStartup}" />
-        
+        <CheckBox Grid.Row="2" Margin="5" IsChecked="{Binding ShowAtStartup}">
+            <TextBlock Text="{ltl:Translate loc_checkAtStartup}" TextWrapping="Wrap" />
+        </CheckBox>
+
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
             <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdDownload}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True" />

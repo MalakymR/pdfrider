@@ -3,7 +3,7 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
     xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
-    Title="{ltl:Translate loc_wndSecurityTitle}" Height="520" Width="400" WindowStartupLocation="CenterOwner" 
+    Title="{ltl:Translate loc_wndSecurityTitle}" Height="520" MinWidth="400" WindowStartupLocation="CenterOwner" SizeToContent="WidthAndHeight"
     ShowInTaskbar="False" ResizeMode="NoResize" Style="{StaticResource GenericStyle}" WindowStyle="SingleBorderWindow" Icon="/PDFRider;component/PDFRider.ico">
     
     <Grid>
@@ -104,7 +104,7 @@
 
                 <DockPanel Grid.Row="1"  Margin="5" LastChildFill="True">
                     <TextBlock Margin="5" Text="{ltl:Translate loc_editPasswordDescription}"
-                               DockPanel.Dock="Top" />
+                               DockPanel.Dock="Top" TextWrapping="Wrap" />
                     <GroupBox Margin="5" IsEnabled="{Binding ElementName=chkEditPassword, Path=IsChecked}">
                         <StackPanel>
                             <CheckBox Content="{ltl:Translate loc_printing}" Margin="5"

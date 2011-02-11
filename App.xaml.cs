@@ -1,5 +1,5 @@
 ﻿/*
- *    Copyright 2009, 2010 Francesco Tonucci
+ *    Copyright 2009-2011 Francesco Tonucci
  * 
  * This file is part of PDFRider.
  * 
@@ -46,17 +46,17 @@ namespace PDFRider
         
         public static string NAME = App.ResourceAssembly.GetName().Name;
         public static string TITLE = "PDF Rider"; // I could use reflection here...
-        public static string VERSION = String.Format("{0}.{1}",
+        public static string VERSION = String.Format("{0}.{1}.{2}",
             App.ResourceAssembly.GetName().Version.Major.ToString(),
-            App.ResourceAssembly.GetName().Version.Minor.ToString());
+            App.ResourceAssembly.GetName().Version.Minor.ToString(),
+            App.ResourceAssembly.GetName().Version.Build.ToString());
         public static string FULL_VERSION = App.ResourceAssembly.GetName().Version.ToString();
         public static string WEBSITE = "http://pdfrider.codeplex.com";
         public static string AD_LINK = "http://www.babylon.com/welcome/index.html?affID=16195";
 
         //Locale directory (e.g. {app}\Languages\en-US\ )
-        public static string LOC_DIR = Path.Combine(
-            Path.Combine(AppDomain.CurrentDomain.BaseDirectory, App.LOC_DIR_NAME),
-            System.Threading.Thread.CurrentThread.CurrentCulture.ToString());
+        //The locale specific part is added in the constructor, after the localization test part.
+        public static string LOC_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, App.LOC_DIR_NAME);
 
         //Temporary directory ( {app}\Temp\ )
         public static string TEMP_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
@@ -72,12 +72,16 @@ namespace PDFRider
 
             // -- Remove or comment this block in the final version --
 
-            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("en-US");
-            //enCulture = new System.Globalization.CultureInfo("fr-FR");
+            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("es-ES");
+            ////enCulture = new System.Globalization.CultureInfo("fr-FR");
             //System.Threading.Thread.CurrentThread.CurrentCulture = enCulture;
             //System.Threading.Thread.CurrentThread.CurrentUICulture = enCulture;
 
             #endregion
+
+
+            App.LOC_DIR = Path.Combine(App.LOC_DIR, System.Threading.Thread.CurrentThread.CurrentCulture.ToString());
+
 
             // Verifies the directory structure
             if (!Directory.Exists(App.LOC_DIR))

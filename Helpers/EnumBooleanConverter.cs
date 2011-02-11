@@ -1,5 +1,5 @@
 ﻿/*
- *    Copyright 2009, 2010 Francesco Tonucci
+ *    Copyright 2009-2011 Francesco Tonucci
  * 
  *    This class is from David Schmitt (http://stackoverflow.com/users/4918/david-schmitt)
  *    Posted at http://stackoverflow.com/questions/397556/wpf-how-to-bind-radiobuttons-to-an-enum

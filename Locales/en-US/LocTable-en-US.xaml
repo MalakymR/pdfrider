@@ -21,7 +21,7 @@
  * Project page: http://pdfrider.codeplex.com
 -->
     
-<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+ <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:sys="clr-namespace:System;assembly=mscorlib"
     xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
