@@ -37,7 +37,7 @@ namespace PDFRider
     {
         PDFDocument _doc;
 
-        PDFDocument.InsertPositions _insertPosition;
+        PDFActions.InsertPositions _insertPosition;
         string _fileToMerge;
         string _fileNameToMerge;
 
@@ -45,9 +45,22 @@ namespace PDFRider
         /// <summary>
         /// Initializes a new instance of the WndInsertPagesViewModel class.
         /// </summary>
-        public WndInsertPagesViewModel()
+        public WndInsertPagesViewModel(PDFDocument document, string fileToMerge)
         {
-            Messenger.Default.Register<TMsgShowInsertPages>(this, MsgShowInsertPages_Handler);
+            //Get the document...
+            this._doc = document;
+
+            //... and do some initializations.
+            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
+            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
+
+            this.PageStart = this._doc.PageLabelStart.ToString();
+            this.PageEnd = this.NumberOfPhysicalPages.ToString();
+
+            this.FileToMerge = fileToMerge;
+            this.FileNameToMerge = System.IO.Path.GetFileName(this._fileToMerge);
+
+            this.InsertPosition = PDFActions.InsertPositions.End;
         }
 
         #region Properties
@@ -55,7 +68,7 @@ namespace PDFRider
         /// <summary>
         /// Position to start insert from.
         /// </summary>
-        public PDFDocument.InsertPositions InsertPosition
+        public PDFActions.InsertPositions InsertPosition
         {
             get
             {
@@ -130,16 +143,17 @@ namespace PDFRider
 
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
 
-            PDFDocument.OperationStates state = this._doc.InsertPages(start, this._insertPosition, 
+            PDFActions pdfActions = new PDFActions();
+            PDFActions.OperationStates state = pdfActions.InsertPages(this._doc, start, this._insertPosition, 
                 this._fileToMerge, ref tempFile);
 
-            if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
+            if (state == PDFActions.OperationStates.PageRangeOutOfDocument)
             {
                 this.Information = App.Current.FindResource("loc_msgOutOfDocument").ToString();
             }
             else
             {
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
+                this.Close(tempFile);
             }
         }
 
@@ -155,28 +169,6 @@ namespace PDFRider
 
         #endregion
 
-
-        #region Message handlers
-
-        void MsgShowInsertPages_Handler(TMsgShowInsertPages msg)
-        {
-            //Get the document...
-            this._doc = msg.Document;
-
-            //... and do some initializations.
-            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
-            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
-
-            this.PageStart = this._doc.PageLabelStart.ToString();
-            this.PageEnd = this.NumberOfPhysicalPages.ToString();
-
-            this.FileToMerge = msg.FileToMerge;
-            this.FileNameToMerge = System.IO.Path.GetFileName(this._fileToMerge);
-
-            this.InsertPosition = PDFDocument.InsertPositions.End;
-        }
-
-        #endregion
 
     }
 }

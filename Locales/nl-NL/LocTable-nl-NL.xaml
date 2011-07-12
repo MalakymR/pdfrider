@@ -1,0 +1,284 @@
+﻿<!--
+ *    Copyright 2009-2011 Francesco Tonucci
+ * 
+ * This file is part of PDFRider.
+ * 
+ * PDFRider is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PDFRider is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with PDFRider; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * 
+ * Project page: http://pdfrider.codeplex.com
+-->
+    
+ <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:sys="clr-namespace:System;assembly=mscorlib"
+    xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    xml:space="preserve">
+    
+    <!-- 
+        +++ DO NOT CHANGE THE FOLLOWING NAMESPACE DECLARATIONS +++
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" 
+    
+        You should not remove the xml:space="preserve" attribute too.
+        Remember to inform the user that you are using it. ;)
+    -->
+    
+    
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.5">
+'xml:space="preserve"' activated to easily edit line breaks in string.
+Do not use indentation in text unless you really want to indent it! 
+Pay attention to leading and trailing spaces too.
+
+"{0}" are placeholders for dynamic content and should not be removed!
+    </ltl:LocInfo>
+    
+    <!-- General -->
+    <ltl:LocItem x:Key="loc_version">versie</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_defaultTempFileName" Deprecated="True">Pagina's van </ltl:LocItem> <!-- deprecated. use "loc_tempPagesFrom" -->
+    <ltl:LocItem x:Key="loc_tempPagesFrom">Pagina's van {0}</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempMerged">{0} - Samengevoegd</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempEncrypted">{0} - Versleuteld</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempDecrypted">{0} - Ontsleuteld</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_btnOK">OK</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_btnCancel">Annuleer</ltl:LocItem>
+
+    <ltl:LocItem x:Key="loc_openFileDialogTitle">Kies een PDF bestand</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_openFileDialogFilter">PDF Bestand|*.pdf</ltl:LocItem> <!-- Do not change or remove the "|*.pdf" part! -->
+    
+    <ltl:LocItem x:Key="loc_saveFileDialogTitle">Bestand opslaan...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_saveFileDialogFilter">PDF Bestand (.pdf)|*.pdf</ltl:LocItem> <!-- Do not change or remove the "|*.pdf" part! -->
+    
+    <ltl:LocItem x:Key="loc_browse">Bladeren</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_workingDirectory">Werkmap:</ltl:LocItem>
+    
+    <!-- Messages -->
+    <ltl:LocItem x:Key="loc_msgOutOfDocument">
+De ingevoerde waarden zijn ongeldig voor deze bewerking.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_msgEntireDocument">
+Pagina-bereik moet kleiner zijn dan het totaal aantal pagina's.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_msgSaveChanges">
+Het huidige document is mogelijk niet opgeslagen.
+Wilt u het nu opslaan?
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_correctErrors">
+De fouten moeten eerst hersteld worden om verder te kunnen gaan.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tooManyFiles">
+Sorry, ik kan niet overweg met meer dan {0} bestanden.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_invalidDocument">Kan geen informatie over dit document achterhalen.
+Dit is misschien geen geldig pdf-document of het is met een wachtwoord beveiligd.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_missingConfigFiles">Kan de configuratiebestanden niet vinden.
+Dit kan mogelijk verholpen worden door het programma opnieuw te installeren.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_programUpToDate">
+Het programma is up-to-date.
+    </ltl:LocItem>
+    
+    
+    
+    <!-- MainWindow -->
+    <ltl:LocItem x:Key="loc_miFile">Toepassing</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miHomePage">Home page</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miOpenFile">Document openen...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miSaveFile">Opslaan...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miPreferences">Voorkeuren</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miExit">Afsluiten</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miTools">Gereedschappen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miExtractPages">Pagina's extraheren...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miDeletePages">Pagina's verwijderen...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miInsertPages">Pagina's invoegen...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miRotatePages">Pagina's draaien...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miMergeDocuments">Documenten samenvoegen...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miBurst">Burst...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miSecurity">Beveiliging...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miCheckForUpdates">Controleer op updates...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miAbout">Over PDF Rider</ltl:LocItem>
+    
+    
+    
+    <ltl:LocItem x:Key="loc_tbkPagesFrom">Van:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tbkPagesTo">Tot:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tbkPagesOf">van</ltl:LocItem>
+    
+    
+    <!-- WndInsertPages -->
+    <ltl:LocItem x:Key="loc_wndInsertPagesTitle">Pagina's invoegen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fileToInsert">In te voegen bestand: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_position">Positie</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionBeginning">Aan het begin</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionEnd">Aan het eind</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionCustom">Na pagina </ltl:LocItem>
+    
+    
+    
+    <!-- WndExtractPages -->
+    <ltl:LocItem x:Key="loc_wndExtractPagesTitle">Pagina's extraheren</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_deletePagesAfterExtraction">Pagina's na extractie verwijderen.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_separateExtraction">Pagina's naar aparte bestanden extraheren.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_separateExtractionStep">Stap:</ltl:LocItem>
+    
+    
+    
+    <!-- WndDeletePages -->
+    <ltl:LocItem x:Key="loc_wndDeletePagesTitle">Pagina's verwijderen</ltl:LocItem>
+    
+    
+    
+    <!-- WndRotatePages -->
+    <ltl:LocItem x:Key="loc_wndRotatePagesTitle">Pagina's draaien</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_interval">Bereik:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalAllPages">Alle pagina's</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalOddPages">Oneven pagina's</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalEvenPages">Even pagina's</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_rotation">Rotatie:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation90CCW">90° tegen de klok in</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation90CW">90° met de klok mee</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation180">180°</ltl:LocItem>
+    
+    
+    
+    <!-- WndMergeDocuments -->
+    <ltl:LocItem x:Key="loc_wndMergeDocumentsTitle">Documenten samenvoegen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fileColumn">Bestand</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_pagesColumn">Pagina's</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_moveUp">Naar boven verplaatsen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_moveDown">Naar beneden verplaatsen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_addFile">Toevoegen...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_removeFile">Verwijderen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rdbAllPages">Alle pagina's</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rdbPagesInterval">Pagina's: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_allPages">Alle pagina's</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_pagesIntervalInfo">Voeg paginanummers en/of -bereiken in, gescheiden door een komma.
+(bijv. 1,3-6,8)</ltl:LocItem>
+    
+    
+    
+    <!-- WndBurst -->
+    <ltl:LocItem x:Key="loc_wndBurstTitle">In losse pagina's opdelen!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFileDescription">De losse pagina-bestanden krijgen het volgende voorvoegsel.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_prefix">Voorvoegsel:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFilesWarning">* LET OP! Bestaande bestanden met dezelfde naam zullen overschreven worden.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFolderBrowserDialogDescription">Selecteer de map waar de losse pagina-bestanden moeten worden opgeslagen.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_showBurstFiles">Losse pagina-bestanden tonen wanneer gereed</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstCompletedDialogInformation">Opdelen compleet</ltl:LocItem>
+    
+    
+    
+    <!-- WndSecurity -->
+    <ltl:LocItem x:Key="loc_wndSecurityTitle">Beveiliging</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_setOpenPassword">Stel wachtwoord in om te openen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_openPassword">Wachtwoord om te openen:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_setEditPassword">Stel wachtwoord in om te wijzigen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_editPassword">Wachtwoord om te wijzigen:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_editPasswordDescription">Selecteer de opties die u wilt toestaan.</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_printing">Afdrukken</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_degradatedPrinting">Afdrukken in lage kwaliteit</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_modifyContents">Inhoud wijzigen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_assembly">Document samenstellen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_copyContents">Inhoud kopiëren</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_screenReaders">Inhoud kopiën voor toegang</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_modifyAnnotations">Opmerkingen wijzigen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fillIn">Invulmodules</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_allFeatures">Alles</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_setPasswords">Wachtwoorden instellen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_removePasswords">Wachtwoorden verwijderen</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_username">Gebruikersnaam:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_password">Wachtwoord:</ltl:LocItem>
+    
+    
+    <!-- WndConfirmPassword -->
+    <ltl:LocItem x:Key="loc_wndConfirmPasswordTitle">Bevestig wachtwoord</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_confirmOpenPasswordMessage">Stel wachtwoord in om te openen</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_confirmEditPasswordMessage">Stel wachtwoord in om te wijzigen</ltl:LocItem>
+    
+    
+    
+    <!-- WndEnterPassword -->
+    <ltl:LocItem x:Key="loc_wndEnterPasswordTitle">Voer wachtwoord in</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_enterPasswordMessage">Voer wachtwoord voor openen of voor wijzigen in. Wanneer u het document opent met het wachtwoord voor wijzigen, zal het wachtwoord voor openen verwijderd worden.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_enterPasswordInformation">ONJUIST WACHTWOORD.
+Bedenk: als het document zowel een wachtwoord voor openen als voor wijzigen heeft, dient u het wachtwoord voor wijzigen in te voeren.</ltl:LocItem>
+    
+    
+    
+    <!-- WndNewVersion -->
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle">Controleer op updates </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersionAvailable">Er kan een nieuwe versie van PDF Rider gedownload worden.
+
+Klik op OK om naar de download-locatie te gaan!
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_currentVersion">Geïnstalleerde versie: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersion">Nieuwe versie: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_checkAtStartup">Bij opstarten op updates controleren</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsTitle">Authenticatie vereist</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsSaveCredentials">Gebruikersnaam en wachtwoord opslaan</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsMessage">Proxy op "{0}" vereist authenticatie. Voer uw gebruikersnaam en wachtwoord in om verbinding met het internet te krijgen.
+    </ltl:LocItem>
+    
+    
+    
+    
+    <!-- WndAbout -->
+    <ltl:LocItem x:Key="loc_wndAboutTitle">Over PDF Rider</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_disclaimer">
+LEGAL
+-------------------------------------------------------------------------------------------
+Copyright 2009-2011 Francesco Tonucci
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+Project page: http://pdfrider.codeplex.com
+
+        
+NOTES
+-------------------------------------------------------------------------------------------
+
+This software uses components from other people/companies, which are not subject to this license (the GNU GPL), but have their own.
+
+Components used:
+   - Images (except the application icon) by David Vignoni - http://www.icon-king.com
+
+   - Application icon by Charlotte Schmidt - http://pattedemouche.free.fr/
+
+   - pdftk by Sid Steward - http://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
+
+   - MVVM Light Toolkit by Laurent Bugnion - http://www.galasoft.ch/mvvm/getstarted/
+
+A copy of the GNU GPL should be included with the source code of the software, as well as the licenses of the other components.
+    </ltl:LocItem>
+    
+</ResourceDictionary>

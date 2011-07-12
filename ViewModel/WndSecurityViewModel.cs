@@ -32,14 +32,16 @@ namespace PDFRider
 {
     public class WndSecurityViewModel : WindowViewModel
     {
-        public WndSecurityViewModel()
-        {
-            Messenger.Default.Register<TMsgShowSecurity>(this, MsgShowSecurity_Handler);
-
-            //this.EditPassword = new SecureString();
-        }
-
         PDFDocument _doc;
+
+        public WndSecurityViewModel(PDFDocument document)
+        {
+            //Get the document...
+            this._doc = document;
+
+            //... and do some initializations.
+            this.IsUnlocked = this._doc.HasInfo;
+        }
 
         #region Properties
 
@@ -292,20 +294,20 @@ namespace PDFRider
 
             if (this.SetOpenPassword == true)
             {
-                GenericMessageAction<TMsgConfirmPassword, bool> message = new GenericMessageAction<TMsgConfirmPassword,bool>(
-                    new TMsgConfirmPassword(this._openPassword, TMsgConfirmPassword.PasswordTypes.Open),
+                GenericMessageAction<MsgShowConfirmPassword, bool> message = new GenericMessageAction<MsgShowConfirmPassword,bool>(
+                    new MsgShowConfirmPassword(this._openPassword, PasswordTypes.Open),
                     x => confirmedOpenPassword = (x == true) ? this._openPassword : null);
 
-                Messenger.Default.Send<GenericMessageAction<TMsgConfirmPassword, bool>, WndSecurity>(message);
+                Messenger.Default.Send(message);
             }
 
             if (this.SetEditPassword == true)
             {
-                GenericMessageAction<TMsgConfirmPassword, bool> message = new GenericMessageAction<TMsgConfirmPassword, bool>(
-                    new TMsgConfirmPassword(this._editPassword, TMsgConfirmPassword.PasswordTypes.Edit),
+                GenericMessageAction<MsgShowConfirmPassword, bool> message = new GenericMessageAction<MsgShowConfirmPassword, bool>(
+                    new MsgShowConfirmPassword(this._editPassword, PasswordTypes.Edit),
                     x => confirmedEditPassword = (x == true) ? this._editPassword : null);
 
-                Messenger.Default.Send<GenericMessageAction<TMsgConfirmPassword, bool>, WndSecurity>(message);
+                Messenger.Default.Send(message);
             }
 
             if ((confirmedOpenPassword != null) || (confirmedEditPassword != null))
@@ -315,17 +317,14 @@ namespace PDFRider
                     System.IO.Path.GetExtension(this._doc.FileName);
                 string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
-                PDFDocument.OperationStates state = this._doc.Encrypt(confirmedOpenPassword, confirmedEditPassword,
+                PDFActions pdfActions = new PDFActions();
+                PDFActions.OperationStates state = pdfActions.Encrypt(this._doc, confirmedOpenPassword, confirmedEditPassword,
                     this.AllowPrinting, this.AllowDegradatedPrinting, this.AllowModifyContents,
                     this.AllowAssembly, this.AllowCopyContents, this.AllowScreenReaders, this.AllowModifyAnnotations,
                     this.AllowFillIn, this.AllowAll, ref tempFile);
 
-                //System.Windows.MessageBox.Show("salvate");
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
+                this.Close(tempFile);
             }
-            //{
-            //    Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
-            //}
         }
 
         private bool CanDoCmdSetPasswords()
@@ -355,11 +354,11 @@ namespace PDFRider
             System.Security.SecureString password = new SecureString();
 
 
-            GenericMessageAction<TMsgEnterPassword, System.Security.SecureString> message = new GenericMessageAction<TMsgEnterPassword, System.Security.SecureString>(
-                new TMsgEnterPassword(this._doc),
+            GenericMessageAction<MsgShowEnterPassword, System.Security.SecureString> message = new GenericMessageAction<MsgShowEnterPassword, System.Security.SecureString>(
+                new MsgShowEnterPassword(this._doc),
                 x => password = x);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgEnterPassword, System.Security.SecureString>, WndSecurity>(message);
+            Messenger.Default.Send(message);
             
 
             if (password != null)
@@ -369,33 +368,15 @@ namespace PDFRider
                     System.IO.Path.GetExtension(this._doc.FileName);
                 string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
-                PDFDocument.OperationStates state = this._doc.Decrypt(password, ref tempFile);
+                PDFActions pdfActions = new PDFActions();
+                PDFActions.OperationStates state = pdfActions.Decrypt(this._doc, password, ref tempFile);
 
-                //System.Windows.MessageBox.Show("salvate");
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
+                this.Close(tempFile);
             }
-            //{
-            //    Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
-            //}
         }
 
 
         #endregion
-
-        #endregion
-
-
-        #region Message handlers
-
-        void MsgShowSecurity_Handler(TMsgShowSecurity msg)
-        {
-            //Get the document...
-            this._doc = msg.Document;
-
-            //... and do some initializations.
-            this.IsUnlocked = this._doc.HasInfo;
-            
-        }
 
         #endregion
 

@@ -20,13 +20,6 @@
  * 
  * Project page: http://pdfrider.codeplex.com
 -->
-    
-<!--
-    *****************************************************
-    Spanish translation by Paola Sirianni
-    *****************************************************
--->
-    
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" xml:space="preserve">
     
     <!-- 
@@ -39,7 +32,7 @@
     -->
     
     
-    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.5">
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6">
 'xml:space="preserve"' activated to easily edit line breaks in string.
 Do not use indentation in text unless you really want to indent it! 
 Pay attention to leading and trailing spaces too.
@@ -78,10 +71,10 @@ El documento actual podrìa resultar no guardado.
 Quieres guardarlo ahora? </ltl:LocItem>
     <ltl:LocItem x:Key="loc_correctErrors">
 Corriges los errores antes de proseguir.</ltl:LocItem>
-    <ltl:LocItem x:Key="loc_tooManyFiles">Lo siento, no puedo dirigir màs de {0} archivios.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tooManyFiles" Deprecated="True" Comment="The limit has been removed">Lo siento, no puedo dirigir màs de {0} archivios.</ltl:LocItem>
     <ltl:LocItem x:Key="loc_invalidDocument">Imposible recuperare informaciones sobre el documento.
 El documento podrià ser protecto de contraseña.</ltl:LocItem>
-    <ltl:LocItem x:Key="loc_missingConfigFiles">Imposible buscar a los archivios de configuración. Una nueva instalación podrìa resolver el problema.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_missingConfigFiles" Deprecated="True">Imposible buscar a los archivios de configuración. Una nueva instalación podrìa resolver el problema.</ltl:LocItem>
     <ltl:LocItem x:Key="loc_programUpToDate">El programa està arreglado.</ltl:LocItem>
     
     
@@ -216,7 +209,7 @@ Recuerde que si el documento es la contraseña para abrir o cerrar la contraseñ
     
     
     <!-- WndNewVersion -->
-    <ltl:LocItem x:Key="loc_wndNewVersionTitle">Nueva versión disponible!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle" Comment="Changed from version 0.5.1">Control actualizaciones</ltl:LocItem>
     <ltl:LocItem x:Key="loc_newVersionAvailable">Una nueva versión de PDF jinete está disponible para su descarga.
 
 Haga clic en Aceptar para ir a la aplicación y descargarla!</ltl:LocItem>

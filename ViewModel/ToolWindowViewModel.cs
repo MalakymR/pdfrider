@@ -37,7 +37,7 @@ namespace PDFRider
     {
         public struct PageInterval
         {
-            public PDFDocument.PageIntervals Id;
+            public PDFActions.PageIntervals Id;
             public string Description { get; set; }
         }
 

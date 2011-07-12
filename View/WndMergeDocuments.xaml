@@ -3,13 +3,15 @@
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
     xmlns:local="clr-namespace:PDFRider"
     xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras"
     Title="{ltl:Translate loc_wndMergeDocumentsTitle}" Height="400" MinHeight="400" Width="Auto" MinWidth="680"
     WindowStartupLocation="CenterScreen" Style="{StaticResource GenericStyle}" 
     Icon="/PDFRider;component/PDFRider.ico" ResizeMode="CanResize" SizeToContent="Width">
     <Window.Resources>
         <local:EnumBooleanConverter x:Key="enumBooleanConverter" />
     </Window.Resources>
-    
+
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="*" />
@@ -22,9 +24,16 @@
             <ColumnDefinition Width="*" MinWidth="200" />
         </Grid.ColumnDefinitions>
         
-        <ListView Grid.Row="0" ItemsSource="{Binding Files}" MinWidth="100" Width="Auto"
+        <ListView Grid.Row="0" ItemsSource="{Binding Files}" MinWidth="100" Width="Auto" AllowDrop="True"
                   SelectedItem="{Binding SelectedFile}"
                   SelectionMode="Single">
+            
+            <i:Interaction.Triggers>
+                <i:EventTrigger EventName="Drop">
+                    <cmd:EventToCommand Command="{Binding CmdDropFiles}" PassEventArgsToCommand="True" />
+                </i:EventTrigger>
+            </i:Interaction.Triggers>
+            
             <ListView.View>
                 <GridView>
                     <GridViewColumn Header="{ltl:Translate loc_fileColumn}" Width="300" >
@@ -57,7 +66,6 @@
                 <Style TargetType="ListViewItem">
                     <Style.Triggers>
                         <DataTrigger Binding="{Binding IsValidInterval}" Value="False">
-                            <!--<Setter Property="Foreground" Value="#80FF0000" />-->
                             <Setter Property="Foreground" Value="DarkRed" />
                         </DataTrigger>
                     </Style.Triggers>
@@ -98,13 +106,23 @@
         
         <TextBlock Grid.Row="2" Style="{StaticResource InformationTextBlock}" Text="{Binding Information}" />
         
-        <WrapPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdMerge}"
-                Style="{StaticResource StandardRectangleDialogButton}" />
-            <Button Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
-                Style="{StaticResource StandardRectangleDialogButton}" />
-        </WrapPanel>
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <ProgressBar Margin="7" IsTabStop="False" Value="{Binding MergeProgress}" Maximum="{Binding MergeProgressMax}"
+                         Visibility="{Binding Path=MergeStarted, Converter={StaticResource BooleanToVisibilityConverter}}" />
 
+            <Button Grid.Column="1" Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdMerge}"
+                Style="{StaticResource StandardRectangleDialogButton}" />
+            <Button Grid.Column="2" Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
+                Style="{StaticResource StandardRectangleDialogButton}" />
+            
+        </Grid>
+        
+        
         <DockPanel Grid.Column="1" Grid.RowSpan="4" Margin="2" MinWidth="100" LastChildFill="True">
             <WrapPanel Orientation="Horizontal" DockPanel.Dock="Top">
                 <RadioButton Margin="2" Content="{ltl:Translate loc_rdbAllPages}" VerticalAlignment="Center"
@@ -128,7 +146,6 @@
                     </local:IntervalTextBox.Style>
                 </local:IntervalTextBox>
             </WrapPanel>
-            <!--<TextBlock Text="{Binding SelectedFile.Uri}" DockPanel.Dock="Bottom"  />-->
             <Border BorderBrush="DarkSlateGray" BorderThickness="2">
                 <WebBrowser local:WebBrowserUtility.BindableSource="{Binding SelectedFile.Uri, Mode=OneWay}" />
             </Border>

@@ -33,9 +33,19 @@ namespace PDFRider
 {
     public class WndConfirmPasswordViewModel : WindowViewModel
     {
-        public WndConfirmPasswordViewModel()
+        public WndConfirmPasswordViewModel(PasswordTypes passwordType, SecureString originalPassword)
         {
-            Messenger.Default.Register<TMsgConfirmPassword>(this, MsgShowConfirmPassword_Handler);
+            switch (passwordType)
+            {
+                case PasswordTypes.Open:
+                    this.ConfirmPasswordMessage = App.Current.FindResource("loc_confirmOpenPasswordMessage").ToString();
+                    break;
+                case PasswordTypes.Edit:
+                    this.ConfirmPasswordMessage = App.Current.FindResource("loc_confirmEditPasswordMessage").ToString();
+                    break;
+            }
+
+            this._originalPassword = originalPassword;
         }
 
         SecureString _originalPassword;
@@ -93,36 +103,15 @@ namespace PDFRider
 
             if (p1 == p2)
             {
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, true));
+                this.Close(true);
             }
 
             p1 = p2 = null;
         }
 
-        //private bool CanDoCmdConfirm
-        //{
-        //    get
-        //    {
-        //        return (this._password == this._originalPassword);
-        //    }
-        //}
-
 
         #endregion
 
-        private void MsgShowConfirmPassword_Handler(TMsgConfirmPassword msg)
-        {
-            switch (msg.PasswordType)
-            {
-                case TMsgConfirmPassword.PasswordTypes.Open:
-                    this.ConfirmPasswordMessage = App.Current.FindResource("loc_confirmOpenPasswordMessage").ToString();
-                    break;
-                case TMsgConfirmPassword.PasswordTypes.Edit:
-                    this.ConfirmPasswordMessage = App.Current.FindResource("loc_confirmEditPasswordMessage").ToString();
-                    break;
-            }
-
-            this._originalPassword = msg.OriginalPassword;
-        }
+        
     }
 }

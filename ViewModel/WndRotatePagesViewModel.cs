@@ -36,16 +36,23 @@ namespace PDFRider
         
         public struct Rotation
         {
-            public PDFDocument.Rotations Id;
+            public PDFActions.Rotations Id;
             public string Description { get; set; }
         }
 
         PDFDocument _doc;
 
-        public WndRotatePagesViewModel()
-            : base()
+        public WndRotatePagesViewModel(PDFDocument document)
         {
-            Messenger.Default.Register<TMsgShowRotatePages>(this, MsgShowRotatePages_Handler);
+            //Get the document...
+            this._doc = document;
+
+            //... and do some initializations.
+            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
+            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
+
+            this.PageStart = this._doc.PageLabelStart.ToString();
+            this.PageEnd = this._doc.PageLabelStart.ToString();
 
             this.PageIntervals = LoadPageIntervals();
             this.SelectedPageInterval = this.PageIntervals[0];
@@ -62,17 +69,17 @@ namespace PDFRider
 
             pageIntervals.Add(new PageInterval()
             {
-                Id = PDFDocument.PageIntervals.All,
+                Id = PDFActions.PageIntervals.All,
                 Description = App.Current.FindResource("loc_intervalAllPages").ToString()
             });
             pageIntervals.Add(new PageInterval()
             {
-                Id = PDFDocument.PageIntervals.Even,
+                Id = PDFActions.PageIntervals.Even,
                 Description = App.Current.FindResource("loc_intervalEvenPages").ToString()
             });
             pageIntervals.Add(new PageInterval()
             {
-                Id = PDFDocument.PageIntervals.Odd,
+                Id = PDFActions.PageIntervals.Odd,
                 Description = App.Current.FindResource("loc_intervalOddPages").ToString()
             });
 
@@ -85,17 +92,17 @@ namespace PDFRider
 
             rotations.Add(new Rotation()
             {
-                Id = PDFDocument.Rotations.Left,
+                Id = PDFActions.Rotations.Left,
                 Description = App.Current.FindResource("loc_rotation90CCW").ToString()
             });
             rotations.Add(new Rotation()
             {
-                Id = PDFDocument.Rotations.Right,
+                Id = PDFActions.Rotations.Right,
                 Description = App.Current.FindResource("loc_rotation90CW").ToString()
             });
             rotations.Add(new Rotation()
             {
-                Id = PDFDocument.Rotations.Down,
+                Id = PDFActions.Rotations.Down,
                 Description = App.Current.FindResource("loc_rotation180").ToString()
             });
 
@@ -158,18 +165,20 @@ namespace PDFRider
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
             int end = Int32.Parse(this.PageEnd) - this._doc.PageLabelStart + 1;
 
-            PDFDocument.PageIntervals interval = this.SelectedPageInterval.Id;
-            PDFDocument.Rotations rotation = this.SelectedRotation.Id;
+            PDFActions pdfActions = new PDFActions();
 
-            PDFDocument.OperationStates state = this._doc.RotatePages(start, end, interval, rotation, ref tempFile);
+            PDFActions.PageIntervals interval = this.SelectedPageInterval.Id;
+            PDFActions.Rotations rotation = this.SelectedRotation.Id;
 
-            if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
+            PDFActions.OperationStates state = pdfActions.RotatePages(this._doc, start, end, interval, rotation, ref tempFile);
+
+            if (state == PDFActions.OperationStates.PageRangeOutOfDocument)
             {
                 this.Information = App.Current.FindResource("loc_msgOutOfDocument").ToString();
             }
             else
             {
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
+                this.Close(tempFile);
             }
         }
 
@@ -185,23 +194,6 @@ namespace PDFRider
 
         #endregion
 
-
-        #region Message handlers
-
-        void MsgShowRotatePages_Handler(TMsgShowRotatePages msg)
-        {
-            //Get the document...
-            this._doc = msg.Document;
-
-            //... and do some initializations.
-            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
-            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
-
-            this.PageStart = this._doc.PageLabelStart.ToString();
-            this.PageEnd = this._doc.PageLabelStart.ToString();
-        }
-
-        #endregion
 
     }
 }

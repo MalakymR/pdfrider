@@ -25,12 +25,73 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {
-    public static class DialogController
+    /// <summary>
+    /// A class to display MessageBoxes and CommonDialog windows.
+    /// </summary>
+    public class DialogController
     {
-        
+        public DialogController()
+        {
+            // Standard message to display a dialog message
+            Messenger.Default.Register<DialogMessage>(this, MsgDialogMessage_Handler);
+
+            Messenger.Default.Register<GenericMessageAction<MsgOpenFile, MsgOpenFile>>(this, this.MsgOpenFile_Handler);
+            Messenger.Default.Register<GenericMessageAction<MsgSaveFile, MsgOpenFile>>(this, this.MsgSaveFile_Handler);
+            Messenger.Default.Register<GenericMessageAction<MsgSelectFolder, string>>(this, this.MsgOpenFolder_Handler);
+        }
+
+        void MsgDialogMessage_Handler(DialogMessage msg)
+        {
+            var result = System.Windows.MessageBox.Show(
+                        msg.Content,
+                        msg.Caption,
+                        msg.Button,
+                        msg.Icon);
+
+            // Send callback
+            msg.ProcessCallback(result);
+        }
+
+        // --- OPEN FILE
+        void MsgOpenFile_Handler(GenericMessageAction<MsgOpenFile, MsgOpenFile> msg)
+        {
+            MsgOpenFile data = msg.Data;
+
+            FileDialogResult r = DialogController.ShowOpenFileDialog(data.Multiselect);
+            data.FileName = r.FileName;
+            data.FileNames = r.FileNames;
+            data.NewFile = r.CommonDialogReturn;
+            msg.Execute(data);
+        }
+
+
+        // --- SAVE FILE
+        void MsgSaveFile_Handler(GenericMessageAction<MsgSaveFile, MsgOpenFile> msg)
+        {
+            FileDialogResult r = DialogController.ShowSaveFileDialog();
+            msg.Execute(new MsgOpenFile(r.FileName, r.CommonDialogReturn));
+        }
+
+
+
+        // --- OPEN FOLDER
+        void MsgOpenFolder_Handler(GenericMessageAction<MsgSelectFolder, string> msg) //MsgSelectFolder msg)
+        {
+            System.Windows.Forms.FolderBrowserDialog fbd = new System.Windows.Forms.FolderBrowserDialog();
+
+            fbd.Description = msg.Data.Description;
+
+            if (fbd.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            {
+                msg.Execute(fbd.SelectedPath);
+            }
+        }
+
+
         /// <summary>
         /// Shows a OpenFileDialog window with standard settings for this application.
         /// </summary>
@@ -47,7 +108,18 @@ namespace PDFRider
             FileDialogResult result = new FileDialogResult();
             result.CommonDialogReturn = (bool)ofd.ShowDialog();
             result.FileName = ofd.FileName;
-            result.FileNames = ofd.FileNames;
+
+            /* In multiselection, OpenFileDialog puts the last selected file at the beginning of the list (array)
+             * of the returned file. I avoid this with the below code. */
+            List<string> fileNames = new List<string>();
+            fileNames.AddRange(ofd.FileNames);
+            if (fileNames.Count > 1)
+            {
+                fileNames.RemoveAt(0);
+                fileNames.Add(ofd.FileNames[0]);
+            }
+
+            result.FileNames = fileNames.ToArray();
 
             return result;
         }

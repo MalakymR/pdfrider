@@ -41,8 +41,6 @@ namespace PDFRider
         public WndRotatePages()
         {
             InitializeComponent();
-
-            this.DataContext = new WndRotatePagesViewModel();
         }
     }
 }

@@ -41,8 +41,6 @@ namespace PDFRider
         public WndConfirmPassword()
         {
             InitializeComponent();
-
-            this.DataContext = new WndConfirmPasswordViewModel();
         }
     }
 }

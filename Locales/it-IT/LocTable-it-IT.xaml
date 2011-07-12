@@ -20,7 +20,6 @@
  * 
  * Project page: http://pdfrider.codeplex.com
 -->
-    
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" xml:space="preserve">
     
     <!-- 
@@ -33,7 +32,7 @@
     -->
     
     
-    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.5">
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6">
 'xml:space="preserve"' activated to easily edit line breaks in string.
 Do not use indentation in text unless you really want to indent it! 
 Pay attention to leading and trailing spaces too.
@@ -76,10 +75,10 @@ Vuoi salvarlo ora?
     <ltl:LocItem x:Key="loc_correctErrors">
 Correggi gli errori prima di continuare.
     </ltl:LocItem>
-    <ltl:LocItem x:Key="loc_tooManyFiles">Mi dispiace, non posso gestire più di {0} files.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tooManyFiles" Deprecated="True" Comment="The limit has been removed">Mi dispiace, non posso gestire più di {0} files.</ltl:LocItem>
     <ltl:LocItem x:Key="loc_invalidDocument">Impossibile recuperare informazioni sul documento.
 Il documento potrebbe non essere un documento PDF valido oppure potrebbe essere protetto da password.</ltl:LocItem>
-    <ltl:LocItem x:Key="loc_missingConfigFiles">Impossibile trovare i file di configurazione.
+    <ltl:LocItem x:Key="loc_missingConfigFiles" Deprecated="True">Impossibile trovare i file di configurazione.
 Una nuova installazione potrebbe risolvere il problema.</ltl:LocItem>
     <ltl:LocItem x:Key="loc_programUpToDate">Il programma è aggiornato.</ltl:LocItem>
     
@@ -216,7 +215,7 @@ Ricorda che se il documento ha sia la password di apertura sia la password di ch
     
     
     <!-- WndNewVersion -->
-    <ltl:LocItem x:Key="loc_wndNewVersionTitle">Nuova versione disponibile!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle" Comment="Changed from version 0.5.1">Controllo aggiornamenti</ltl:LocItem>
     <ltl:LocItem x:Key="loc_newVersionAvailable">Una nuova versione di PDF Rider è disponibile per il download.
 
 Clicca OK per andare al sito dell'applicazione e scaricarla!</ltl:LocItem>

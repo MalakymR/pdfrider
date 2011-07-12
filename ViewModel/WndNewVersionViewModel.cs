@@ -41,9 +41,21 @@ namespace PDFRider
         /// <summary>
         /// Initializes a new instance of the WndNewVersionViewModel class.
         /// </summary>
-        public WndNewVersionViewModel()
+        public WndNewVersionViewModel(Updater.VersionInfo versionInfo)
         {
-            Messenger.Default.Register<TMsgShowNewVersion>(this, MsgShowNewVersion_Handler);
+            this.NewVersionAvailable = versionInfo.NewVersionAvailable;
+            this.CurrentVersion = versionInfo.CurrentVersion;
+
+            if (this.NewVersionAvailable)
+            {
+                this.NewVersion = versionInfo.NewVersion;
+                this.MessageText = App.Current.FindResource("loc_newVersionAvailable").ToString();
+            }
+            else
+            {
+                this.NewVersion = "-";
+                this.MessageText = App.Current.FindResource("loc_programUpToDate").ToString();
+            }
         }
 
 
@@ -51,6 +63,9 @@ namespace PDFRider
 
         public string CurrentVersion { get; private set; }
         public string NewVersion { get; private set; }
+
+        public string MessageText { get; private set; }
+        public bool NewVersionAvailable { get; private set; }
 
         public bool ShowAtStartup
         {
@@ -72,23 +87,26 @@ namespace PDFRider
 
         #region CmdDownload
 
-        RelayCommand _cmdDownload;
-        public ICommand CmdDownload
+        RelayCommand _cmdOK;
+        public ICommand CmdOK
         {
             get
             {
-                if (this._cmdDownload == null)
+                if (this._cmdOK == null)
                 {
-                    this._cmdDownload = new RelayCommand(() => this.DoCmdDownload());
+                    this._cmdOK = new RelayCommand(() => this.DoCmdOK());
                 }
-                return this._cmdDownload;
+                return this._cmdOK;
             }
         }
 
-        private void DoCmdDownload()
+        private void DoCmdOK()
         {
-            System.Diagnostics.Process.Start(
-                new System.Diagnostics.ProcessStartInfo(App.WEBSITE));
+            if (this.NewVersionAvailable)
+            {
+                System.Diagnostics.Process.Start(
+                    new System.Diagnostics.ProcessStartInfo(App.WEBSITE));
+            }
 
             this.CmdClose.Execute(null);
         }
@@ -104,17 +122,6 @@ namespace PDFRider
             base.OnCmdClose();
         }
 
-
-        #endregion
-
-
-        #region Message handlers
-
-        void MsgShowNewVersion_Handler(TMsgShowNewVersion msg)
-        {
-            this.CurrentVersion = msg.Info.CurrentVersion;
-            this.NewVersion = msg.Info.NewVersion;
-        }
 
         #endregion
 

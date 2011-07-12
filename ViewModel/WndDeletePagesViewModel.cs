@@ -41,9 +41,17 @@ namespace PDFRider
         /// <summary>
         /// Initializes a new instance of the WndDeletePagesViewModel class.
         /// </summary>
-        public WndDeletePagesViewModel()
+        public WndDeletePagesViewModel(PDFDocument document)
         {
-            Messenger.Default.Register<TMsgShowDeletePages>(this, MsgShowDeletePages_Handler);
+            //Get the document...
+            this._doc = document;
+
+            //... and do some initializations.
+            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
+            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
+
+            this.PageStart = this._doc.PageLabelStart.ToString();
+            this.PageEnd = this._doc.PageLabelStart.ToString();
         }
 
 
@@ -72,19 +80,21 @@ namespace PDFRider
             int start = Int32.Parse(this.PageStart) - this._doc.PageLabelStart + 1;
             int end = Int32.Parse(this.PageEnd) - this._doc.PageLabelStart + 1;
 
-            PDFDocument.OperationStates state = this._doc.DeletePages(start, end, ref tempFile, false);
+            PDFActions pdfActions = new PDFActions();
 
-            if (state == PDFDocument.OperationStates.PageRangeOutOfDocument)
+            PDFActions.OperationStates state = pdfActions.DeletePages(this._doc, start, end, ref tempFile, false);
+
+            if (state == PDFActions.OperationStates.PageRangeOutOfDocument)
             {
                 this.Information = App.Current.FindResource("loc_msgOutOfDocument").ToString();
             }
-            else if (state == PDFDocument.OperationStates.PageRangeEntireDocument)
+            else if (state == PDFActions.OperationStates.PageRangeEntireDocument)
             {
                 this.Information = App.Current.FindResource("loc_msgEntireDocument").ToString();
             }
             else
             {
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
+                this.Close(tempFile);
             }
         }
 
@@ -101,23 +111,6 @@ namespace PDFRider
 
         #endregion
 
-        #region Message handlers
-
-        void MsgShowDeletePages_Handler(TMsgShowDeletePages msg)
-        {
-            //Get the document...
-            this._doc = msg.Document;
-
-            //... and do some initializations.
-            this.NumberOfPages = (this._doc.NumberOfPages + this._doc.PageLabelStart - 1);
-            this.NumberOfPhysicalPages = this._doc.NumberOfPages;
-
-            this.PageStart = this._doc.PageLabelStart.ToString();
-            this.PageEnd = this._doc.PageLabelStart.ToString();
-
-        }
-
-        #endregion
-
+      
     }
 }

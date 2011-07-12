@@ -37,7 +37,7 @@
     -->
     
     
-    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.5">
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6">
 'xml:space="preserve"' activated to easily edit line breaks in string.
 Do not use indentation in text unless you really want to indent it! 
 Pay attention to leading and trailing spaces too.
@@ -80,12 +80,12 @@ Do you want to save it now?
     <ltl:LocItem x:Key="loc_correctErrors">
 Correct the errors before continuing.
     </ltl:LocItem>
-    <ltl:LocItem x:Key="loc_tooManyFiles">
+    <ltl:LocItem x:Key="loc_tooManyFiles" Deprecated="True" Comment="The limit has been removed">
 Sorry, I can't handle more than {0} files.
     </ltl:LocItem>
     <ltl:LocItem x:Key="loc_invalidDocument">Cannot retrieve informations about the document.
 The document could be an invalid pdf document or password protected.</ltl:LocItem>
-    <ltl:LocItem x:Key="loc_missingConfigFiles">Cannot find the configuration files.
+    <ltl:LocItem x:Key="loc_missingConfigFiles" Deprecated="True">Cannot find the configuration files.
 A new installation could solve the problem.</ltl:LocItem>
     <ltl:LocItem x:Key="loc_programUpToDate">
 The program is up to date.
@@ -224,7 +224,7 @@ Remember that if the document has both open and edit password, you must supply t
     
     
     <!-- WndNewVersion -->
-    <ltl:LocItem x:Key="loc_wndNewVersionTitle">New version available!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle" Comment="Changed from version 0.5.1">Check for updates</ltl:LocItem>
     <ltl:LocItem x:Key="loc_newVersionAvailable">A new verison of PDF Rider is available for download.
 
 Click OK to go to the application web site and download it!

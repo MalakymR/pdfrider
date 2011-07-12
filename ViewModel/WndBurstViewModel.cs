@@ -34,9 +34,14 @@ namespace PDFRider
     {
         PDFDocument _doc;
 
-        public WndBurstViewModel()
+        public WndBurstViewModel(PDFDocument document)
         {
-            Messenger.Default.Register<TMsgShowBurst>(this, MsgShowBurst_Handler);
+            //Get the document...
+            this._doc = document;
+
+            //... and do some initializations.
+            this.WorkingDirectory = System.IO.Path.GetDirectoryName(this._doc.FullName);
+            this.Prefix = "pg_";
         }
 
 
@@ -116,14 +121,14 @@ namespace PDFRider
 
         private void DoCmdBrowse()
         {
-            GenericMessageAction<TMsgSelectFolder, string> message = new GenericMessageAction<TMsgSelectFolder, string>(
-                new TMsgSelectFolder()
+            GenericMessageAction<MsgSelectFolder, string> message = new GenericMessageAction<MsgSelectFolder, string>(
+                new MsgSelectFolder()
                 {
                     Description = App.Current.FindResource("loc_burstFolderBrowserDialogDescription").ToString()
                 }, 
                 x => this.WorkingDirectory = x);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgSelectFolder, string>, MainWindow>(message);
+            Messenger.Default.Send(message);
         }
 
         #endregion
@@ -147,18 +152,33 @@ namespace PDFRider
 
         private void DoCmdBurst()
         {
-            PDFDocument.OperationStates state = this._doc.Burst(this.WorkingDirectory, this.Prefix);
+            PDFActions pdfActions = new PDFActions();
+            pdfActions.Burst(this._doc, this.WorkingDirectory, this.Prefix);
 
-            DialogMessage message = new DialogMessage(
-                App.Current.FindResource("loc_burstCompletedDialogInformation").ToString(), DoCmdBurstCallback)
+            DialogMessage message = new DialogMessage(this,
+                App.Current.FindResource("loc_burstCompletedDialogInformation").ToString(),
+                x =>
+                {
+                    if (this.ShowFiles)
+                    {
+                        System.Diagnostics.Process p = new System.Diagnostics.Process();
+
+                        p.StartInfo.FileName = this.WorkingDirectory;
+
+                        p.Start();
+
+                        p.Close();
+                    }
+
+                    this.Close(this.WorkingDirectory);
+                })
             {
                 Button = System.Windows.MessageBoxButton.OK,
                 Icon = System.Windows.MessageBoxImage.Information,
                 Caption = App.NAME
             };
 
-            Messenger.Default.Send<DialogMessage, WndBurst>(message);
-            //Messenger.Default.Send<TMsgClose>(new TMsgClose(this, this.WorkingDirectory));
+            Messenger.Default.Send(message);
             
         }
 
@@ -173,39 +193,8 @@ namespace PDFRider
 
         #endregion
 
-        #endregion
-
-
-
-        #region Message handlers
-
-        void MsgShowBurst_Handler(TMsgShowBurst msg)
-        {
-            //Get the document...
-            this._doc = msg.Document;
-
-            //... and do some initializations.
-            this.WorkingDirectory = System.IO.Path.GetDirectoryName(this._doc.FullName);
-            this.Prefix = "pg_";
-        }
-
-
-        void DoCmdBurstCallback(System.Windows.MessageBoxResult result)
-        {
-            if (this.ShowFiles)
-            {
-                System.Diagnostics.Process p = new System.Diagnostics.Process();
-
-                p.StartInfo.FileName = this.WorkingDirectory;
-                
-                p.Start();
-                
-                p.Close();
-            }
-
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this, this.WorkingDirectory));
-        }
 
         #endregion
+
     }
 }

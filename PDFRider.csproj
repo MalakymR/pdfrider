@@ -50,6 +50,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>none</DebugType>
@@ -60,6 +61,7 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <CodeAnalysisRuleSet>AllRules.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>x86</PlatformTarget>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>340464A353A8586B3C3F7490C7DA0433F8B406BD</ManifestCertificateThumbprint>
@@ -76,7 +78,7 @@
   <ItemGroup>
     <Reference Include="CryptoDLL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\CryptoDLL.dll</HintPath>
+      <HintPath>.\CryptoDLL.dll</HintPath>
     </Reference>
     <Reference Include="FTControls, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -138,6 +140,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Resource>
+    <Page Include="Locales\de-DE\LocTable-de-DE.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
     <Page Include="Locales\en-US\LocTable-en-US.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -151,6 +157,10 @@
       <SubType>Designer</SubType>
     </Page>
     <Page Include="Locales\it-IT\LocTable-it-IT.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Locales\nl-NL\LocTable-nl-NL.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
@@ -232,7 +242,15 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Helpers\BindToSettingsExtension.cs" />
+    <Compile Include="Model\Enumerations.cs" />
+    <Compile Include="Model\PDFActions.cs" />
     <Compile Include="Model\PDFRiderConfig.cs" />
+    <Compile Include="Properties\UpdaterSettings.Designer.cs">
+      <DependentUpon>UpdaterSettings.settings</DependentUpon>
+      <AutoGen>True</AutoGen>
+      <DesignTimeSharedInput>True</DesignTimeSharedInput>
+    </Compile>
     <Compile Include="Updater\VersionInfo.cs" />
     <Compile Include="Updater\Updater.cs" />
     <Compile Include="Updater\UpdaterConfig.cs" />
@@ -241,6 +259,7 @@
       <DependentUpon>WndCredentials.xaml</DependentUpon>
     </Compile>
     <Compile Include="ViewModel\WndNewVersionViewModel.cs" />
+    <Compile Include="View\ApplicationController.cs" />
     <Compile Include="View\DialogController.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
       <DependentUpon>MainWindow.xaml</DependentUpon>
@@ -321,14 +340,12 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="pdfrider.config">
-      <SubType>Designer</SubType>
-    </None>
-    <None Include="pdfrider.update.config">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="app.config" />
     <None Include="PDFRider_TemporaryKey.pfx" />
+    <None Include="Properties\UpdaterSettings.settings">
+      <Generator>SettingsSingleFileGenerator</Generator>
+      <LastGenOutput>UpdaterSettings.Designer.cs</LastGenOutput>
+    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -363,7 +380,9 @@
     <None Include="pdfrider_version.xml">
       <SubType>Designer</SubType>
     </None>
-    <Resource Include="images\blogo.jpg" />
+    <Content Include="libiconv2.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <Content Include="pdftk.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -406,6 +425,7 @@
   <ItemGroup>
     <WCFMetadata Include="Service References\" />
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

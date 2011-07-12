@@ -34,11 +34,15 @@ namespace PDFRider
     /// </summary>
     public abstract class WindowViewModel : ViewModelBase
     {
+        public WindowViewModel()
+        {
+            this.ReturnValue = null;
+        }
+
         #region Properties
 
-        #region Information
+        public object ReturnValue { get; set; }
 
-        string _information = "";
         public string Information
         {
             get
@@ -51,8 +55,8 @@ namespace PDFRider
                 RaisePropertyChanged("Information");
             }
         }
-
-        #endregion
+        string _information = "";
+        
 
         #endregion
 
@@ -80,12 +84,29 @@ namespace PDFRider
 
         #endregion
 
-        protected virtual void OnCmdClose()
-        {
-            Messenger.Default.Send<TMsgClose>(new TMsgClose(this));
-        }
-
         #endregion
 
+        protected virtual void OnCmdClose()
+        {
+            Messenger.Default.Send<MsgClose>(new MsgClose(this));
+        }
+
+        /// <summary>
+        /// Provides an easy way to close the view model and his relative window
+        /// </summary>
+        protected void Close()
+        {
+            this.OnCmdClose();
+        }
+
+        /// <summary>
+        /// Provides an easy way to close the view model and his relative window
+        /// </summary>
+        /// <param name="return_value">Value returned by the dialog window</param>
+        protected void Close(object returnValue)
+        {
+            this.ReturnValue = returnValue;
+            this.OnCmdClose();
+        }
     }
 }

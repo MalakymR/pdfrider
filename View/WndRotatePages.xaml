@@ -49,9 +49,6 @@
                     </DataTemplate>
                 </ComboBox.ItemTemplate>
             </ComboBox>
-            <!-- Option not supported by pdftk -->
-            <!--<ComboBox Grid.Row="1" Grid.Column="1" Margin="5"
-                      ItemsSource="{Binding PageOrientations}" SelectedItem="{Binding PageOrientation}" />-->
 
             <TextBlock Grid.Row="2" Text="{ltl:Translate loc_rotation}" Margin="5" VerticalAlignment="Center" />
             <ComboBox Grid.Row="2" Grid.Column="1" Margin="5"

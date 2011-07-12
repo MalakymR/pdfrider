@@ -14,7 +14,7 @@
         </Grid.RowDefinitions>
         
         <TextBlock Margin="5" FontSize="13" FontWeight="Bold" 
-                   Text="{ltl:Translate loc_newVersionAvailable}" TextWrapping="Wrap" />
+                   Text="{Binding MessageText}" TextWrapping="Wrap" />
 
         <Grid Grid.Row="1">
             <Grid.RowDefinitions>
@@ -38,7 +38,7 @@
         </CheckBox>
 
         <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdDownload}"
+            <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdOK}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True" />
             <Button Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsCancel="True" />

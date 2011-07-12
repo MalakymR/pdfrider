@@ -56,13 +56,13 @@ namespace PDFRider
         
         public FileToMergeViewModel(string path)
         {
-            this.PdfFileInfo = PDFDocument.GetInfo(path);
+            this.PdfDocument = new PDFDocument(path);
             
             this.FullName = path;
             this.PagesInterval = PagesIntervalEnum.AllPages;
         }
 
-        public PDFFileInfo PdfFileInfo { get; private set; }
+        public PDFDocument PdfDocument { get; private set; }
 
         public string FileName
         {
@@ -81,18 +81,18 @@ namespace PDFRider
         {
             get
             {
-                return this.PdfFileInfo.FullName;
+                return this.PdfDocument.FullName;
             }
             set
             {
-                this.PdfFileInfo.FullName = value;
+                this.PdfDocument = new PDFDocument(value);
                 RaisePropertyChanged("FullName");
 
                 this.FileName = System.IO.Path.GetFileName(value);
 
                 // I use uri instead of path so I can specify parameters like below
                 Uri uri = new Uri(value);
-                this.Uri = uri.AbsoluteUri + "#toolbar=0"; // Maybe this kork only with Adobe Reader ?
+                this.Uri = uri.AbsoluteUri + "#toolbar=0"; // Maybe this works only with Adobe Reader ?
             }
         }
 
@@ -147,10 +147,10 @@ namespace PDFRider
                 // If I had specified a valid interval, I add the page ranges to the underlying PDFFile
                 if (this.IsValidInterval)
                 {
-                    this.PdfFileInfo.PageRanges.Clear();
+                    this.PdfDocument.PageRanges.Clear();
                     if (this._interval != App.Current.FindResource("loc_allPages").ToString())
                     {
-                        this.PdfFileInfo.PageRanges.AddRange(this._interval.Split(','));
+                        this.PdfDocument.PageRanges.AddRange(this._interval.Split(','));
                     }
                 }
 
@@ -177,15 +177,20 @@ namespace PDFRider
                 // Start with true...
                 this.IsValidInterval = true;
 
-                // ...then check if the values are inside the document lenght
+                // ...then check if the values are inside the document length
                 string[] ranges = this._interval.Split(',');
+                string[] subranges;
                 foreach (string range in ranges)
                 {
-                    if ((short.Parse(range.First().ToString()) <= 0) ||
-                        (short.Parse(range.Last().ToString()) > this.PdfFileInfo.NumberOfPages))
+                    subranges = range.Split('-');
+                    foreach (string subrange in subranges)
                     {
-                        this.IsValidInterval = false;
-                        break;
+                        if ((short.Parse(subrange.ToString()) <= 0) ||
+                            (short.Parse(subrange.ToString()) > this.PdfDocument.NumberOfPages))
+                        {
+                            this.IsValidInterval = false;
+                            break;
+                        }
                     }
                 }
                 

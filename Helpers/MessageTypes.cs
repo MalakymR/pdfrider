@@ -26,73 +26,79 @@ using System.Collections.Generic;
 
 namespace PDFRider
 {
-    /* The main purpose of message types is to pass information from view to view model and viceversa,
-     * or between view models.
-     * I would use structs for them, but I have to use classes when I must avoid or override 
-     * the default constructor. */
+    /* ***************************************************************************************
+     * Define here the classes that a sender object can use to pass data to a recipient.
+     * 
+     * The classes are also used to identify the type of the massage sent, so that a recipient
+     * can register itself to handle that specific message.
+     * *************************************************************************************** */
+
+    
+    /// <summary>
+    /// Base class for messages requesting to show a tool window.
+    /// </summary>
+    public abstract class MsgShowToolWindow
+    {
+        public MsgShowToolWindow(PDFDocument document)
+        {
+            this.Document = document;
+        }
+
+        public PDFDocument Document { get; private set; }
+    }
+
 
     /// <summary>
-    /// Type of the message for requesting to close a window.
+    /// Message for requesting to close a window.
     /// </summary>
-    public class TMsgClose
+    public class MsgClose
     {
-        public TMsgClose(WindowViewModel sender_view_model, object dialog_return_value)
+        public MsgClose(WindowViewModel senderViewModel)
         {
-            this.SenderViewModel = sender_view_model;
-            this.DialogReturnValue = dialog_return_value;
+            this.SenderViewModel = senderViewModel;
         }
         
-        public TMsgClose(WindowViewModel sender_view_model)
-            : this(sender_view_model, null)
-        {
-        }
-
         public WindowViewModel SenderViewModel { get; private set; }
-        public bool? DialogResult { get; set; }
-
-        /// <summary>
-        /// A custom value that a dialog window can return in place of the standard "bool? DialogResult"
-        /// </summary>
-        public object DialogReturnValue { get; set; }
-
     }
 
     /// <summary>
-    /// Type of the message for sending information about window closing status.
+    /// Message for sending information about window closing status.
     /// </summary>
-    public struct TMsgClosing
+    public class MsgClosing
     {
-        public bool AskForSave { get; set; }
         public object Data { get; set; }
         public bool Cancel { get; set; }
     }
 
 
     /// <summary>
-    /// Type of the message to open a file.
+    /// Message for requesting to open a file.
     /// </summary>
-    public struct TMsgOpenFile
+    public class MsgOpenFile
     {
-        public TMsgOpenFile(string file_name, bool new_file, bool new_window)
-            : this()
+        public MsgOpenFile(string fileName, bool newFile, bool newWindow)
         {
-            this.FileName = file_name;
-            this.NewFile = new_file;
-            this.NewWindow = new_window;
+            this.FileName = fileName;
+            this.NewFile = newFile;
+            this.NewWindow = newWindow;
 
             this.Multiselect = false;
-
         }
 
-        public TMsgOpenFile(string file_name, bool new_file)
-            : this(file_name, new_file, false)
+        public MsgOpenFile(string fileName, bool newFile)
+            : this(fileName, newFile, false)
         {
-            this.FileName = file_name;
-            this.NewFile = new_file;
+            this.FileName = fileName;
+            this.NewFile = newFile;
         }
 
-        public TMsgOpenFile(string file_name)
-            : this(file_name, false)
+        public MsgOpenFile(string fileName)
+            : this(fileName, false)
+        {
+        }
+
+        public MsgOpenFile()
+            : this(null)
         {
         }
 
@@ -124,59 +130,50 @@ namespace PDFRider
     }
 
 
-    public struct TMsgSaveFile
-    {
-    }
+    /// <summary>
+    /// Message for requesting to save a file
+    /// </summary>
+    public class MsgSaveFile { }
 
 
-    public struct TMsgSelectFolder
+    /// <summary>
+    /// Message for requesting to select a folder
+    /// </summary>
+    public class MsgSelectFolder
     {
         public string Description { get; set; }
     }
 
 
-    /// <summary>
-    /// Base class for messages requesting to show a tool window.
-    /// </summary>
-    public class TMsgShowToolWindow
-    {
-        public TMsgShowToolWindow(PDFDocument document)
-        {
-            this.Document = document;
-        }
-
-        public PDFDocument Document { get; private set; }
-    }
-
 
     /// <summary>
-    /// Type of the message for requesting to extract the pages from the document.
+    /// Message for requesting to extract the pages from the document.
     /// </summary>
-    public class TMsgShowExtractPages : TMsgShowToolWindow
+    public class MsgShowExtractPages : MsgShowToolWindow
     {
-        public TMsgShowExtractPages(PDFDocument document)
+        public MsgShowExtractPages(PDFDocument document)
             : base(document)
         { }
     }
 
 
     /// <summary>
-    /// Type of the message for requesting to delete pages from the document.
+    /// Message for requesting to delete pages from the document.
     /// </summary>
-    public class TMsgShowDeletePages : TMsgShowToolWindow
+    public class MsgShowDeletePages : MsgShowToolWindow
     {
-        public TMsgShowDeletePages(PDFDocument document)
+        public MsgShowDeletePages(PDFDocument document)
             : base(document)
         { }
     }
 
 
     /// <summary>
-    /// Type of the message for requesting to insert pages into the document.
+    /// Message for requesting to insert pages into the document.
     /// </summary>
-    public class TMsgShowInsertPages : TMsgShowToolWindow
+    public class MsgShowInsertPages : MsgShowToolWindow
     {
-        public TMsgShowInsertPages(PDFDocument document)
+        public MsgShowInsertPages(PDFDocument document)
             : base(document)
         { }
 
@@ -185,11 +182,11 @@ namespace PDFRider
 
 
     /// <summary>
-    /// Type of the message for requesting to rotate the pages of the document.
+    /// Message for requesting to rotate the pages of the document.
     /// </summary>
-    public class TMsgShowRotatePages : TMsgShowToolWindow
+    public class MsgShowRotatePages : MsgShowToolWindow
     {
-        public TMsgShowRotatePages(PDFDocument document)
+        public MsgShowRotatePages(PDFDocument document)
             : base(document)
         { }
 
@@ -197,16 +194,16 @@ namespace PDFRider
 
 
     /// <summary>
-    /// Type of the message for requesting to merge documents.
+    /// Message for requesting to merge documents.
     /// </summary>
-    public class TMsgShowMergeDocuments
+    public class MsgShowMergeDocuments
     {
-        public TMsgShowMergeDocuments(List<string> filesToMerge)
+        public MsgShowMergeDocuments(List<string> filesToMerge)
         {
             this.FilesToMerge = filesToMerge;
         }
 
-        public TMsgShowMergeDocuments()
+        public MsgShowMergeDocuments()
             : this(new List<string>())
         {
         }
@@ -216,11 +213,22 @@ namespace PDFRider
 
 
     /// <summary>
-    /// Type of the message for requesting to burst the document.
+    /// Message for requesting to burst the document.
     /// </summary>
-    public class TMsgShowBurst : TMsgShowToolWindow
+    public class MsgShowBurst : MsgShowToolWindow
     {
-        public TMsgShowBurst(PDFDocument document)
+        public MsgShowBurst(PDFDocument document)
+            : base(document)
+        { }
+
+    }
+
+    /// <summary>
+    /// Message for requesting to open the security window.
+    /// </summary>
+    public class MsgShowSecurity : MsgShowToolWindow
+    {
+        public MsgShowSecurity(PDFDocument document)
             : base(document)
         { }
 
@@ -228,30 +236,11 @@ namespace PDFRider
 
 
     /// <summary>
-    /// Type of the message for requesting to open the security window.
+    /// Message for requesting to confirm a password.
     /// </summary>
-    public class TMsgShowSecurity : TMsgShowToolWindow
+    public class MsgShowConfirmPassword
     {
-        public TMsgShowSecurity(PDFDocument document)
-            : base(document)
-        { }
-
-    }
-
-
-    /// <summary>
-    /// Type of the message for requesting to confirm a password.
-    /// </summary>
-    public struct TMsgConfirmPassword
-    {
-        public enum PasswordTypes
-        {
-            Open,
-            Edit
-        }
-
-        public TMsgConfirmPassword(System.Security.SecureString password, PasswordTypes type)
-            :this()
+        public MsgShowConfirmPassword(System.Security.SecureString password, PasswordTypes type)
         {
             this.OriginalPassword = password;
             this.PasswordType = type;
@@ -263,12 +252,11 @@ namespace PDFRider
 
 
     /// <summary>
-    /// Type of the message for requesting to enter a password.
+    /// Message for requesting to enter a password.
     /// </summary>
-    public struct TMsgEnterPassword
+    public class MsgShowEnterPassword
     {
-        public TMsgEnterPassword(PDFDocument document)
-            :this()
+        public MsgShowEnterPassword(PDFDocument document)
         {
             this.Document = document;
         }
@@ -277,12 +265,11 @@ namespace PDFRider
     }
 
     /// <summary>
-    /// Type of the message for requesting to show the "new version available" window.
+    /// Message for requesting to show the "new version available" window.
     /// </summary>
-    public struct TMsgShowNewVersion
+    public class MsgShowNewVersion
     {
-        public TMsgShowNewVersion(Updater.VersionInfo info)
-            : this()
+        public MsgShowNewVersion(Updater.VersionInfo info)
         {
             this.Info = info;
         }
@@ -291,9 +278,9 @@ namespace PDFRider
     }
 
     /// <summary>
-    /// Type of the message for requesting to show the information window.
+    /// Message for requesting to show the information window.
     /// </summary>
-    public struct TMsgShowAbout
+    public class MsgShowAbout
     {
     }
 }

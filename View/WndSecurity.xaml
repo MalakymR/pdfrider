@@ -41,18 +41,6 @@
                             </Style>
                         </PasswordBox.Style>
                     </PasswordBox>
-                    <!--<TextBox Margin="5" Text="{Binding OpenPassword, UpdateSourceTrigger=PropertyChanged}"
-                             IsEnabled="{Binding ElementName=chkOpenPassword, Path=IsChecked}">
-                        <TextBox.Style>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="True">
-                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>-->
                 </DockPanel>
                 
                 
@@ -88,18 +76,6 @@
                             </Style>
                         </PasswordBox.Style>
                     </PasswordBox>
-                    <!--<TextBox Margin="5" Text="{Binding EditPassword, UpdateSourceTrigger=PropertyChanged}"
-                             IsEnabled="{Binding ElementName=chkEditPassword, Path=IsChecked}">
-                        <TextBox.Style>
-                            <Style TargetType="{x:Type TextBox}">
-                                <Style.Triggers>
-                                    <Trigger Property="IsEnabled" Value="True">
-                                        <Setter Property="local:FocusExtension.IsFocused" Value="True" />
-                                    </Trigger>
-                                </Style.Triggers>
-                            </Style>
-                        </TextBox.Style>
-                    </TextBox>-->
                 </DockPanel>
 
                 <DockPanel Grid.Row="1"  Margin="5" LastChildFill="True">
@@ -116,7 +92,6 @@
                                   Name="chkModifyContents" />
                             <CheckBox Content="{ltl:Translate loc_assembly}" Margin="5"
                                   IsChecked="{Binding AllowAssembly}">
-                                <!-- Vedere se conviene di più gestire questa cosa da codice -->
                                 <CheckBox.Style>
                                     <Style TargetType="CheckBox">
                                         <Style.Triggers>
@@ -146,12 +121,6 @@
         <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
             <Button Content="{ltl:Translate loc_setPasswords}" Command="{Binding CmdSetPasswords}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True">
-                <!--<Button.CommandParameter>
-                    <MultiBinding Converter="{StaticResource BindingArrayConverter}">
-                        <Binding ElementName="tbxOpenPassword" />
-                        <Binding ElementName="tbxEditPassword" />
-                    </MultiBinding>
-                </Button.CommandParameter>-->
             </Button>
             <Button  Margin="5" Content="{ltl:Translate loc_removePasswords}" 
                      Command="{Binding CmdRemovePasswords}" />

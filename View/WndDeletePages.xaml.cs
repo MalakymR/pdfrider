@@ -33,8 +33,6 @@ namespace PDFRider
         public WndDeletePages()
         {
             InitializeComponent();
-
-            this.DataContext = new WndDeletePagesViewModel();
         }
         
     }

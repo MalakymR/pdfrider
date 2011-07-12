@@ -1,5 +1,5 @@
 ﻿/*
- *    Copyright 2009-2011 Francesco Tonucci
+ *    Copyright 2011 Francesco Tonucci
  * 
  * This file is part of PDFRider.
  * 
@@ -25,25 +25,30 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
-using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Shapes;
 
 namespace PDFRider
 {
     /// <summary>
-    /// Interaction logic for WndNewVersion.xaml
+    /// Provides an easy way to access user defined settings from xaml
     /// </summary>
-    public partial class WndNewVersion : BaseWindow
+    public class BindToSettingsExtension : Binding
     {
-        public WndNewVersion()
+        public BindToSettingsExtension()
         {
-            InitializeComponent();
+            Initialize();
+        }
+
+        public BindToSettingsExtension(string path)
+            : base(path)
+        {
+            Initialize();
+        }
+
+        private void Initialize()
+        {
+            this.Source = Properties.Settings.Default;
+            this.Mode = BindingMode.TwoWay;
         }
     }
 }

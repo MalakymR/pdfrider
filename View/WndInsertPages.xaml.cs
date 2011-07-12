@@ -33,8 +33,6 @@ namespace PDFRider
         public WndInsertPages()
         {
             InitializeComponent();
-
-            this.DataContext = new WndInsertPagesViewModel();
         }
 
     }

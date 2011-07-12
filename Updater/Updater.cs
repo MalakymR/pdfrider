@@ -39,11 +39,6 @@ namespace PDFRider.Updater
     /// </summary>
     public class Updater
     {
-        internal const string CONFIG_FILE_NAME = "pdfrider.update.config";
-        internal static string CONFIG_FILE = Path.Combine(
-            Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), App.NAME),
-            CONFIG_FILE_NAME);
-
         internal const string CREDENTIAL_FILE_NAME = "pdfrider.update.auth";
         internal static string CREDENTIAL_FILE = Path.Combine(
             Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), App.NAME),
@@ -61,13 +56,9 @@ namespace PDFRider.Updater
             try
             {
                 config = new UpdaterConfig();
-                string doc_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CONFIG_FILE);
-
-                XmlDocument doc = new XmlDocument();
-                doc.Load(doc_path);
-
-                config.CheckAtStartup = bool.Parse(doc.DocumentElement.SelectSingleNode("./CheckAtStartup").InnerXml);
-                config.RemoteUrl = doc.DocumentElement.SelectSingleNode("./RemoteUrl").InnerXml;
+                
+                config.CheckAtStartup = Properties.UpdaterSettings.Default.CheckAtStartup;
+                config.RemoteUrl = Properties.UpdaterSettings.Default.RemoteUrl;
             }
             catch
             {
@@ -83,15 +74,8 @@ namespace PDFRider.Updater
         /// <param name="config">UpdaterConfig object containing the configurations to save</param>
         public static void SaveConfig(UpdaterConfig config)
         {
-            string doc_path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, CONFIG_FILE);
-
-            XmlDocument doc = new XmlDocument();
-            doc.Load(doc_path);
-
-            doc.DocumentElement.SelectSingleNode("./CheckAtStartup").InnerXml = config.CheckAtStartup.ToString();
-            doc.DocumentElement.SelectSingleNode("./RemoteUrl").InnerXml = config.RemoteUrl;
-
-            doc.Save(doc_path);
+            Properties.UpdaterSettings.Default.CheckAtStartup = config.CheckAtStartup;
+            Properties.UpdaterSettings.Default.Save();
         }
 
 
@@ -124,7 +108,7 @@ namespace PDFRider.Updater
 
                     string username = credentialsDoc.DocumentElement.SelectSingleNode("./username").InnerXml;
                     string password = credentialsDoc.DocumentElement.SelectSingleNode("./password").InnerXml;
-
+                    
                     wp.Credentials = new NetworkCredential(username, CryptoDLL.FTCrypt.Decrypt(password));
 
                     remoteDoc = GetRemoteData(config.RemoteUrl, wp);
@@ -135,10 +119,11 @@ namespace PDFRider.Updater
                 while (remoteDoc == null)
                 {
                     WndCredentials wndCredentials = new WndCredentials();
-                    Messenger.Default.Send<TMsgAskForCredentials, WndCredentialsViewModel>(new TMsgAskForCredentials(wp));
+                    WndCredentialsViewModel wndCredentialsViewModel = new WndCredentialsViewModel(wp.Address);
 
+                    wndCredentials.DataContext = wndCredentialsViewModel;
                     wndCredentials.ShowDialog();
-                    wp.Credentials = wndCredentials.ReturnValue as NetworkCredential;
+                    wp.Credentials = wndCredentialsViewModel.ReturnValue as NetworkCredential;
 
                     if (wp.Credentials == null) break;
 
@@ -196,7 +181,7 @@ namespace PDFRider.Updater
         }
 
         /// <summary>
-        /// Compares two versions in the format Major.Minor.Revision.Build.
+        /// Compares two versions in the format Major.Minor.Build.Revision
         /// You can also supply shorter versions. In this case the version are evaluated from left to right
         /// (e.g. v1.5 > v1.4.3)
         /// </summary>
@@ -260,21 +245,5 @@ namespace PDFRider.Updater
 
             return ret;
         }
-
-    }
-
-
-    /// <summary>
-    /// Type of the message for requesting to insert proxy credentials.
-    /// </summary>
-    internal struct TMsgAskForCredentials
-    {
-        public TMsgAskForCredentials(WebProxy proxy)
-            : this()
-        {
-            this.Proxy = proxy;
-        }
-
-        public WebProxy Proxy { get; set; }
     }
 }

@@ -43,9 +43,6 @@ namespace PDFRider
         
         string _homeUri = "";
 
-        // Stores application settings
-        PDFRiderConfig _config = null;
-
         
         public MainWindowViewModel()
             : base()
@@ -135,7 +132,6 @@ namespace PDFRider
                     else
                     {
                         this.Information = App.Current.FindResource("loc_invalidDocument").ToString(); 
-                        // "Impossibile recuperare informazioni sul documento.\nIl documento potrebbe non essere valido oppure protetto da password.";
                         this.ShowInfoBar = true;
                     }
                 }
@@ -222,16 +218,14 @@ namespace PDFRider
         }
         private void DoCmdOpenDocument()
         {
-            // TODO: Ask for saving before open a new document
+            GenericMessageAction<MsgOpenFile, MsgOpenFile> message = new GenericMessageAction<MsgOpenFile, MsgOpenFile>(
+                    new MsgOpenFile()
+                    {
+                        NewFile = true
+                    },
+                    this.MsgOpenFile_Handler);
 
-            GenericMessageAction<TMsgOpenFile, TMsgOpenFile> message = new GenericMessageAction<TMsgOpenFile, TMsgOpenFile>(
-                new TMsgOpenFile()
-                {
-                    NewFile = true
-                }, 
-                this.MsgLoadFile_Handler);
-
-            Messenger.Default.Send<GenericMessageAction<TMsgOpenFile, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
         }
 
         #endregion
@@ -254,19 +248,19 @@ namespace PDFRider
         private void DoCmdSaveDocument()
         {
 
-            GenericMessageAction<TMsgSaveFile, TMsgOpenFile> message = new GenericMessageAction<TMsgSaveFile, TMsgOpenFile>(
-                new TMsgSaveFile(), x =>
+            GenericMessageAction<MsgSaveFile, MsgOpenFile> message = new GenericMessageAction<MsgSaveFile, MsgOpenFile>(
+                new MsgSaveFile(), x =>
                 {
                     if (x.NewFile)
                     {
                         // Always overwrite. Don't check here if the file already exists!
                         System.IO.File.Copy(this.Uri, x.FileName, true);
 
-                        this.MsgLoadFile_Handler(x);
+                        this.MsgOpenFile_Handler(x);
                     }
                 });
 
-            Messenger.Default.Send<GenericMessageAction<TMsgSaveFile, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
         }
         private bool CanDoCmdSaveDocument
         {
@@ -295,25 +289,46 @@ namespace PDFRider
         }
         private void DoCmdClosing(System.ComponentModel.CancelEventArgs e)
         {
-            GenericMessageAction<TMsgClosing, TMsgClosing> message = new GenericMessageAction<TMsgClosing, TMsgClosing>(
-                new TMsgClosing()
-                {
-                    AskForSave = this.IsDocumentChanged
-                }, 
-                x =>
-                    {
-                        // x.Data contains the file name chosen to save the file
-                        // or null if no name was provided.
-                        if ((!x.Cancel)&&(x.Data != null))
-                        {
-                            // Always overwrite. Don't check here if the file already exists!
-                            System.IO.File.Copy(this.Uri, (string)x.Data, true);
-                        }
-                        e.Cancel = x.Cancel;
-                    }
-            );
+            // If the document is not changed just close the window
+            if (!this.IsDocumentChanged) return;
 
-            Messenger.Default.Send<GenericMessageAction<TMsgClosing, TMsgClosing>, MainWindow>(message);
+            string msg = App.Current.FindResource("loc_msgSaveChanges").ToString();
+
+            DialogMessage dialogMessage = new DialogMessage(msg,
+                x =>
+                {
+                    if (x == System.Windows.MessageBoxResult.Cancel)
+                    {
+                        e.Cancel = true;
+                    }
+                    else if (x == System.Windows.MessageBoxResult.Yes)
+                    {
+                        GenericMessageAction<MsgSaveFile, MsgOpenFile> message =
+                            new GenericMessageAction<MsgSaveFile, MsgOpenFile>(new MsgSaveFile(),
+                                y =>
+                                {
+                                    if (y.FileName != "")
+                                    {
+                                        // Always overwrite. Don't check here if the file already exists!
+                                        System.IO.File.Copy(this.Uri, (string)y.FileName, true);
+                                    }
+                                    else
+                                    {
+                                        e.Cancel = true;
+                                    }
+                                });
+                        
+                        Messenger.Default.Send(message);
+                    }
+
+                    Properties.Settings.Default.Save();
+                })
+                {
+                    Button = System.Windows.MessageBoxButton.YesNoCancel,
+                    Icon = System.Windows.MessageBoxImage.Question
+                };
+
+            Messenger.Default.Send(dialogMessage);
         }
 
         #endregion
@@ -335,10 +350,10 @@ namespace PDFRider
         }
         private void DoCmdExtractPages()
         {
-            GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile>(
-                new TMsgShowExtractPages(this._doc), this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgShowExtractPages, MsgOpenFile> message = new GenericMessageAction<MsgShowExtractPages, MsgOpenFile>(
+                new MsgShowExtractPages(this._doc), this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowExtractPages, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
         }
         private bool CanDoCmdExtractPages
         {
@@ -367,10 +382,10 @@ namespace PDFRider
         }
         private void DoCmdDeletePages()
         {
-            GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile>(
-                new TMsgShowDeletePages(this._doc), this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgShowDeletePages, MsgOpenFile> message = new GenericMessageAction<MsgShowDeletePages, MsgOpenFile>(
+                new MsgShowDeletePages(this._doc), this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowDeletePages, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
         }
         private bool CanDoCmdDeletePages
         {
@@ -399,10 +414,23 @@ namespace PDFRider
         }
         private void DoCmdInsertPages()
         {
-            GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile>(
-                new TMsgShowInsertPages(this._doc), this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgOpenFile, MsgOpenFile> openfile_message = new GenericMessageAction<MsgOpenFile, MsgOpenFile>(
+                new MsgOpenFile(), x =>
+            {
+                if (x.FileName != "")
+                {
+                    GenericMessageAction<MsgShowInsertPages, MsgOpenFile> message = new GenericMessageAction<MsgShowInsertPages, MsgOpenFile>(
+                    new MsgShowInsertPages(this._doc)
+                    {
+                        FileToMerge = x.FileName
+                    }, 
+                    this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowInsertPages, TMsgOpenFile>, MainWindow>(message);
+                    Messenger.Default.Send(message);
+                }
+            });
+
+            Messenger.Default.Send(openfile_message);
 
         }
         private bool CanDoCmdInsertPages
@@ -432,10 +460,10 @@ namespace PDFRider
         }
         private void DoCmdRotatePages()
         {
-            GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile> message = new GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile>(
-                new TMsgShowRotatePages(this._doc), this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgShowRotatePages, MsgOpenFile> message = new GenericMessageAction<MsgShowRotatePages, MsgOpenFile>(
+                new MsgShowRotatePages(this._doc), this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowRotatePages, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
 
         }
         private bool CanDoCmdRotatePages
@@ -464,17 +492,17 @@ namespace PDFRider
         }
         private void DoCmdMergeDocuments()
         {
-            TMsgShowMergeDocuments msg = new TMsgShowMergeDocuments();
+            MsgShowMergeDocuments msg = new MsgShowMergeDocuments();
 
             if ((this._doc != null) && (this._doc.HasInfo))
             {
                 msg.FilesToMerge.Add(this._doc.FullName);
             }
 
-            GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile> message = new GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>(
-                msg, this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile> message = new GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile>(
+                msg, this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
 
         }
         
@@ -498,7 +526,7 @@ namespace PDFRider
         }
         private void DoCmdBurst()
         {
-            Messenger.Default.Send<TMsgShowBurst>(new TMsgShowBurst(this._doc));
+            Messenger.Default.Send(new MsgShowBurst(this._doc));
         }
         private bool CanDoCmdBurst
         {
@@ -527,10 +555,10 @@ namespace PDFRider
         }
         private void DoCmdSecurity()
         {
-            GenericMessageAction<TMsgShowSecurity, TMsgOpenFile> message = new GenericMessageAction<TMsgShowSecurity, TMsgOpenFile>(
-                new TMsgShowSecurity(this._doc), this.MsgLoadFile_Handler);
+            GenericMessageAction<MsgShowSecurity, MsgOpenFile> message = new GenericMessageAction<MsgShowSecurity, MsgOpenFile>(
+                new MsgShowSecurity(this._doc), this.MsgOpenFile_Handler);
 
-            Messenger.Default.Send<GenericMessageAction<TMsgShowSecurity, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send(message);
 
         }
         private bool CanDoCmdSecurity
@@ -563,21 +591,7 @@ namespace PDFRider
 
             if (info != null)
             {
-                if (info.NewVersionAvailable == true)
-                {
-                    Messenger.Default.Send<TMsgShowNewVersion>(new TMsgShowNewVersion(info));
-                }
-                else
-                {
-                    DialogMessage message = new DialogMessage(App.Current.FindResource("loc_programUpToDate").ToString(), null)
-                    {
-                        Button = System.Windows.MessageBoxButton.OK,
-                        Icon = System.Windows.MessageBoxImage.Information,
-                        Caption = App.NAME
-                    };
-
-                    Messenger.Default.Send<DialogMessage, MainWindow>(message);
-                }
+                Messenger.Default.Send(new MsgShowNewVersion(info));
             }
             
         }
@@ -600,7 +614,7 @@ namespace PDFRider
         }
         private void DoCmdAbout()
         {
-            Messenger.Default.Send<TMsgShowAbout>(new TMsgShowAbout());
+            Messenger.Default.Send(new MsgShowAbout());
         }
 
         #endregion
@@ -626,24 +640,53 @@ namespace PDFRider
 
         #endregion
 
-        #region CmdOpenAd
+        #region CmdDropFiles
 
-        RelayCommand _cmdOpenAd;
-        public ICommand CmdOpenAd
+        RelayCommand<System.Windows.DragEventArgs> _cmdDropFiles;
+        public ICommand CmdDropFiles
         {
             get
             {
-                if (this._cmdOpenAd == null)
+                if (this._cmdDropFiles == null)
                 {
-                    this._cmdOpenAd = new RelayCommand(() => this.DoCmdOpenAd());
+                    this._cmdDropFiles = new RelayCommand<System.Windows.DragEventArgs>((x) => this.DoCmdDropFiles(x));
                 }
-                return this._cmdOpenAd;
+                return this._cmdDropFiles;
             }
         }
-        private void DoCmdOpenAd()
+        private void DoCmdDropFiles(System.Windows.DragEventArgs e)
         {
-            System.Diagnostics.Process.Start(
-                new System.Diagnostics.ProcessStartInfo(App.AD_LINK));
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] droppedFilePaths = e.Data.GetData(System.Windows.DataFormats.FileDrop, true) as string[];
+
+                this.Files.Clear();
+
+                // Add only valid PDF files
+                foreach (string path in droppedFilePaths)
+                {
+                    if (PDFDocument.PDFCheck(path))
+                    {
+                        this.Files.Add(path);
+                    }
+                }
+
+                // Only one file: open it in the main window
+                if (this.Files.Count == 1)
+                {
+                    this.MsgOpenFile_Handler(new MsgOpenFile(this.Files[0], true, false));
+                }
+
+                // Shows the window for merging documents, if more than one file is dropped to the window
+                if (this.Files.Count > 1)
+                {
+                    GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile> message = new GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile>(
+                    new MsgShowMergeDocuments(this.Files), this.MsgOpenFile_Handler);
+
+                    Messenger.Default.Send(message);
+                }
+            }
+
         }
 
         #endregion
@@ -653,7 +696,7 @@ namespace PDFRider
 
         #region Message handlers
 
-        void MsgLoadFile_Handler(TMsgOpenFile msg)
+        void MsgOpenFile_Handler(MsgOpenFile msg)
         {
             if ((msg.FileName != null) && (msg.FileName != "") &&
                 (System.IO.File.Exists(msg.FileName)))
@@ -691,21 +734,6 @@ namespace PDFRider
 
         void StartupInitializations()
         {
-            if ((!System.IO.File.Exists(PDFRiderConfig.CONFIG_FILE)) ||
-                (!System.IO.File.Exists(Updater.Updater.CONFIG_FILE)))
-            {
-                DialogMessage message = new DialogMessage(App.Current.FindResource("loc_missingConfigFiles").ToString(), null)
-                    {
-                        Button = System.Windows.MessageBoxButton.OK,
-                        Icon = System.Windows.MessageBoxImage.Error,
-                        Caption = App.NAME
-                    };
-
-                Messenger.Default.Send<DialogMessage, MainWindow>(message);
-
-                return;
-            }
-
             // Handles command line arguments
             string[] args = Environment.GetCommandLineArgs();
 
@@ -746,18 +774,6 @@ namespace PDFRider
                 }
             }
 
-            // Load application configuration
-            try
-            {
-                this._config = new PDFRiderConfig();
-            }
-            catch { }
-
-            if (this._config != null)
-            {
-                // Show Ad?
-                this.ShowAd = this._config.ShowAd;
-            }
             
             // Operation to do only if the temporary directory is not in use or
             // if there isn't another PDF Rider process running.
@@ -780,7 +796,7 @@ namespace PDFRider
                     {
                         if (info.NewVersionAvailable == true)
                         {
-                            Messenger.Default.Send<TMsgShowNewVersion>(new TMsgShowNewVersion(info));
+                            Messenger.Default.Send(new MsgShowNewVersion(info));
                         }
                     }
                 }
@@ -791,10 +807,10 @@ namespace PDFRider
             // Shows the window for merging documents, if more than one file is passed in Arguments list
             if (this.Files.Count > 1)
             {
-                GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile> message = new GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>(
-                new TMsgShowMergeDocuments(this.Files), this.MsgLoadFile_Handler);
+                GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile> message = new GenericMessageAction<MsgShowMergeDocuments, MsgOpenFile>(
+                new MsgShowMergeDocuments(this.Files), this.MsgOpenFile_Handler);
 
-                Messenger.Default.Send<GenericMessageAction<TMsgShowMergeDocuments, TMsgOpenFile>, MainWindow>(message);
+                Messenger.Default.Send(message);
             }
         }
 

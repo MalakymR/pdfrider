@@ -64,12 +64,18 @@
 
         <TextBlock Grid.Row="4" Style="{StaticResource InformationTextBlock}" Text="{Binding Information}" TextWrapping="Wrap" />
         
-        <StackPanel Grid.Row="5" Orientation="Horizontal" HorizontalAlignment="Right" Margin="5">
-            <Button Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdBurst}"
+        <Grid Grid.Row="5" Margin="5">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Button Grid.Column="2" Content="{ltl:Translate loc_btnOK}" Command="{Binding CmdBurst}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsDefault="True" />
-            <Button Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
+            <Button Grid.Column="3" Content="{ltl:Translate loc_btnCancel}" Command="{Binding CmdClose}"
                     Style="{StaticResource StandardRectangleDialogButton}" IsCancel="True"/>
-        </StackPanel>
+        </Grid>
     </Grid>
 </local:BaseWindow>
 

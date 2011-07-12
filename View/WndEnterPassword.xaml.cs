@@ -41,8 +41,6 @@ namespace PDFRider
         public WndEnterPassword()
         {
             InitializeComponent();
-
-            this.DataContext = new WndEnterPasswordViewModel();
         }
     }
 }

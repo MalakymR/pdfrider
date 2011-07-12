@@ -6,15 +6,18 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:cmd="clr-namespace:GalaSoft.MvvmLight.Command;assembly=GalaSoft.MvvmLight.Extras"
     xmlns:ftc="clr-namespace:FTControls;assembly=FTControls"
-    Title="{Binding WindowTitle}" Height="430" Width="686"
+    Title="{Binding WindowTitle}" Icon="/PDFRider;component/PdfRider.ico"
+    Height="{local:BindToSettings WindowHeight}" Width="{local:BindToSettings WindowWidth}" WindowState="{local:BindToSettings WindowState}"
+    MinHeight="300" MinWidth="400"
     Style="{StaticResource GenericStyle}" ResizeMode="CanResizeWithGrip" WindowStartupLocation="CenterScreen"
-    Icon="/PDFRider;component/PDFRider.ico">
+    AllowDrop="True" MouseMove="BaseWindow_MouseMove" DragEnter="BaseWindow_DragEnter">
     
     <i:Interaction.Triggers>
         <i:EventTrigger EventName="Closing">
-            <cmd:EventToCommand
-                Command="{Binding CmdClosing}"
-                PassEventArgsToCommand="True" />
+            <cmd:EventToCommand Command="{Binding CmdClosing}" PassEventArgsToCommand="True" />
+        </i:EventTrigger>
+        <i:EventTrigger EventName="Drop">
+            <cmd:EventToCommand Command="{Binding CmdDropFiles}" PassEventArgsToCommand="True" />
         </i:EventTrigger>
     </i:Interaction.Triggers>
     
@@ -32,8 +35,9 @@
                     <ColumnDefinition Width="*" />
                     <ColumnDefinition Width="Auto" />
                 </Grid.ColumnDefinitions>
+
                 <Menu Style="{StaticResource MenuStyle}">
-                    <MenuItem Header="{ltl:Translate loc_miFile}" Style="{StaticResource MenuItemStyle}">
+                    <MenuItem Header="{ltl:Translate loc_miFile}" Style="{StaticResource MainMenuItemStyle}">
                         <MenuItem Header="{ltl:Translate loc_miHomePage}" 
                                   Command="{Binding CmdHome}">
                             <MenuItem.Icon>
@@ -64,7 +68,7 @@
                                   Command="{Binding CmdClose}" />
                     </MenuItem>
                     
-                    <MenuItem Header="{ltl:Translate loc_miTools}" Style="{StaticResource MenuItemStyle}">
+                    <MenuItem Header="{ltl:Translate loc_miTools}" Style="{StaticResource MainMenuItemStyle}">
                         <MenuItem Header="{ltl:Translate loc_miInsertPages}"
                                   Command="{Binding CmdInsertPages}" />
                         <MenuItem Header="{ltl:Translate loc_miExtractPages}"
@@ -84,7 +88,7 @@
                                   Command="{Binding CmdSecurity}" />
                     </MenuItem>
 
-                    <MenuItem Header="?" Style="{StaticResource MenuItemStyle}">
+                    <MenuItem Header="?" Style="{StaticResource MainMenuItemStyle}">
                         <MenuItem Header="{ltl:Translate loc_miCheckForUpdates}"
                                   Command="{Binding CmdCheckForUpdates}" />
                         <MenuItem Header="{ltl:Translate loc_miAbout}"
@@ -93,19 +97,7 @@
 
                 </Menu>
                 
-                <!--<TextBlock Grid.Column="2" Text="{Binding Version}"
-                           HorizontalAlignment="Right" VerticalAlignment="Bottom" FontSize="10" />-->
-
-                <Button Grid.Column="3" Width="100" Height="30" Command="{Binding CmdOpenAd}"
-                        Visibility="{Binding Path=ShowAd, Converter={StaticResource BooleanToVisibilityConverter}}"
-                        Cursor="Hand">
-                    <Button.Template>
-                        <ControlTemplate>
-                            <Image Source="..\images\blogo.jpg" />
-                        </ControlTemplate>
-                    </Button.Template>
-                </Button>
-
+                
                 <ftc:InformationBar Grid.Row="2" Grid.ColumnSpan="3"
                                     Visibility="{Binding Path=ShowInfoBar, Converter={StaticResource BooleanToVisibilityConverter}}"
                                     Text="{Binding Information}" />
@@ -128,13 +120,10 @@
                     </TextBlock.Style>
                 </TextBlock>
             </StatusBarItem>
-            
-            <!--<TextBox Margin="0" Background="Transparent" Width="Auto" />-->
         </StatusBar>
-        
-        <Border BorderBrush="DarkSlateGray" BorderThickness="2">
-            <WebBrowser local:WebBrowserUtility.BindableSource="{Binding Uri, Mode=TwoWay}" />
-        </Border>
 
+        <Border BorderBrush="DarkSlateGray" BorderThickness="2">
+            <WebBrowser local:WebBrowserUtility.BindableSource="{Binding Uri, Mode=TwoWay}" Name="browser" />
+        </Border>
     </DockPanel>
 </local:BaseWindow>

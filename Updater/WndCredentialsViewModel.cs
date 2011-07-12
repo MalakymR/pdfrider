@@ -35,12 +35,12 @@ namespace PDFRider.Updater
 {
     public class WndCredentialsViewModel : WindowViewModel
     {
-        public WndCredentialsViewModel()
+        public WndCredentialsViewModel(Uri proxyAddress)
         {
-            Messenger.Default.Register<TMsgAskForCredentials>(this, MsgAskForCredentials_Handler);
+            this.CredentialsMessage = String.Format(App.Current.FindResource("loc_wndCredentialsMessage").ToString(),
+                proxyAddress.ToString());
         }
 
-        //SecureString _originalPassword;
 
         string _credentialsMessage = "";
         public string CredentialsMessage
@@ -145,17 +145,11 @@ namespace PDFRider.Updater
                 credentialsDoc.Save(Updater.CREDENTIAL_FILE);
             }
 
-            Messenger.Default.Send<TMsgClose>(
-                new TMsgClose(this, new System.Net.NetworkCredential(this.Username, password)));
+            this.Close(new System.Net.NetworkCredential(this.Username, password));
         }
 
 
         #endregion
 
-        private void MsgAskForCredentials_Handler(TMsgAskForCredentials msg)
-        {
-            this.CredentialsMessage = String.Format(App.Current.FindResource("loc_wndCredentialsMessage").ToString(),
-                msg.Proxy.Address.ToString());
-        }
     }
 }

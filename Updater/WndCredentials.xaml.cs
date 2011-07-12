@@ -44,8 +44,6 @@ namespace PDFRider.Updater
         public WndCredentials()
         {
             InitializeComponent();
-
-            this.DataContext = new WndCredentialsViewModel();
         }
     }
 }

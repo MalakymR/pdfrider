@@ -29,18 +29,19 @@ using System.Collections.ObjectModel;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
 using GalaSoft.MvvmLight.Messaging;
+using System.ComponentModel;
 
 namespace PDFRider
 {
     public class WndMergeDocumentsViewModel : WindowViewModel
     {
-        public static int MAX_FILES = PDFDocument.MAX_HANDLES;
-
-        public WndMergeDocumentsViewModel()
+        
+        public WndMergeDocumentsViewModel(List<string> filesToMerge)
         {
-            Messenger.Default.Register<TMsgShowMergeDocuments>(this, MsgShowMergeDocuments_Handler);
-
             this.Files = new ObservableCollection<FileToMergeViewModel>();
+
+            this.Files.Clear();
+            this.AddFiles(filesToMerge);
         }
 
         #region Properties
@@ -62,6 +63,51 @@ namespace PDFRider
         }
 
 
+        public bool MergeStarted
+        {
+            get
+            {
+                return this._mergeStarted;
+            }
+            set
+            {
+                this._mergeStarted = value;
+                RaisePropertyChanged("MergeStarted");
+            }
+        }
+        bool _mergeStarted = false;
+
+
+        public int MergeProgress
+        {
+            get
+            {
+                return this._mergeProgress;
+            }
+            set
+            {
+                this._mergeProgress = value;
+                RaisePropertyChanged("MergeProgress");
+            }
+        }
+        int _mergeProgress = 0;
+
+
+        public int MergeProgressMax
+        {
+            get
+            {
+                return this._mergeProgressMax;
+            }
+            set
+            {
+                this._mergeProgressMax = value;
+                RaisePropertyChanged("MergeProgressMax");
+            }
+        }
+        int _mergeProgressMax = 100;
+
+
         #endregion
 
 
@@ -76,7 +122,8 @@ namespace PDFRider
             {
                 if (this._cmdMerge == null)
                 {
-                    this._cmdMerge = new RelayCommand(() => this.DoCmdMerge());
+                    this._cmdMerge = new RelayCommand(() => this.DoCmdMerge(),
+                        () => this.CanDoCmdMerge);
                 }
                 return this._cmdMerge;
             }
@@ -99,28 +146,49 @@ namespace PDFRider
             }
             else
             {
+
                 string tempFileName = String.Format(App.Current.FindResource("loc_tempMerged").ToString(),
                     System.IO.Path.GetFileNameWithoutExtension(this.Files[0].FileName)) +
                     System.IO.Path.GetExtension(this.Files[0].FileName);
                 string tempFile = System.IO.Path.Combine(App.TEMP_DIR, tempFileName);
 
-                PDFFileInfo[] filesToMerge = (from f in this.Files
-                                              select f.PdfFileInfo).ToArray<PDFFileInfo>();
+                PDFDocument[] filesToMerge = (from f in this.Files
+                                              select f.PdfDocument).ToArray<PDFDocument>();
 
-                PDFDocument.OperationStates state = PDFDocument.MergeDocuments(filesToMerge, ref tempFile);
+                this.MergeProgressMax = filesToMerge.Length;
+                this.MergeStarted = true;
+                this.MergeProgress = 1;
 
-                if (state == PDFDocument.OperationStates.TooManyFiles)
-                {
-                    this.Information = String.Format(
-                        App.Current.FindResource("loc_tooManyFiles").ToString(), MAX_FILES); ;
-                }
-                else
-                {
-                    Messenger.Default.Send<TMsgClose>(new TMsgClose(this, tempFile));
-                }
+                PDFActions pdfActions = new PDFActions();
+                pdfActions.MergeChanged += new PDFActions.MergeChangedEventHandler(pdfActions_MergeChanged);
+                pdfActions.MergeCompleted += new PDFActions.MergeChangedEventHandler(pdfActions_MergeCompleted);
+
+                pdfActions.MergeDocuments(filesToMerge, ref tempFile);
+
             }
         }
 
+        private bool CanDoCmdMerge
+        {
+            get
+            {
+                return this.Files.Count > 1;
+            }
+        }
+
+        void pdfActions_MergeChanged(object sender, PDFActions.MergeChangedEventArgs e)
+        {
+            this.MergeProgress += 1;
+        }
+
+        void pdfActions_MergeCompleted(object sender, PDFActions.MergeChangedEventArgs e)
+        {
+            this.MergeStarted = false;
+            this.MergeProgress = 0;
+            this.MergeProgressMax = 100;
+
+            this.Close(e.FileName);
+        }
 
         #endregion
 
@@ -192,6 +260,40 @@ namespace PDFRider
 
         #endregion
 
+        #region CmdDropFiles
+
+        RelayCommand<System.Windows.DragEventArgs> _cmdDropFiles;
+        public ICommand CmdDropFiles
+        {
+            get
+            {
+                if (this._cmdDropFiles == null)
+                {
+                    this._cmdDropFiles = new RelayCommand<System.Windows.DragEventArgs>((x) => this.DoCmdDropFiles(x));
+                }
+                return this._cmdDropFiles;
+            }
+        }
+        private void DoCmdDropFiles(System.Windows.DragEventArgs e)
+        {
+            if (e.Data.GetDataPresent(System.Windows.DataFormats.FileDrop))
+            {
+                string[] droppedFilePaths = e.Data.GetData(System.Windows.DataFormats.FileDrop, true) as string[];
+
+                // Add only valid PDF files
+                foreach (string path in droppedFilePaths)
+                {
+                    if (PDFDocument.PDFCheck(path))
+                    {
+                        this.Files.Add(new FileToMergeViewModel(path));
+                    }
+                }
+            }
+
+        }
+
+        #endregion
+
         #region CmdAddFile
 
         RelayCommand _cmdAddFile;
@@ -209,14 +311,17 @@ namespace PDFRider
 
         private void DoCmdAddFile()
         {
-            GenericMessageAction<TMsgOpenFile, TMsgOpenFile> message = new GenericMessageAction<TMsgOpenFile, TMsgOpenFile>(
-                new TMsgOpenFile()
+            GenericMessageAction<MsgOpenFile, MsgOpenFile> message = new GenericMessageAction<MsgOpenFile, MsgOpenFile>(
+                new MsgOpenFile()
                 {
                     Multiselect = true
                 },
-                this.MsgAddFiles_Handler);
+                x =>
+                {
+                    this.AddFiles(x.FileNames);
+                });
 
-            Messenger.Default.Send<GenericMessageAction<TMsgOpenFile, TMsgOpenFile>, MainWindow>(message);
+            Messenger.Default.Send<GenericMessageAction<MsgOpenFile, MsgOpenFile>>(message);
         }
 
         #endregion
@@ -246,7 +351,7 @@ namespace PDFRider
         {
             get
             {
-                return ((this.Files.Count > 1) &&
+                return ((this.Files.Count > 0) &&
                     (this.SelectedFile != null));
             }
         }
@@ -254,25 +359,8 @@ namespace PDFRider
         #endregion
 
         #endregion
-
-
-        #region Message handlers
-
-        void MsgShowMergeDocuments_Handler(TMsgShowMergeDocuments msg)
-        {
-            this.Files.Clear();
-            this.AddFiles(msg.FilesToMerge);
-        }
-
-
-        void MsgAddFiles_Handler(TMsgOpenFile msg)
-        {
-            this.AddFiles(msg.FileNames);
-        }
-
-        #endregion
-
-
+        
+    
         #region Private (support) methods
 
         void AddFiles(IEnumerable<string> files)

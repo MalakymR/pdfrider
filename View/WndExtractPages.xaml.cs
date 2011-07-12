@@ -33,8 +33,6 @@ namespace PDFRider
         public WndExtractPages()
         {
             InitializeComponent();
-
-            this.DataContext = new WndExtractPagesViewModel();
         }
     }
 }

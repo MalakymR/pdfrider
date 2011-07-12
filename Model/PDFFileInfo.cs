@@ -35,12 +35,11 @@ namespace PDFRider
     {
         public PDFFileInfo()
         {
-            this.PageRanges = new List<string>();
+            
         }
 
         public string FullName { get; set; }
         public short NumberOfPages { get; set; }
         public short PageLabelStart { get; set; }
-        public List<string> PageRanges { get; private set; }
     }
 }

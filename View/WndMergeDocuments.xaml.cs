@@ -34,8 +34,6 @@ namespace PDFRider
         public WndMergeDocuments()
         {
             InitializeComponent();
-
-            this.DataContext = new WndMergeDocumentsViewModel();
         }
 
     }

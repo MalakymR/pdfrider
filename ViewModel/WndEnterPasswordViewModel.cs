@@ -33,15 +33,14 @@ namespace PDFRider
 {
     public class WndEnterPasswordViewModel : WindowViewModel
     {
-        public WndEnterPasswordViewModel()
-        {
-            Messenger.Default.Register<TMsgEnterPassword>(this, MsgShowEnterPassword_Handler);
-        }
-
         PDFDocument _doc;
 
-        //string _originalPassowrd;
+        public WndEnterPasswordViewModel(PDFDocument document)
+        {
+            this._doc = document;
+        }
 
+        
         string _enterPasswordMessage = "";
         public string EnterPasswordMessage
         {
@@ -88,26 +87,22 @@ namespace PDFRider
 
         private void DoCmdConfirm()
         {
-            PDFDocument.OperationStates state = this._doc.TryDecrypt(this._password);
+            PDFActions pdfActions = new PDFActions();
+            PDFActions.OperationStates state = pdfActions.TryDecrypt(this._doc, this._password);
 
-            if (state == PDFDocument.OperationStates.WrongPassword)
+            if (state == PDFActions.OperationStates.WrongPassword)
             {
                 this.Information = App.Current.FindResource("loc_enterPasswordInformation").ToString();
             }
             else
             {
-                Messenger.Default.Send<TMsgClose>(new TMsgClose(this, this._password));
+                this.Close(this._password);
             }
         }
 
 
         #endregion
 
-        private void MsgShowEnterPassword_Handler(TMsgEnterPassword msg)
-        {
-            this._doc = msg.Document;
-
-            //this._originalPassowrd = msg.OriginalPassword;
-        }
+     
     }
 }

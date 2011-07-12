@@ -25,8 +25,6 @@ using System;
 using System.Collections.Generic;
 using System.Windows;
 using System.IO;
-using GalaSoft.MvvmLight.Messaging;
-
 
 namespace PDFRider
 {
@@ -45,14 +43,14 @@ namespace PDFRider
         const string TEMP_DIR_NAME = "Temp";
         
         public static string NAME = App.ResourceAssembly.GetName().Name;
-        public static string TITLE = "PDF Rider"; // I could use reflection here...
+        public static string TITLE = "PDF Rider";
         public static string VERSION = String.Format("{0}.{1}.{2}",
             App.ResourceAssembly.GetName().Version.Major.ToString(),
             App.ResourceAssembly.GetName().Version.Minor.ToString(),
             App.ResourceAssembly.GetName().Version.Build.ToString());
         public static string FULL_VERSION = App.ResourceAssembly.GetName().Version.ToString();
         public static string WEBSITE = "http://pdfrider.codeplex.com";
-        public static string AD_LINK = "http://www.babylon.com/welcome/index.html?affID=16195";
+        //public static string AD_LINK = "http://www.babylon.com/welcome/index.html?affID=16195";
 
         //Locale directory (e.g. {app}\Languages\en-US\ )
         //The locale specific part is added in the constructor, after the localization test part.
@@ -62,9 +60,11 @@ namespace PDFRider
         public static string TEMP_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
             TEMP_DIR_NAME);
 
-        public static string HOME_URI = ""; //Path.Combine(App.LOC_DIR, "");
+        public static string HOME_URI = "";
+
         
-        private MainWindow _mainWindow;
+        private ApplicationController _applicationController;
+
 
         public App()
         {
@@ -72,14 +72,14 @@ namespace PDFRider
 
             // -- Remove or comment this block in the final version --
 
-            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("es-ES");
+            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("nl-NL");
             ////enCulture = new System.Globalization.CultureInfo("fr-FR");
             //System.Threading.Thread.CurrentThread.CurrentCulture = enCulture;
             //System.Threading.Thread.CurrentThread.CurrentUICulture = enCulture;
 
             #endregion
 
-
+            
             App.LOC_DIR = Path.Combine(App.LOC_DIR, System.Threading.Thread.CurrentThread.CurrentCulture.ToString());
 
 
@@ -96,11 +96,12 @@ namespace PDFRider
         // Command line arguments are handled via Environment.GetCommandLineArgs() in MainWindowViewModel
         protected override void OnStartup(StartupEventArgs e)
         {
-           // This must be called after the initialization
+            // This must be called after the initialization
             SetLocalizedStrings();
 
-            this._mainWindow = new MainWindow();
-            this._mainWindow.Show();
+            // Start the application GUI
+            this._applicationController = new ApplicationController();
+            this._applicationController.OpenMainWindow();
         }
 
         //Gets the localized strings file and adds it to the the application resources
@@ -125,6 +126,8 @@ namespace PDFRider
                 catch { } //No action, the default LocTable.xaml is used
             }
         }
+
+        
 
     }
 }
