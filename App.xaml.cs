@@ -40,7 +40,6 @@ namespace PDFRider
         public const string PROCESS_NAME = "PDFRider";
         const string LOC_DIR_NAME = "Locales";
         const string LOC_FILE_NAME = "LocTable-{0}.xaml";
-        const string TEMP_DIR_NAME = "Temp";
         
         public static string NAME = App.ResourceAssembly.GetName().Name;
         public static string TITLE = "PDF Rider";
@@ -50,15 +49,13 @@ namespace PDFRider
             App.ResourceAssembly.GetName().Version.Build.ToString());
         public static string FULL_VERSION = App.ResourceAssembly.GetName().Version.ToString();
         public static string WEBSITE = "http://pdfrider.codeplex.com";
-        //public static string AD_LINK = "http://www.babylon.com/welcome/index.html?affID=16195";
 
         //Locale directory (e.g. {app}\Languages\en-US\ )
         //The locale specific part is added in the constructor, after the localization test part.
         public static string LOC_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, App.LOC_DIR_NAME);
 
-        //Temporary directory ( {app}\Temp\ )
-        public static string TEMP_DIR = Path.Combine(AppDomain.CurrentDomain.BaseDirectory,
-            TEMP_DIR_NAME);
+        //Temporary directory ( %TEMP% )
+        public static string TEMP_DIR = Environment.GetEnvironmentVariable("TEMP");
 
         public static string HOME_URI = "";
 
@@ -72,7 +69,7 @@ namespace PDFRider
 
             // -- Remove or comment this block in the final version --
 
-            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("nl-NL");
+            //System.Globalization.CultureInfo enCulture = new System.Globalization.CultureInfo("ja-JP");
             ////enCulture = new System.Globalization.CultureInfo("fr-FR");
             //System.Threading.Thread.CurrentThread.CurrentCulture = enCulture;
             //System.Threading.Thread.CurrentThread.CurrentUICulture = enCulture;
