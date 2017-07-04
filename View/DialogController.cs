@@ -22,6 +22,7 @@
 */
 
 using System;
+using System.Windows.Forms;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -99,24 +100,31 @@ namespace PDFRider
         /// <returns>A structure containing information returned by a CommonDialog window.</returns>
         public static FileDialogResult ShowOpenFileDialog(bool multiselect)
         {
-            Microsoft.Win32.OpenFileDialog ofd = new Microsoft.Win32.OpenFileDialog();
-            ofd.DefaultExt = "pdf";
-            ofd.Multiselect = multiselect;
-            ofd.Title = App.Current.FindResource("loc_openFileDialogTitle").ToString();
-            ofd.Filter = App.Current.FindResource("loc_openFileDialogFilter").ToString();
+            OpenFileDialog dlg = new OpenFileDialog();
+            dlg.DefaultExt = "pdf";
+            dlg.Multiselect = multiselect;
+            dlg.Title = App.Current.FindResource("loc_openFileDialogTitle").ToString();
+            dlg.Filter = App.Current.FindResource("loc_openFileDialogFilter").ToString();
+
+            DialogResult dlgresult = dlg.ShowDialog();
 
             FileDialogResult result = new FileDialogResult();
-            result.CommonDialogReturn = (bool)ofd.ShowDialog();
-            result.FileName = ofd.FileName;
+            if (dlgresult == DialogResult.OK)
+            {
+                result.CommonDialogReturn = true;
+            }
+            result.FileName = dlg.FileName;
 
-            /* In multiselection, OpenFileDialog puts the last selected file at the beginning of the list (array)
-             * of the returned file. I avoid this with the below code. */
-            List<string> fileNames = new List<string>();
-            fileNames.AddRange(ofd.FileNames);
+            ///* In multiselection, OpenFileDialog puts the last selected file at the beginning of the list (array)
+            // * of the returned file. I avoid this with the below code. */
+
+
+            List <string> fileNames = new List<string>();
+            fileNames.AddRange(dlg.FileNames);
             if (fileNames.Count > 1)
             {
                 fileNames.RemoveAt(0);
-                fileNames.Add(ofd.FileNames[0]);
+                fileNames.Add(dlg.FileNames[0]);
             }
 
             result.FileNames = fileNames.ToArray();
