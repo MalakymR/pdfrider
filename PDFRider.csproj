@@ -364,6 +364,7 @@
     <Resource Include="images\folder_yellow_open.png" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="System.Windows.Interactivity.dll" />
     <Resource Include="images\pdf.png" />
     <Resource Include="images\down.png" />
     <Resource Include="images\up.png" />
@@ -374,6 +375,10 @@
     <None Include="Licenses\Nuvola icon set\lgpl-2.1.txt" />
     <None Include="Licenses\MVVM Light toolkit\mit license.txt" />
     <Resource Include="images\filesaveas.png" />
+    <Content Include="CryptoDLL.dll" />
+    <Content Include="FTControls.dll" />
+    <Content Include="GalaSoft.MvvmLight.dll" />
+    <Content Include="GalaSoft.MvvmLight.Extras.dll" />
     <Content Include="home.html" />
     <Resource Include="Licenses\PDFRider\gpl-2.0.txt" />
     <Resource Include="PdfRider.ico" />
@@ -383,6 +388,7 @@
     <Content Include="libiconv2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+    <Content Include="LocTranslateLibrary.dll" />
     <Content Include="pdftk.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
