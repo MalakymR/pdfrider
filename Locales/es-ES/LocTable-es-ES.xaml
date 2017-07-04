@@ -32,7 +32,7 @@
     -->
     
     
-    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6">
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6.0">
 'xml:space="preserve"' activated to easily edit line breaks in string.
 Do not use indentation in text unless you really want to indent it! 
 Pay attention to leading and trailing spaces too.

@@ -573,28 +573,28 @@ namespace PDFRider
 
         #region CmdCheckForUpdates
 
-        RelayCommand _cmdCheckForUpdates;
-        public ICommand CmdCheckForUpdates
-        {
-            get
-            {
-                if (this._cmdCheckForUpdates == null)
-                {
-                    this._cmdCheckForUpdates = new RelayCommand(() => this.DoCmdCheckForUpdates());
-                }
-                return this._cmdCheckForUpdates;
-            }
-        }
-        private void DoCmdCheckForUpdates()
-        {
-            Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
-
-            if (info != null)
-            {
-                Messenger.Default.Send(new MsgShowNewVersion(info));
-            }
-            
-        }
+        //RelayCommand _cmdCheckForUpdates;
+        //public ICommand CmdCheckForUpdates
+        //{
+        //    get
+        //    {
+        //        if (this._cmdCheckForUpdates == null)
+        //        {
+        //            this._cmdCheckForUpdates = new RelayCommand(() => this.DoCmdCheckForUpdates());
+        //        }
+        //        return this._cmdCheckForUpdates;
+        //    }
+        //}
+        //private void DoCmdCheckForUpdates()
+        //{
+        //    Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
+        //
+        //    if (info != null)
+        //    {
+        //        Messenger.Default.Send(new MsgShowNewVersion(info));
+        //    }
+        //    
+        //}
 
         #endregion
 

@@ -89,8 +89,8 @@
                     </MenuItem>
 
                     <MenuItem Header="?" Style="{StaticResource MainMenuItemStyle}">
-                        <MenuItem Header="{ltl:Translate loc_miCheckForUpdates}"
-                                  Command="{Binding CmdCheckForUpdates}" />
+                        <!--<MenuItem Header="{ltl:Translate loc_miCheckForUpdates}"
+                                  Command="{Binding CmdCheckForUpdates}" />-->
                         <MenuItem Header="{ltl:Translate loc_miAbout}"
                                   Command="{Binding CmdAbout}" />
                     </MenuItem>
