@@ -1,6 +1,7 @@
 #ignore thumbnails created by windows
 Thumbs.db
 #Ignore files build by Visual Studio
+.gitconfig
 *.obj
 *.exe
 *.pdb
@@ -27,3 +28,4 @@ obj/
 _ReSharper*/
 [Tt]est[Rr]esult*
 .vs/
+*.csproj.user
