@@ -342,10 +342,10 @@
     <Compile Include="View\WndSecurity.xaml.cs">
       <DependentUpon>WndSecurity.xaml</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <Resource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
+    </Resource>
     <None Include="app.config" />
     <None Include="PDFRider_1_TemporaryKey.pfx" />
     <None Include="PDFRider_TemporaryKey.pfx" />
