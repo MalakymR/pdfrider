@@ -564,6 +564,17 @@ namespace PDFRider
 
             return state;
         }
+
+        public string toalphabetic(int i)
+        {   // converts numbers to A-Z then AA etc (0=A, 25=Z, 26=AA, 27=AB, 100=CW)
+            int rem = i % 26;
+            int quot = i / 26;
+            char letter = (char)(65 + rem);
+            if (quot == 0) { return letter.ToString(); }
+            else { return toalphabetic(quot - 1) + letter.ToString(); };
+        }
+
+
         /// <summary>
         /// Merge 2 files recursively
         /// </summary>
@@ -572,44 +583,52 @@ namespace PDFRider
         /// <param name="filesToMerge">List of file to merge.</param>
         /// <param name="index">Index of the last file to be merged.</param>
         /// <param name="tempOutputFileName">Path of the final merged file.</param>
-        private void Merge(PDFDocument file1, PDFDocument file2, PDFDocument[] filesToMerge, ref int index, ref string tempOutputFileName)
+
+
+        private void Merge(PDFDocument[] filesToMerge, ref string tempOutputFileName)
         {
-            this._mergeBgWorker.ReportProgress(1);
+            //toalphabetic
 
-            
+            //build arguments
             string args = "";
+            string argsA = "";
+            string argsB = "";
+            int indexA = 0;
 
-            args = "A=\"" + file1.FullName + "\" ";
-            args += "B=\"" + file2.FullName + "\" ";
+            // consider single loop with 2 arg variables to be combined later with "cat" in the middle
 
-            args += "cat ";
-
-            // First file
-            if (file1.PageRanges.Count > 0)
+            do
             {
-                foreach (string s in file1.PageRanges)
+                string thisletter = toalphabetic(indexA);
+                // generate input -- A=1.pdf
+                argsA += thisletter + "=\"" + filesToMerge[indexA].FullName + "\" ";
+
+                // generate output -- A1-2 etc we can have A1-2 and A4-5 on the same line etc
+                if (filesToMerge[indexA].PageRanges.Count > 0)
                 {
-                    args += "A" + s + " ";
+                    foreach (string s in filesToMerge[indexA].PageRanges)
+                    {
+                        argsB += thisletter + s + " ";
+                    }
                 }
-            }
-            else
-            {
-                args += "A" + " ";
-            }
-
-            // Second file
-            if (file2.PageRanges.Count > 0)
-            {
-                foreach (string s in file2.PageRanges)
+                else
                 {
-                    args += "B" + s + " ";
+                    argsB += thisletter + " ";
                 }
-            }
-            else
-            {
-                args += "B" + " ";
-            }
 
+
+                indexA++;
+            }
+            while (indexA < filesToMerge.Length - 1);
+
+            // we can no longer get progress per file since there is only one argument run under pdftk
+            // using index count will only progress producing the string which is ms of time before the conversion
+
+            args = argsA + " cat " + argsB;
+
+           
+
+           
             tempOutputFileName = Path.Combine(App.TEMP_DIR, "merge.pdf");
 
             GetValidOutputFileName(ref tempOutputFileName, 1);
@@ -620,21 +639,16 @@ namespace PDFRider
 
             PDFDocument tempOutputFile = new PDFDocument(tempOutputFileName);
 
-            if (index < filesToMerge.Length - 1)
-            {
-                ++index;
-                Merge(tempOutputFile, filesToMerge[index], filesToMerge, ref index, ref tempOutputFileName);
-            }
 
         }
+
         void _mergeBgWorker_DoWork(object sender, DoWorkEventArgs e)
         {
             MergeBgWorkerArgs args = (MergeBgWorkerArgs)e.Argument;
 
-            int index = 1;
             string outputFileName = args.OutputFileName;
 
-            Merge(args.FilesToMerge[0], args.FilesToMerge[1], args.FilesToMerge, ref index, ref outputFileName);
+            Merge(args.FilesToMerge, ref outputFileName);
 
             e.Result = outputFileName;
         }
