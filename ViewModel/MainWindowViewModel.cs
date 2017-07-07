@@ -571,33 +571,6 @@ namespace PDFRider
 
         #endregion
 
-        #region CmdCheckForUpdates
-
-        //RelayCommand _cmdCheckForUpdates;
-        //public ICommand CmdCheckForUpdates
-        //{
-        //    get
-        //    {
-        //        if (this._cmdCheckForUpdates == null)
-        //        {
-        //            this._cmdCheckForUpdates = new RelayCommand(() => this.DoCmdCheckForUpdates());
-        //        }
-        //        return this._cmdCheckForUpdates;
-        //    }
-        //}
-        //private void DoCmdCheckForUpdates()
-        //{
-        //    Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
-        //
-        //    if (info != null)
-        //    {
-        //        Messenger.Default.Send(new MsgShowNewVersion(info));
-        //    }
-        //    
-        //}
-
-        #endregion
-
         #region CmdAbout
 
         RelayCommand _cmdAbout;
@@ -785,22 +758,6 @@ namespace PDFRider
             {
                 // Deletes the temporary files
                 this.DeleteTempFiles();
-
-                // Checks for update
-                Updater.UpdaterConfig updaterConfig = Updater.Updater.LoadConfig();
-                if ((updaterConfig != null) && (updaterConfig.CheckAtStartup))
-                {
-                    Updater.VersionInfo info = Updater.Updater.CheckForUpdates(App.VERSION);
-
-                    if (info != null)
-                    {
-                        if (info.NewVersionAvailable == true)
-                        {
-                            Messenger.Default.Send(new MsgShowNewVersion(info));
-                        }
-                    }
-                }
-
             }
 
             

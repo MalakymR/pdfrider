@@ -170,10 +170,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Updater\WndCredentials.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\WndEnterPassword.xaml">
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
@@ -228,10 +224,6 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="View\WndNewVersion.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="View\WndRotatePages.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -252,19 +244,6 @@
     <Compile Include="Model\Enumerations.cs" />
     <Compile Include="Model\PDFActions.cs" />
     <Compile Include="Model\PDFRiderConfig.cs" />
-    <Compile Include="Properties\UpdaterSettings.Designer.cs">
-      <DependentUpon>UpdaterSettings.settings</DependentUpon>
-      <AutoGen>True</AutoGen>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
-    <Compile Include="Updater\VersionInfo.cs" />
-    <Compile Include="Updater\Updater.cs" />
-    <Compile Include="Updater\UpdaterConfig.cs" />
-    <Compile Include="Updater\WndCredentialsViewModel.cs" />
-    <Compile Include="Updater\WndCredentials.xaml.cs">
-      <DependentUpon>WndCredentials.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="ViewModel\WndNewVersionViewModel.cs" />
     <Compile Include="View\ApplicationController.cs" />
     <Compile Include="View\DialogController.cs" />
     <Compile Include="View\MainWindow.xaml.cs">
@@ -333,9 +312,6 @@
     <Compile Include="View\WndMergeDocuments.xaml.cs">
       <DependentUpon>WndMergeDocuments.xaml</DependentUpon>
     </Compile>
-    <Compile Include="View\WndNewVersion.xaml.cs">
-      <DependentUpon>WndNewVersion.xaml</DependentUpon>
-    </Compile>
     <Compile Include="View\WndRotatePages.xaml.cs">
       <DependentUpon>WndRotatePages.xaml</DependentUpon>
     </Compile>
@@ -350,19 +326,11 @@
     <None Include="PDFRider_1_TemporaryKey.pfx" />
     <None Include="PDFRider_TemporaryKey.pfx" />
     <None Include="Properties\app.manifest" />
-    <None Include="Properties\UpdaterSettings.settings">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <LastGenOutput>UpdaterSettings.Designer.cs</LastGenOutput>
-    </None>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="Updater\pdfrider.update.auth">
-      <Generator>SettingsSingleFileGenerator</Generator>
-      <SubType>Designer</SubType>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <Resource Include="images\folder_home.png" />
