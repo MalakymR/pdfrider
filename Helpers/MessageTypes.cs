@@ -265,19 +265,6 @@ namespace PDFRider
     }
 
     /// <summary>
-    /// Message for requesting to show the "new version available" window.
-    /// </summary>
-    public class MsgShowNewVersion
-    {
-        public MsgShowNewVersion(Updater.VersionInfo info)
-        {
-            this.Info = info;
-        }
-
-        public Updater.VersionInfo Info { get; set; }
-    }
-
-    /// <summary>
     /// Message for requesting to show the information window.
     /// </summary>
     public class MsgShowAbout

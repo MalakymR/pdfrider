@@ -58,7 +58,6 @@ namespace PDFRider
             Messenger.Default.Register<GenericMessageAction<MsgShowConfirmPassword, bool>>(this, MsgShowConfirmPassword_Handler);
             Messenger.Default.Register<GenericMessageAction<MsgShowEnterPassword, string>>(this, MsgShowEnterPassword_Handler);
 
-            Messenger.Default.Register<MsgShowNewVersion>(this, MsgShowNewVersion_Handler);
             Messenger.Default.Register<MsgShowAbout>(this, MsgShowAbout_Handler);
         }
 
@@ -241,17 +240,6 @@ namespace PDFRider
             msg.Execute(ret);
         }
 
-
-
-        // --- NEW VERSION AVAILABLE
-        void MsgShowNewVersion_Handler(MsgShowNewVersion msg)
-        {
-            WndNewVersion wndNewVersion = new WndNewVersion();
-            WndNewVersionViewModel wndNewVersionViewModel = new WndNewVersionViewModel(msg.Info);
-
-            wndNewVersion.DataContext = wndNewVersionViewModel;
-            ShowWindow(wndNewVersion, true);
-        }
 
 
         // --- ABOUT
