@@ -318,6 +318,7 @@
     <Compile Include="View\WndSecurity.xaml.cs">
       <DependentUpon>WndSecurity.xaml</DependentUpon>
     </Compile>
+    <None Include="version" />
     <Resource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
