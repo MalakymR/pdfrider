@@ -1,0 +1,281 @@
+<!--
+ *    Copyright 2009-2011 Francesco Tonucci
+ * 
+ * This file is part of PDFRider.
+ * 
+ * PDFRider is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ * 
+ * PDFRider is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ * 
+ * You should have received a copy of the GNU General Public License
+ * along with PDFRider; if not, write to the Free Software
+ * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+ * 
+ * 
+ * Project page: http://pdfrider.codeplex.com
+-->
+<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" xml:space="preserve">
+    
+    <!-- 
+        +++ DO NOT CHANGE THE FOLLOWING NAMESPACE DECLARATIONS +++
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" 
+    
+        You should not remove the xml:space="preserve" attribute too.
+        Remember to inform the user that you are using it. ;)
+    -->
+    
+    
+    <ltl:LocInfo x:Key="loc_info1" TargetProject="PDF Rider" TargetProjectVersion="0.6">
+'xml:space="preserve"' activated to easily edit line breaks in string.
+Do not use indentation in text unless you really want to indent it! 
+Pay attention to leading and trailing spaces too.
+
+"{0}" are placeholders for dynamic content and should not be removed!
+    </ltl:LocInfo>
+    
+    <!-- General -->
+    <ltl:LocItem x:Key="loc_version">version</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_defaultTempFileName" Deprecated="True">Pages from </ltl:LocItem> <!-- deprecated. use "loc_tempPagesFrom" -->
+    <ltl:LocItem x:Key="loc_tempPagesFrom">Pages from {0}</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempMerged">{0} - Merged</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempEncrypted">{0} - Encrypted</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tempDecrypted">{0} - Decrypted</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_btnOK">OK</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_btnCancel">Cancel</ltl:LocItem>
+
+    <ltl:LocItem x:Key="loc_openFileDialogTitle">Select a PDF file</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_openFileDialogFilter">PDF File|*.pdf</ltl:LocItem> <!-- Do not change or remove the "|*.pdf" part! -->
+    
+    <ltl:LocItem x:Key="loc_saveFileDialogTitle">Save file...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_saveFileDialogFilter">PDF File (.pdf)|*.pdf</ltl:LocItem> <!-- Do not change or remove the "|*.pdf" part! -->
+    
+    <ltl:LocItem x:Key="loc_browse">Browse</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_workingDirectory">Working directory:</ltl:LocItem>
+    
+    <!-- Messages -->
+    <ltl:LocItem x:Key="loc_msgOutOfDocument">
+The values you've entered are not valid for this operation.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_msgEntireDocument">
+Page interval must be less than the total number of pages.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_msgSaveChanges">
+The current document has not been saved.
+Do you want to save it now?
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_correctErrors">
+Correct the errors before continuing.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tooManyFiles" Deprecated="True" Comment="The limit has been removed">
+Sorry, I can't handle more than {0} files.
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_invalidDocument">Cannot retrieve information about the document.
+The document could be an invalid pdf file or is password protected.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_missingConfigFiles" Deprecated="True">Cannot find the configuration files.
+A new installation could solve the problem.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_programUpToDate" Deprecated="True">
+The program is up to date.
+    </ltl:LocItem>
+    
+    
+    
+    <!-- MainWindow -->
+    <ltl:LocItem x:Key="loc_miFile">Application</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miHomePage">Home page</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miOpenFile">Open document...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miSaveFile">Save...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miPreferences">Preferences</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miExit">Exit</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miTools">Tools</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miExtractPages">Extract pages...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miDeletePages">Delete pages...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miInsertPages">Insert pages...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miRotatePages">Rotate pages...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miMergeDocuments">Merge documents...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miBurst">Burst...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miSecurity">Security...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miCheckForUpdates">Check for updates...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_miAbout">About PDF Rider</ltl:LocItem>
+    
+    
+    
+    <ltl:LocItem x:Key="loc_tbkPagesFrom">From:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tbkPagesTo">To:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_tbkPagesOf">of</ltl:LocItem>
+    
+    
+    <!-- WndInsertPages -->
+    <ltl:LocItem x:Key="loc_wndInsertPagesTitle">Insert pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fileToInsert">File to insert: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_position">Position</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionBeginning">At the beginning</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionEnd">At the end</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_positionCustom">After page </ltl:LocItem>
+    
+    
+    
+    <!-- WndExtractPages -->
+    <ltl:LocItem x:Key="loc_wndExtractPagesTitle">Extract pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_deletePagesAfterExtraction">Delete pages after extraction.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_separateExtraction">Extract pages as separate files.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_separateExtractionStep">Step:</ltl:LocItem>
+    
+    
+    
+    <!-- WndDeletePages -->
+    <ltl:LocItem x:Key="loc_wndDeletePagesTitle">Delete pages</ltl:LocItem>
+    
+    
+    
+    <!-- WndRotatePages -->
+    <ltl:LocItem x:Key="loc_wndRotatePagesTitle">Rotate pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_interval">Interval:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalAllPages">All pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalOddPages">Odd pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_intervalEvenPages">Even pages</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_rotation">Rotation:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation90CCW">90° CCW</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation90CW">90° CW</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rotation180">180°</ltl:LocItem>
+    
+    
+    
+    <!-- WndMergeDocuments -->
+    <ltl:LocItem x:Key="loc_wndMergeDocumentsTitle">Merge documents</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fileColumn">File</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_pagesColumn">Pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_moveUp">Move up</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_moveDown">Move down</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_addFile">Add...</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_removeFile">Remove</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rdbAllPages">All pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_rdbPagesInterval">Pages: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_allPages">All pages</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_pagesIntervalInfo">Insert page numbers or intervals separated by comma.
+(e.g. 1,3-6,8)</ltl:LocItem>
+    
+    
+    
+    <!-- WndBurst -->
+    <ltl:LocItem x:Key="loc_wndBurstTitle">Burst!</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFileDescription">Burst files will have the following prefix.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_prefix">Prefix:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFilesWarning">* Existing files with the same name will be overwritten.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstFolderBrowserDialogDescription">Select the folder where this document will be burst.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_showBurstFiles">Show burst files on exit</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_burstCompletedDialogInformation">Burst complete</ltl:LocItem>
+    
+    
+    
+    <!-- WndSecurity -->
+    <ltl:LocItem x:Key="loc_wndSecurityTitle">Security</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_setOpenPassword">Set open password</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_openPassword">Open password:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_setEditPassword">Set edit password</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_editPassword">Edit password:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_editPasswordDescription">Select the options you want to allow.</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_printing">Printing</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_degradatedPrinting">Low quality printing</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_modifyContents">Modify contents</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_assembly">Assembly document</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_copyContents">Copy contents</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_screenReaders">Copy contents for accessibility</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_modifyAnnotations">Modify annotations</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_fillIn">Fill in modules</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_allFeatures">All</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_setPasswords">Set passwords</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_removePasswords">Remove passwords</ltl:LocItem>
+    
+    <ltl:LocItem x:Key="loc_username">User name:</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_password">Password:</ltl:LocItem>
+    
+    
+    <!-- WndConfirmPassword -->
+    <ltl:LocItem x:Key="loc_wndConfirmPasswordTitle">Confirm password</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_confirmOpenPasswordMessage">Set open password</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_confirmEditPasswordMessage">Set edit password</ltl:LocItem>
+    
+    
+    
+    <!-- WndEnterPassword -->
+    <ltl:LocItem x:Key="loc_wndEnterPasswordTitle">Enter password</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_enterPasswordMessage">Enter either open or edit password.
+Decrypting a document with edit password will also remove the open password.</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_enterPasswordInformation">INCORRECT PASSWORD.
+Remember that if the document has both open and edit password, you must supply the edit one.</ltl:LocItem>
+    
+    
+    
+    <!-- WndNewVersion -->
+    <ltl:LocItem x:Key="loc_wndNewVersionTitle" Comment="Changed from version 0.5.1">Check for updates</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersionAvailable">A new verison of PDF Rider is available for download.
+
+Click OK to go to the application web site and download it!
+    </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_currentVersion">Installed version: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_newVersion">New version: </ltl:LocItem>
+    <ltl:LocItem x:Key="loc_checkAtStartup">Check for updates at startup</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsTitle">Authentication required</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsSaveCredentials">Save this credentials</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_wndCredentialsMessage">Proxy at "{0}" requires authentication.
+Please supply your username and password to connect to the internet.
+    </ltl:LocItem>
+    
+    
+    
+    
+    <!-- WndAbout -->
+    <ltl:LocItem x:Key="loc_wndAboutTitle">About PDF Rider</ltl:LocItem>
+    <ltl:LocItem x:Key="loc_disclaimer">
+LEGAL
+-------------------------------------------------------------------------------------------
+Copyright 2009-2011 Francesco Tonucci
+
+    This program is free software; you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation; either version 2 of the License, or
+    (at your option) any later version.
+
+    This program is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+
+    You should have received a copy of the GNU General Public License
+    along with this program; if not, write to the Free Software
+    Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
+
+
+Project page: http://pdfrider.codeplex.com
+
+        
+NOTES
+-------------------------------------------------------------------------------------------
+
+This software uses components from other people/companies, which are not subject to this license (the GNU GPL), but have their own.
+
+Components used:
+   - Images (except the application icon) by David Vignoni - http://www.icon-king.com
+
+   - Application icon by Charlotte Schmidt - http://pattedemouche.free.fr/
+
+   - pdftk by Sid Steward - http://www.pdflabs.com/tools/pdftk-the-pdf-toolkit/
+
+   - MVVM Light Toolkit by Laurent Bugnion - http://www.galasoft.ch/mvvm/getstarted/
+
+A copy of the GNU GPL should be included with the source code of the software, as well as the licenses of the other components.
+    </ltl:LocItem>
+    
+</ResourceDictionary>
