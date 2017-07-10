@@ -153,23 +153,6 @@ namespace PDFRider
             }
         }
 
-        /// <summary>
-        /// Indicates whether to show the Ad
-        /// </summary>
-        bool _showAd = false;
-        public bool ShowAd
-        {
-            get
-            {
-                return this._showAd;
-            }
-            set
-            {
-                this._showAd = value;
-                RaisePropertyChanged("ShowAd");
-            }
-        }
-
         public List<string> Files { get; private set; }
 
         #endregion
