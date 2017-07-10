@@ -22,8 +22,6 @@
 */
 
 using System.Reflection;
-using System.Resources;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Windows;
 
@@ -35,7 +33,7 @@ using System.Windows;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("PDF Rider")]
-[assembly: AssemblyCopyright("Copyright ©  2009-2011 Francesco Tonucci")]
+[assembly: AssemblyCopyright("Copyright © 2009-2011 Francesco Tonucci")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 

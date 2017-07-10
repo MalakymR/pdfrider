@@ -21,11 +21,7 @@
  * Project page: http://pdfrider.codeplex.com
 */
 
-using System;
-using System.Linq;
 using System.Windows;
-using System.Windows.Controls;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {
@@ -40,7 +36,7 @@ namespace PDFRider
         #region DragDrop events
 
         /* **********************************************************************************************
-         * The WebBrowser control has its own drag-drop implementations. It does not rise a drop event
+         * The WebBrowser control has its own drag-drop implementations. It does not raise a drop event
          * that I can implement. So when the cursor enter the main window with a drag operation, I hide 
          * the WebBrowser, letting the window reacts to the drop event.
          * When the drag-drop operation is finished, I show the WebBrowser again.
@@ -49,14 +45,14 @@ namespace PDFRider
         // If I am dragging something to the window, hide the browser
         private void BaseWindow_DragEnter(object sender, DragEventArgs e)
         {
-            this.browser.Visibility = System.Windows.Visibility.Hidden;
+            this.browser.Visibility = Visibility.Hidden;
         }
 
         // If I am not dragging make the browser visible again
         private void BaseWindow_MouseMove(object sender, System.Windows.Input.MouseEventArgs e)
         {
-            if (this.browser.Visibility == System.Windows.Visibility.Hidden)
-                this.browser.Visibility = System.Windows.Visibility.Visible;
+            if (this.browser.Visibility == Visibility.Hidden)
+                this.browser.Visibility = Visibility.Visible;
         }
 
         #endregion

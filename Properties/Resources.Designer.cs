@@ -9,7 +9,6 @@
 //------------------------------------------------------------------------------
 
 namespace PDFRider.Properties {
-    using System;
     
     
     /// <summary>
