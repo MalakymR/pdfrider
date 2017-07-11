@@ -22,12 +22,9 @@
 */
 
 using System;
-using System.Linq;
 using System.Windows.Input;
 using System.Collections.ObjectModel;
-using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
-using GalaSoft.MvvmLight.Messaging;
 
 namespace PDFRider
 {

@@ -21,7 +21,6 @@
  * Project page: http://pdfrider.codeplex.com
 */
 
-using System;
 using System.Windows.Input;
 using GalaSoft.MvvmLight;
 using GalaSoft.MvvmLight.Command;
