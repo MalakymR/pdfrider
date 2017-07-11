@@ -140,16 +140,23 @@ namespace PDFRider
         /// <returns>A structure containing information returned by a CommonDialog window.</returns>
         public static FileDialogResult ShowSaveFileDialog()
         {
-            Microsoft.Win32.SaveFileDialog sfd = new Microsoft.Win32.SaveFileDialog();
-            sfd.Title = App.Current.FindResource("loc_saveFileDialogTitle").ToString();
-            sfd.DefaultExt = "pdf";
-            sfd.AddExtension = true;
-            sfd.Filter = App.Current.FindResource("loc_saveFileDialogFilter").ToString();
+            SaveFileDialog dlg = new SaveFileDialog();
+
+            dlg.DefaultExt = "pdf";
+            dlg.Title = App.Current.FindResource("loc_saveFileDialogTitle").ToString();
+            dlg.Filter = App.Current.FindResource("loc_saveFileDialogFilter").ToString();
+            dlg.AddExtension = true;
+
+            DialogResult dlgresult = dlg.ShowDialog();
 
             FileDialogResult result = new FileDialogResult();
-            result.CommonDialogReturn = (bool)sfd.ShowDialog();
-            result.FileName = sfd.FileName;
             
+            if (dlgresult == DialogResult.OK)
+            {
+                result.CommonDialogReturn = true;
+            }
+            result.FileName = dlg.FileName;
+
             return result;
         }
 
