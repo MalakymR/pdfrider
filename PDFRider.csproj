@@ -94,10 +94,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\..\..\..\Program Files\Laurent Bugnion (GalaSoft)\Mvvm Light Toolkit\Binaries\WPF35SP1\GalaSoft.MvvmLight.Extras.dll</HintPath>
     </Reference>
-    <Reference Include="LocTranslateLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>bin\Debug\LocTranslateLibrary.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
@@ -229,6 +225,9 @@
       <SubType>Code</SubType>
     </Compile>
     <Compile Include="Helpers\BindToSettingsExtension.cs" />
+    <Compile Include="Helpers\LocInfo.cs" />
+    <Compile Include="Helpers\LocItem.cs" />
+    <Compile Include="Helpers\TranslateExtension.cs" />
     <Compile Include="Model\Enumerations.cs" />
     <Compile Include="Model\PDFActions.cs" />
     <Compile Include="Model\PDFRiderConfig.cs" />
@@ -347,9 +346,6 @@
     <Content Include="GalaSoft.MvvmLight.Extras.dll" />
     <Resource Include="Licenses\PDFRider\gpl-2.0.txt" />
     <Resource Include="PdfRider.ico" />
-    <None Include="pdfrider_version.xml">
-      <SubType>Designer</SubType>
-    </None>
     <Content Include="libiconv2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>

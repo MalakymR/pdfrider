@@ -23,14 +23,13 @@
     
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:sys="clr-namespace:System;assembly=mscorlib"
-    xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary"
+    xmlns:ltl="clr-namespace:PDFRider;assembly=PDFRider"
     xml:space="preserve">
     
     <!-- 
         +++ DO NOT CHANGE THE FOLLOWING NAMESPACE DECLARATIONS +++
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:ltl="clr-namespace:LocTranslate;assembly=LocTranslateLibrary" 
+        xmlns:ltl="clr-namespace:PDFRider" 
     
         You should not remove the xml:space="preserve" attribute too.
         Remember to inform the user that you are using it. ;)
