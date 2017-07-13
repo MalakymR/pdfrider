@@ -117,12 +117,6 @@
         }
         "Entry"
         {
-        "MsmKey" = "8:_F3DA16D49F3170384BCE061CAE277BF9"
-        "OwnerKey" = "8:_7DE75AC4ECD14E4CA1B29776CA8EF5C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
         "MsmKey" = "8:_F4AA8BC8F10A4D248EBEB1129A0CF489"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
@@ -131,12 +125,6 @@
         {
         "MsmKey" = "8:_UNDEFINED"
         "OwnerKey" = "8:_7DE75AC4ECD14E4CA1B29776CA8EF5C9"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_F3DA16D49F3170384BCE061CAE277BF9"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -602,37 +590,6 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
-            "{9F6F8455-1EF1-4B85-886A-4223BCC8E7F7}:_F3DA16D49F3170384BCE061CAE277BF9"
-            {
-            "AssemblyRegister" = "3:1"
-            "AssemblyIsInGAC" = "11:FALSE"
-            "AssemblyAsmDisplayName" = "8:LocTranslateLibrary, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL"
-                "ScatterAssemblies"
-                {
-                    "_F3DA16D49F3170384BCE061CAE277BF9"
-                    {
-                    "Name" = "8:LocTranslateLibrary.dll"
-                    "Attributes" = "3:512"
-                    }
-                }
-            "SourcePath" = "8:LocTranslateLibrary.dll"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:TRUE"
-            "IsolateTo" = "8:"
-            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_F4AA8BC8F10A4D248EBEB1129A0CF489"
             {
             "SourcePath" = "8:.\\Locales\\de-DE\\LocTable-de-DE.xaml"
@@ -863,15 +820,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PDFRider"
-        "ProductCode" = "8:{BE3CE7F4-30DC-4B86-A7D2-D315B0B6A2C5}"
-        "PackageCode" = "8:{F564A021-BC66-49F9-848F-01BD6641BB06}"
+        "ProductCode" = "8:{6397F3C9-6F2E-4201-98E8-2B78E2E4069C}"
+        "PackageCode" = "8:{D73259E3-85AB-4652-B46D-4CFCFEA22C07}"
         "UpgradeCode" = "8:{E597AAB0-8B17-4A08-B90B-7ACB8D193873}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.6.2"
+        "ProductVersion" = "8:0.6.3"
         "Manufacturer" = "8:PDFRider"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
@@ -1427,7 +1384,7 @@
             }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7DE75AC4ECD14E4CA1B29776CA8EF5C9"
             {
-            "SourcePath" = "8:obj\\Debug\\PDFRider.exe"
+            "SourcePath" = "8:obj\\Release\\PDFRider.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"

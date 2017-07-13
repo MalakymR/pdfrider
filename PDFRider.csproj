@@ -349,7 +349,6 @@
     <Content Include="libiconv2.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="LocTranslateLibrary.dll" />
     <Content Include="pdftk.exe">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
