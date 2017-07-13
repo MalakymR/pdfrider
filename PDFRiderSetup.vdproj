@@ -69,7 +69,19 @@
         }
         "Entry"
         {
+        "MsmKey" = "8:_5A7AD997BDEC4B05BAA10A8B1D1BB23C"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
         "MsmKey" = "8:_7DE75AC4ECD14E4CA1B29776CA8EF5C9"
+        "OwnerKey" = "8:_UNDEFINED"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_888E0D1BF10D4C2993B8E436FAF8F630"
         "OwnerKey" = "8:_UNDEFINED"
         "MsmSig" = "8:_UNDEFINED"
         }
@@ -159,7 +171,7 @@
         "DisplayName" = "8:Debug"
         "IsDebugOnly" = "11:TRUE"
         "IsReleaseOnly" = "11:FALSE"
-        "OutputFilename" = "8:Debug\\PDFRiderSetup.msi"
+        "OutputFilename" = "8:Installer\\Debug\\PDFRiderSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -191,7 +203,7 @@
         "DisplayName" = "8:Release"
         "IsDebugOnly" = "11:FALSE"
         "IsReleaseOnly" = "11:TRUE"
-        "OutputFilename" = "8:Release\\PDFRiderSetup.msi"
+        "OutputFilename" = "8:Installer\\PDFRiderSetup.msi"
         "PackageFilesAs" = "3:2"
         "PackageFileSize" = "3:-2147483648"
         "CabType" = "3:1"
@@ -203,17 +215,17 @@
         "InstallerBootstrapper" = "3:2"
             "BootstrapperCfg:{63ACBE69-63AA-4F98-B2B6-99F9E24495F2}"
             {
-            "Enabled" = "11:TRUE"
+            "Enabled" = "11:FALSE"
             "PromptEnabled" = "11:TRUE"
             "PrerequisitesLocation" = "2:1"
             "Url" = "8:"
             "ComponentsUrl" = "8:"
                 "Items"
                 {
-                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:.NETFramework,Version=v4.6.1"
+                    "{EDC2488A-8267-493A-A98E-7D9C3B36CDF3}:Microsoft.Net.Framework.3.5.SP1"
                     {
-                    "Name" = "8:Microsoft .NET Framework 4.6.1 (x86 and x64)"
-                    "ProductCode" = "8:.NETFramework,Version=v4.6.1"
+                    "Name" = "8:.NET Framework 3.5 SP1"
+                    "ProductCode" = "8:Microsoft.Net.Framework.3.5.SP1"
                     }
                 }
             }
@@ -239,7 +251,7 @@
                 "Name" = "8:.NET Framework"
                 "Message" = "8:[VSDNETMSG]"
                 "FrameworkVersion" = "8:.NETFramework,Version=v3.5"
-                "AllowLaterVersions" = "11:FALSE"
+                "AllowLaterVersions" = "11:TRUE"
                 "InstallUrl" = "8:http://go.microsoft.com/fwlink/?LinkId=671728"
                 }
             }
@@ -459,6 +471,46 @@
             "IsDependency" = "11:FALSE"
             "IsolateTo" = "8:"
             }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_5A7AD997BDEC4B05BAA10A8B1D1BB23C"
+            {
+            "SourcePath" = "8:pdftk.exe"
+            "TargetName" = "8:pdftk.exe"
+            "Tag" = "8:"
+            "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
+            "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_888E0D1BF10D4C2993B8E436FAF8F630"
+            {
+            "SourcePath" = "8:libiconv2.dll"
+            "TargetName" = "8:libiconv2.dll"
+            "Tag" = "8:"
+            "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"
+            "Condition" = "8:"
+            "Transitive" = "11:FALSE"
+            "Vital" = "11:TRUE"
+            "ReadOnly" = "11:FALSE"
+            "Hidden" = "11:FALSE"
+            "System" = "11:FALSE"
+            "Permanent" = "11:FALSE"
+            "SharedLegacy" = "11:FALSE"
+            "PackageAs" = "3:1"
+            "Register" = "3:1"
+            "Exclude" = "11:FALSE"
+            "IsDependency" = "11:FALSE"
+            "IsolateTo" = "8:"
+            }
             "{1FB2D0AE-D3B9-43D4-B9DD-F88EC61E35DE}:_95A0A4DA160F4A12A2F6DE908BE1D11B"
             {
             "SourcePath" = "8:.\\Licenses\\PDFRider\\gpl-2.0.txt"
@@ -618,7 +670,7 @@
         {
             "{3C67513D-01DD-4637-8A68-80971EB9504F}:_16A23F4022E84CC5AC8D1F6C22B82CF5"
             {
-            "DefaultLocation" = "8:[ProgramFilesFolder][ProductName]"
+            "DefaultLocation" = "8:[ProgramFiles64Folder][ProductName]"
             "Name" = "8:#1925"
             "AlwaysCreate" = "11:FALSE"
             "Condition" = "8:"
@@ -820,8 +872,8 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PDFRider"
-        "ProductCode" = "8:{6397F3C9-6F2E-4201-98E8-2B78E2E4069C}"
-        "PackageCode" = "8:{D73259E3-85AB-4652-B46D-4CFCFEA22C07}"
+        "ProductCode" = "8:{2D30670B-3403-429B-B149-40FB28C069C9}"
+        "PackageCode" = "8:{707686F3-4AF9-4C68-8075-A9694ED8BCB5}"
         "UpgradeCode" = "8:{E597AAB0-8B17-4A08-B90B-7ACB8D193873}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
@@ -842,9 +894,9 @@
         "ARPIconIndex" = "3:32512"
         "SearchPath" = "8:"
         "UseSystemSearchPath" = "11:TRUE"
-        "TargetPlatform" = "3:0"
+        "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
-        "PostBuildEvent" = "8:findstr /v PostBuildEvent $(ProjectDir)PDFRiderSetup.vdproj | findstr ProductVersion >$(ProjectDir)postbuild_version.txt\r\nset /p var=<$(ProjectDir)postbuild_version.txt\r\nset var=%var:\"=%\r\nset var=%var: =%\r\nfor /f \"tokens=1,2 delims=:\" %%i in (\"%var%\") do @echo | set /p=%%j >$(ProjectDir)postbuild_version.txt\r\nset /p realvar=<$(ProjectDir)postbuild_version.txt\r\nset realvar=%realvar: =%\r\nrename \"$(ProjectDir)$(Configuration)\\PDFRiderSetup.msi\" \"PDFRiderSetup_%realvar%.msi\"\r\ndel $(ProjectDir)postbuild_version.txt"
+        "PostBuildEvent" = "8:findstr /v PostBuildEvent $(ProjectDir)PDFRiderSetup.vdproj | findstr ProductVersion >$(ProjectDir)postbuild_version.txt\r\nset /p var=<$(ProjectDir)postbuild_version.txt\r\nset var=%var:\"=%\r\nset var=%var: =%\r\nfor /f \"tokens=1,2 delims=:\" %%i in (\"%var%\") do @echo | set /p=%%j >$(ProjectDir)postbuild_version.txt\r\nset /p realvar=<$(ProjectDir)postbuild_version.txt\r\nset realvar=%realvar: =%\r\nrename \"$(BuiltOuputPath)\" \"PDFRiderSetup_%realvar%.msi\"\r\ndel $(ProjectDir)postbuild_version.txt"
         "RunPostBuildEvent" = "3:0"
         }
         "Registry"
@@ -1354,37 +1406,9 @@
         }
         "ProjectOutput"
         {
-            "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_207F68C15F63425297D56077E84C6DB0"
-            {
-            "SourcePath" = "8:"
-            "TargetName" = "8:"
-            "Tag" = "8:"
-            "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"
-            "Condition" = "8:"
-            "Transitive" = "11:FALSE"
-            "Vital" = "11:TRUE"
-            "ReadOnly" = "11:FALSE"
-            "Hidden" = "11:FALSE"
-            "System" = "11:FALSE"
-            "Permanent" = "11:FALSE"
-            "SharedLegacy" = "11:FALSE"
-            "PackageAs" = "3:1"
-            "Register" = "3:1"
-            "Exclude" = "11:FALSE"
-            "IsDependency" = "11:FALSE"
-            "IsolateTo" = "8:"
-            "ProjectOutputGroupRegister" = "3:1"
-            "OutputConfiguration" = "8:"
-            "OutputGroupCanonicalName" = "8:ContentFiles"
-            "OutputProjectGuid" = "8:{F76B28B6-7A01-4248-954A-F07DCD144474}"
-            "ShowKeyOutput" = "11:TRUE"
-                "ExcludeFilters"
-                {
-                }
-            }
             "{5259A561-127C-4D43-A0A1-72F10C7B3BF8}:_7DE75AC4ECD14E4CA1B29776CA8EF5C9"
             {
-            "SourcePath" = "8:obj\\Release\\PDFRider.exe"
+            "SourcePath" = "8:obj\\x64\\Release\\PDFRider.exe"
             "TargetName" = "8:"
             "Tag" = "8:"
             "Folder" = "8:_16A23F4022E84CC5AC8D1F6C22B82CF5"
