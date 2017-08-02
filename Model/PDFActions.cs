@@ -595,8 +595,6 @@ namespace PDFRider
             string argsB = "";
             int indexA = 0;
 
-            // consider single loop with 2 arg variables to be combined later with "cat" in the middle
-
             do
             {
                 string thisletter = toalphabetic(indexA);
@@ -619,7 +617,7 @@ namespace PDFRider
 
                 indexA++;
             }
-            while (indexA < filesToMerge.Length - 1);
+            while (indexA <= filesToMerge.Length - 1);
 
             // we can no longer get progress per file since there is only one argument run under pdftk
             // using index count will only progress producing the string which is ms of time before the conversion
