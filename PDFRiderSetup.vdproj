@@ -896,7 +896,7 @@
         "UseSystemSearchPath" = "11:TRUE"
         "TargetPlatform" = "3:1"
         "PreBuildEvent" = "8:"
-        "PostBuildEvent" = "8:findstr /v PostBuildEvent $(ProjectDir)PDFRiderSetup.vdproj | findstr ProductVersion >$(ProjectDir)postbuild_version.txt\r\nset /p var=<$(ProjectDir)postbuild_version.txt\r\nset var=%var:\"=%\r\nset var=%var: =%\r\nfor /f \"tokens=1,2 delims=:\" %%i in (\"%var%\") do @echo | set /p=%%j >$(ProjectDir)postbuild_version.txt\r\nset /p realvar=<$(ProjectDir)postbuild_version.txt\r\nset realvar=%realvar: =%\r\nrename \"$(BuiltOuputPath)\" \"PDFRiderSetup_%realvar%.msi\"\r\ndel $(ProjectDir)postbuild_version.txt"
+        "PostBuildEvent" = "8:for /f \"tokens=*\" %%a in ('findstr /v PostBuildEvent $(ProjectDir)PDFRiderSetup.vdproj ^| findstr ProductVersion') do set var=%%a\r\necho %var%\r\nset var=%var:\"=%\r\nset var=%var: =%\r\necho %var%\r\nfor /f \"tokens=1,2 delims=:\" %%i in (\"%var%\") do set var=%%j\r\necho %var%\r\nrename \"$(BuiltOuputPath)\" \"PDFRiderSetup_%var%.msi\""
         "RunPostBuildEvent" = "3:0"
         }
         "Registry"
