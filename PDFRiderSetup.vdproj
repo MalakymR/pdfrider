@@ -142,13 +142,7 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_CAD53F218C1EE6F5607164ACCAEAB263"
-        "MsmSig" = "8:_UNDEFINED"
-        }
-        "Entry"
-        {
-        "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_415A436AFCA3F33265B95EACC521905A"
+        "OwnerKey" = "8:_2276A4B62A8DC8FA0C6D278E86DBCC82"
         "MsmSig" = "8:_UNDEFINED"
         }
         "Entry"
@@ -160,7 +154,13 @@
         "Entry"
         {
         "MsmKey" = "8:_UNDEFINED"
-        "OwnerKey" = "8:_2276A4B62A8DC8FA0C6D278E86DBCC82"
+        "OwnerKey" = "8:_415A436AFCA3F33265B95EACC521905A"
+        "MsmSig" = "8:_UNDEFINED"
+        }
+        "Entry"
+        {
+        "MsmKey" = "8:_UNDEFINED"
+        "OwnerKey" = "8:_CAD53F218C1EE6F5607164ACCAEAB263"
         "MsmSig" = "8:_UNDEFINED"
         }
     }
@@ -872,15 +872,15 @@
         {
         "Name" = "8:Microsoft Visual Studio"
         "ProductName" = "8:PDFRider"
-        "ProductCode" = "8:{DA085E6B-B291-4672-9F45-D0C5CD653A45}"
-        "PackageCode" = "8:{F1FCA649-D09C-4DAC-BA36-002B0299AF6A}"
+        "ProductCode" = "8:{31FE7637-B0AC-47F7-9AA0-DF791AE78A32}"
+        "PackageCode" = "8:{3BE30641-1151-4697-8649-0B8E32B2930F}"
         "UpgradeCode" = "8:{E597AAB0-8B17-4A08-B90B-7ACB8D193873}"
         "AspNetVersion" = "8:4.0.30319.0"
         "RestartWWWService" = "11:FALSE"
         "RemovePreviousVersions" = "11:TRUE"
         "DetectNewerInstalledVersion" = "11:TRUE"
         "InstallAllUsers" = "11:TRUE"
-        "ProductVersion" = "8:0.6.4"
+        "ProductVersion" = "8:0.6.5"
         "Manufacturer" = "8:PDFRider"
         "ARPHELPTELEPHONE" = "8:"
         "ARPHELPLINK" = "8:"
