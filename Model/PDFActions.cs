@@ -26,6 +26,7 @@ using System.IO;
 using System.Diagnostics;
 using System.ComponentModel;
 
+
 namespace PDFRider
 {
     /// <summary>
@@ -259,25 +260,25 @@ namespace PDFRider
             switch (rotation)
             {
                 case Rotations.North:
-                    s_rotation += "N";
+                    s_rotation += "north";
                     break;
                 case Rotations.South:
-                    s_rotation += "S";
+                    s_rotation += "south";
                     break;
                 case Rotations.East:
-                    s_rotation += "E";
+                    s_rotation += "east";
                     break;
                 case Rotations.West:
-                    s_rotation += "W";
+                    s_rotation += "west";
                     break;
                 case Rotations.Left:
-                    s_rotation += "L";
+                    s_rotation += "left";
                     break;
                 case Rotations.Right:
-                    s_rotation += "R";
+                    s_rotation += "right";
                     break;
                 case Rotations.Down:
-                    s_rotation += "D";
+                    s_rotation += "down";
                     break;
             }
 
