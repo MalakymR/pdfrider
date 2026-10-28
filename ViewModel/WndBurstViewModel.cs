@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  * 
- * Project page: http://pdfrider.codeplex.com
+ * Project page: https://github.com/MalakymR/pdfrider
 */
 
 using System.Windows.Input;

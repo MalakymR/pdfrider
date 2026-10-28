@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  * 
- * Project page: http://pdfrider.codeplex.com
+ * Project page: https://github.com/MalakymR/pdfrider
 -->
 <ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml" xmlns:sys="clr-namespace:System;assembly=mscorlib" xmlns:ltl="clr-namespace:PDFRider" xml:space="preserve">
     
@@ -246,7 +246,7 @@ Vous devriez avoir reçu une copie de la GNU General Public License
      Foundation, Inc, 51 St Franklin, au cinquième étage, Boston, MA 02110-1301 USA
 
 
-Page du projet: http://pdfrider.codeplex.com
+Page du projet: https://github.com/MalakymR/pdfrider
 
 
 NOTES

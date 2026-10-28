@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  * 
- * Project page: http://pdfrider.codeplex.com
+ * Project page: https://github.com/MalakymR/pdfrider
 */
 
 using System.Reflection;
@@ -72,4 +72,4 @@ using System.Windows;
 // È possibile specificare tutti i valori oppure impostare valori predefiniti per i numeri relativi alla revisione e alla build 
 // utilizzando l'asterisco (*) come descritto di seguito:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("0.6.6")]
+[assembly: AssemblyVersion("0.7.0")]

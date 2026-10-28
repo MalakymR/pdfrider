@@ -15,7 +15,7 @@ Copyright 2009-2011 Francesco Tonucci
     Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
 
 
-Project page: http://pdfrider.codeplex.com
+Project page: https://github.com/MalakymR/pdfrider
 
 
                     GNU GENERAL PUBLIC LICENSE

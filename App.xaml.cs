@@ -18,7 +18,7 @@
  * Foundation, Inc., 51 Franklin St, Fifth Floor, Boston, MA  02110-1301  USA
  * 
  * 
- * Project page: http://pdfrider.codeplex.com
+ * Project page: https://github.com/MalakymR/pdfrider
 */
 
 using System;
@@ -47,7 +47,7 @@ namespace PDFRider
             App.ResourceAssembly.GetName().Version.Minor.ToString(),
             App.ResourceAssembly.GetName().Version.Build.ToString());
         public static string FULL_VERSION = App.ResourceAssembly.GetName().Version.ToString();
-        public static string WEBSITE = "http://pdfrider.codeplex.com";
+        public static string WEBSITE = "https://github.com/MalakymR/pdfrider";
 
         //Locale directory (e.g. {app}\Languages\en-US\ )
         //The locale specific part is added in the constructor, after the localization test part.
